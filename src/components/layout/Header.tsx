@@ -28,16 +28,28 @@ export default function Header() {
         : "light";
     };
 
-    const apply = () => setTheme(getThemeFromHtml());
-    apply();
+    const applyFromStorageOrSystem = () => {
+      const stored = localStorage.getItem("fp_theme") as ThemeMode | null;
+      const next = stored ?? getThemeFromHtml();
 
-    // observa mudanças de classe no <html> (caso você implemente um toggle depois)
-    const obs = new MutationObserver(apply);
+      const html = document.documentElement;
+      html.classList.remove("theme-dark", "theme-light");
+      html.classList.add(next === "dark" ? "theme-dark" : "theme-light");
+      setTheme(next);
+    };
+
+    applyFromStorageOrSystem();
+
+    // observa mudanças de classe no <html> (caso algo mude fora daqui)
+    const obs = new MutationObserver(() => setTheme(getThemeFromHtml()));
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    // observa mudanças no tema do sistema (fallback)
+    // se o usuário não fixou tema (sem localStorage), segue mudanças do sistema
     const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
-    const onMq = () => apply();
+    const onMq = () => {
+      const stored = localStorage.getItem("fp_theme");
+      if (!stored) applyFromStorageOrSystem();
+    };
     mq?.addEventListener?.("change", onMq);
 
     return () => {
@@ -45,6 +57,17 @@ export default function Header() {
       mq?.removeEventListener?.("change", onMq);
     };
   }, []);
+
+  const toggleTheme = () => {
+    const next: ThemeMode = theme === "dark" ? "light" : "dark";
+    const html = document.documentElement;
+
+    html.classList.remove("theme-dark", "theme-light");
+    html.classList.add(next === "dark" ? "theme-dark" : "theme-light");
+
+    localStorage.setItem("fp_theme", next);
+    setTheme(next);
+  };
 
   const logoSrc =
     theme === "dark"
@@ -109,7 +132,17 @@ export default function Header() {
               <Button variant="ghost" onClick={() => setOpenLogin(true)}>
                 Entrar
               </Button>
+
               <Button onClick={() => alert("Depois liga no fluxo de cadastro")}>Fazer parte</Button>
+
+              <button
+                onClick={toggleTheme}
+                className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
+                aria-label="Alternar tema"
+                title={theme === "dark" ? "Trocar para light" : "Trocar para dark"}
+              >
+                {theme === "dark" ? "☀" : "🌙"}
+              </button>
             </div>
           </div>
         </div>
