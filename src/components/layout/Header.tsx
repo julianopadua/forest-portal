@@ -112,14 +112,14 @@ export default function Header() {
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-6xl px-3 sm:px-4">
           <div
-            className="mt-3 flex items-center justify-between gap-2 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] backdrop-blur-xl"
+            className="mt-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] backdrop-blur-xl"
             style={{ boxShadow: "var(--shadow-float)" }}
           >
-            {/* LEFT (mobile: menu+logo, desktop: logo) */}
-            <div className="flex min-w-0 items-center gap-2 px-3 py-3 sm:gap-3 sm:px-4">
+            {/* MOBILE ROW: ☰ (esquerda) + logo (direita) */}
+            <div className="flex items-center justify-between px-3 py-3 sm:px-4 md:hidden">
               <button
                 onClick={() => setOpenMenu(true)}
-                className="inline-flex rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)] md:hidden"
+                className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
                 aria-label="Abrir menu"
               >
                 ☰
@@ -130,56 +130,66 @@ export default function Header() {
                 alt="Logo"
                 width={420}
                 height={140}
-                className="h-9 w-auto max-w-[140px] object-contain sm:h-10 sm:max-w-[170px] md:h-12 md:max-w-[220px]"
+                className="h-11 w-auto max-w-[210px] object-contain"
                 priority
               />
             </div>
 
-            {/* NAV (desktop only) */}
-            <nav className="hidden items-center gap-1 px-3 py-3 md:flex">
-              <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#missao">
-                Missão
-              </a>
-              <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#programas">
-                Programas
-              </a>
-              <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#conteudos">
-                Conteúdos
-              </a>
-              <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#comunidade">
-                Comunidade
-              </a>
-            </nav>
+            {/* DESKTOP ROW: logo + nav + ações */}
+            <div className="hidden md:flex md:items-center md:justify-between md:gap-2">
+              <div className="flex min-w-0 items-center gap-2 px-3 py-3 sm:gap-3 sm:px-4">
+                <Image
+                  src={logoSrc}
+                  alt="Logo"
+                  width={420}
+                  height={140}
+                  className="h-14 w-auto max-w-[280px] object-contain"
+                  priority
+                />
+              </div>
 
-            {/* RIGHT (desktop only) */}
-            <div className="hidden items-center gap-2 px-3 py-3 sm:px-4 md:flex">
-              <Button variant="ghost" onClick={() => setOpenLogin(true)}>
-                Entrar
-              </Button>
+              <nav className="hidden items-center gap-1 px-3 py-3 md:flex">
+                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#missao">
+                  Missão
+                </a>
+                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#programas">
+                  Programas
+                </a>
+                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#conteudos">
+                  Conteúdos
+                </a>
+                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#comunidade">
+                  Comunidade
+                </a>
+              </nav>
 
-              <Button onClick={() => alert("Depois liga no fluxo de cadastro")}>Fazer parte</Button>
+              <div className="hidden items-center gap-2 px-3 py-3 sm:px-4 md:flex">
+                <Button variant="ghost" onClick={() => setOpenLogin(true)}>
+                  Entrar
+                </Button>
 
-              <button
-                onClick={toggleTheme}
-                className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
-                aria-label="Alternar tema"
-                title={theme === "dark" ? "Trocar para light" : "Trocar para dark"}
-              >
-                {theme === "dark" ? (
-                  <SunIcon className="h-4 w-4 text-[color:var(--foreground)]" />
-                ) : (
-                  <MoonIcon className="h-4 w-4 text-[color:var(--foreground)]" />
-                )}
-              </button>
+                <Button onClick={() => alert("Depois liga no fluxo de cadastro")}>Fazer parte</Button>
+
+                <button
+                  onClick={toggleTheme}
+                  className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
+                  aria-label="Alternar tema"
+                  title={theme === "dark" ? "Trocar para light" : "Trocar para dark"}
+                >
+                  {theme === "dark" ? (
+                    <SunIcon className="h-4 w-4 text-[color:var(--foreground)]" />
+                  ) : (
+                    <MoonIcon className="h-4 w-4 text-[color:var(--foreground)]" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile menu modal */}
       <SidebarSheet open={openMenu} onClose={() => setOpenMenu(false)} />
 
-      {/* Login modal (desktop trigger por enquanto) */}
       <Modal open={openLogin} onClose={() => setOpenLogin(false)} title="Entrar">
         <div className="space-y-3">
           <input
