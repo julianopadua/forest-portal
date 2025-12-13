@@ -12,18 +12,17 @@ export default function Button({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "solid" | "ghost";
 }) {
+  const base =
+    "rounded-xl px-4 py-2 text-sm font-medium transition border disabled:opacity-60 disabled:cursor-not-allowed";
+
+  const solid =
+    "border-[color:var(--border)] bg-[color:var(--primary)] text-[color:var(--primary-contrast)] hover:bg-[color:var(--primary-hover)]";
+
+  const ghost =
+    "border-[color:var(--border)] bg-[color:var(--surface-2)] text-[color:var(--text)] hover:bg-[color:var(--surface-3)]";
+
   return (
-    <button
-      className={cn(
-        "rounded-xl px-4 py-2 text-sm font-medium transition border",
-        variant === "solid" &&
-          "border-white/10 bg-white text-zinc-950 hover:bg-zinc-200",
-        variant === "ghost" &&
-          "border-white/10 bg-white/5 text-white hover:bg-white/10",
-        className
-      )}
-      {...props}
-    >
+    <button className={cn(base, variant === "solid" ? solid : ghost, className)} {...props}>
       {children}
     </button>
   );

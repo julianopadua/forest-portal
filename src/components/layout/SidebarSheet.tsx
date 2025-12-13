@@ -15,16 +15,16 @@ export default function SidebarSheet({
 
   return (
     <div className="fixed inset-0 z-[60]">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <aside className="absolute left-0 top-0 h-full w-[320px] border-r border-white/10 bg-zinc-950/90 p-4 shadow-2xl">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <aside
+        className="absolute left-0 top-0 h-full w-[320px] border-r border-[color:var(--border)] bg-[color:var(--surface)] p-4 backdrop-blur-xl"
+        style={{ boxShadow: "var(--shadow-float)" }}
+      >
         <div className="mb-4 flex items-center justify-between">
           <div className="text-sm font-semibold">Menu</div>
           <button
             onClick={onClose}
-            className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 hover:bg-white/10"
+            className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 hover:bg-[color:var(--surface-3)]"
             aria-label="Fechar menu"
           >
             ✕
@@ -32,16 +32,16 @@ export default function SidebarSheet({
         </div>
 
         <nav className="space-y-1">
-          <a className="block rounded-xl px-3 py-2 text-zinc-200 hover:bg-white/5" href="#missao" onClick={onClose}>
+          <a className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]" href="#missao" onClick={onClose}>
             Missão
           </a>
-          <a className="block rounded-xl px-3 py-2 text-zinc-200 hover:bg-white/5" href="#programas" onClick={onClose}>
+          <a className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]" href="#programas" onClick={onClose}>
             Programas
           </a>
-          <a className="block rounded-xl px-3 py-2 text-zinc-200 hover:bg-white/5" href="#conteudos" onClick={onClose}>
+          <a className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]" href="#conteudos" onClick={onClose}>
             Conteúdos
           </a>
-          <a className="block rounded-xl px-3 py-2 text-zinc-200 hover:bg-white/5" href="#comunidade" onClick={onClose}>
+          <a className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]" href="#comunidade" onClick={onClose}>
             Comunidade
           </a>
         </nav>

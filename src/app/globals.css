@@ -1,24 +1,179 @@
+/* src/app/globals.css */
+
 @import "tailwindcss";
 
+/* =========================
+   Paletas (tokens)
+   - default: light (via :root)
+   - dark via prefers-color-scheme
+   - override manual via html.theme-light / html.theme-dark
+   ========================= */
+
 :root {
+  /* Base */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0b1b12;
+
+  /* Text */
+  --muted: #2a4b3b;
+
+  /* Surfaces (floating aesthetic) */
+  --surface: rgba(29, 68, 50, 0.06);
+  --surface-2: rgba(29, 68, 50, 0.09);
+  --surface-3: rgba(29, 68, 50, 0.12);
+
+  /* Lines / focus */
+  --border: rgba(29, 68, 50, 0.18);
+  --ring: rgba(29, 68, 50, 0.35);
+
+  /* Brand (greens) */
+  --primary: #1d4432; /* seu verde base */
+  --primary-hover: #173727;
+  --primary-contrast: #ffffff;
+
+  /* Accents */
+  --accent: #2b6cb0;
+  --accent-hover: #1f4e82;
+  --accent-contrast: #ffffff;
+
+  /* Status */
+  --danger: #b42318;
+  --warning: #b45309;
+  --success: #15803d;
+
+  /* Visual */
+  --shadow-float: 0 14px 36px -22px rgba(29, 68, 50, 0.35);
+
+  color-scheme: light;
 }
 
+/* Dark default (auto) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #06110b;
+    --foreground: #f4fff8;
+
+    --muted: #b7d4c5;
+
+    --surface: rgba(255, 255, 255, 0.06);
+    --surface-2: rgba(255, 255, 255, 0.08);
+    --surface-3: rgba(255, 255, 255, 0.12);
+
+    --border: rgba(178, 228, 199, 0.16);
+    --ring: rgba(93, 219, 159, 0.55);
+
+    --primary: #2f7a57;
+    --primary-hover: #256347;
+    --primary-contrast: #06110b;
+
+    --accent: #2b6cb0;
+    --accent-hover: #245a92;
+    --accent-contrast: #ffffff;
+
+    --danger: #d92d20;
+    --warning: #f79009;
+    --success: #12b76a;
+
+    --shadow-float: 0 10px 30px -15px rgba(0, 0, 0, 0.85);
+
+    color-scheme: dark;
+  }
+}
+
+/* Manual overrides (se você setar class no <html>) */
+html.theme-light {
+  --background: #ffffff;
+  --foreground: #0b1b12;
+
+  --muted: #2a4b3b;
+
+  --surface: rgba(29, 68, 50, 0.06);
+  --surface-2: rgba(29, 68, 50, 0.09);
+  --surface-3: rgba(29, 68, 50, 0.12);
+
+  --border: rgba(29, 68, 50, 0.18);
+  --ring: rgba(29, 68, 50, 0.35);
+
+  --primary: #1d4432;
+  --primary-hover: #173727;
+  --primary-contrast: #ffffff;
+
+  --accent: #2b6cb0;
+  --accent-hover: #1f4e82;
+  --accent-contrast: #ffffff;
+
+  --danger: #b42318;
+  --warning: #b45309;
+  --success: #15803d;
+
+  --shadow-float: 0 14px 36px -22px rgba(29, 68, 50, 0.35);
+
+  color-scheme: light;
+}
+
+html.theme-dark {
+  --background: #06110b;
+  --foreground: #f4fff8;
+
+  --muted: #b7d4c5;
+
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-2: rgba(255, 255, 255, 0.08);
+  --surface-3: rgba(255, 255, 255, 0.12);
+
+  --border: rgba(178, 228, 199, 0.16);
+  --ring: rgba(93, 219, 159, 0.55);
+
+  --primary: #2f7a57;
+  --primary-hover: #256347;
+  --primary-contrast: #06110b;
+
+  --accent: #2b6cb0;
+  --accent-hover: #245a92;
+  --accent-contrast: #ffffff;
+
+  --danger: #d92d20;
+  --warning: #f79009;
+  --success: #12b76a;
+
+  --shadow-float: 0 10px 30px -15px rgba(0, 0, 0, 0.85);
+
+  color-scheme: dark;
+}
+
+/* Tailwind v4 theme mapping (mantém teu setup e adiciona tokens úteis) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-muted: var(--muted);
+
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-contrast: var(--primary-contrast);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-contrast: var(--accent-contrast);
+
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+
+  --shadow-float: var(--shadow-float);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base styles */
 body {
   background: var(--background);
   color: var(--foreground);
