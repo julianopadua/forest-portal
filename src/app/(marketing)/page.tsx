@@ -1,5 +1,6 @@
 // src/app/(marketing)/page.tsx
 
+import Link from "next/link";
 import Button from "@/components/ui/Button";
 
 function Section({
@@ -39,15 +40,19 @@ export default function MarketingHome() {
               Um portal para aprender, construir e aplicar.
             </h1>
             <p className="mt-4 max-w-2xl text-zinc-300">
-              O Forest Institute organiza conhecimento em trilhas, ferramentas e comunidade.
-              Você pode explorar como visitante ou entrar para salvar progresso, participar e acessar recursos avançados.
+              O Forest Institute organiza conhecimento em trilhas, ferramentas e
+              comunidade. Você pode explorar como visitante ou entrar para salvar
+              progresso, participar e acessar recursos avançados.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Button onClick={() => alert("Depois liga no cadastro")}>Quero fazer parte</Button>
-              <Button variant="ghost" onClick={() => alert("Depois liga no modo visitante")}>
-                Usar sem logar
-              </Button>
+              <Link href="/join">
+                <Button>Quero fazer parte</Button>
+              </Link>
+
+              <Link href="/explore">
+                <Button variant="ghost">Usar sem logar</Button>
+              </Link>
             </div>
 
             <div className="mt-10 grid gap-3 md:grid-cols-3">
@@ -56,7 +61,10 @@ export default function MarketingHome() {
                 ["Ferramentas", "Calculadoras, templates e checklists práticos."],
                 ["Comunidade", "Discussão, curadoria e projetos colaborativos."],
               ].map(([t, d]) => (
-                <div key={t} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                <div
+                  key={t}
+                  className="rounded-2xl border border-white/10 bg-black/20 p-5"
+                >
                   <div className="font-semibold">{t}</div>
                   <div className="mt-1 text-sm text-zinc-300">{d}</div>
                 </div>
@@ -74,7 +82,8 @@ export default function MarketingHome() {
       >
         <div className="grid gap-3 md:grid-cols-2">
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-zinc-300">
-            Curadoria de temas-chave, com linguagem clara e referências. Sem conteúdo inchado.
+            Curadoria de temas-chave, com linguagem clara e referências. Sem
+            conteúdo inchado.
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-zinc-300">
             Uma base viva: melhora contínua por feedback e revisão.
@@ -89,10 +98,14 @@ export default function MarketingHome() {
       >
         <div className="grid gap-3 md:grid-cols-3">
           {["Fundamentos", "Projetos", "Mentorias"].map((x) => (
-            <div key={x} className="rounded-2xl border border-white/10 bg-black/20 p-5">
+            <div
+              key={x}
+              className="rounded-2xl border border-white/10 bg-black/20 p-5"
+            >
               <div className="font-semibold">{x}</div>
               <div className="mt-1 text-sm text-zinc-300">
-                Estrutura e entregáveis claros (você sabe onde está e pra onde vai).
+                Estrutura e entregáveis claros (você sabe onde está e pra onde
+                vai).
               </div>
             </div>
           ))}
@@ -105,7 +118,14 @@ export default function MarketingHome() {
         subtitle="Biblioteca prática: notas, guias, templates, e módulos curtos."
       >
         <div className="flex flex-wrap gap-2">
-          {["Guias", "Cheatsheets", "Templates", "Artigos", "Sprints", "Checklists"].map((tag) => (
+          {[
+            "Guias",
+            "Cheatsheets",
+            "Templates",
+            "Artigos",
+            "Sprints",
+            "Checklists",
+          ].map((tag) => (
             <span
               key={tag}
               className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-200"
@@ -122,10 +142,13 @@ export default function MarketingHome() {
         subtitle="Um espaço para perguntas boas, projetos colaborativos e curadoria real."
       >
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Button onClick={() => alert("Depois liga no cadastro")}>Criar conta</Button>
-          <Button variant="ghost" onClick={() => alert("Depois liga no modo visitante")}>
-            Explorar como visitante
-          </Button>
+          <Link href="/join">
+            <Button>Criar conta</Button>
+          </Link>
+
+          <Link href="/explore">
+            <Button variant="ghost">Explorar como visitante</Button>
+          </Link>
         </div>
       </Section>
     </div>

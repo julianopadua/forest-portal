@@ -28,7 +28,7 @@ export default function Header() {
 
               <div className="flex items-center gap-2">
                 <Image
-                  src="/images/logos/logo-primary.png"
+                  src="/images/logos/002-big-logo.png"
                   alt="Logo do Instituto"
                   width={34}
                   height={34}
