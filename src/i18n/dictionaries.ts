@@ -31,6 +31,16 @@ export type Dict = {
     themeToDark: string;
   };
 
+  footer: {
+    brand: string;
+    tagline: string;
+    links: {
+      mission: string;
+      contents: string;
+      community: string;
+    };
+  };
+
   marketing: {
     hero: {
       title: string;
@@ -110,6 +120,16 @@ export const dictionaries: Record<Locale, Dict> = {
 
       themeToLight: "Trocar para light",
       themeToDark: "Trocar para dark",
+    },
+
+    footer: {
+        brand: "Forest Institute",
+        tagline: "Conhecimento aplicado, comunidade e ferramentas.",
+        links: {
+        mission: "Missão",
+        contents: "Conteúdos",
+        community: "Comunidade",
+        },
     },
 
     marketing: {
@@ -202,6 +222,16 @@ export const dictionaries: Record<Locale, Dict> = {
 
       themeToLight: "Switch to light",
       themeToDark: "Switch to dark",
+    },
+
+    footer: {
+        brand: "Forest Institute",
+        tagline: "Applied knowledge, community, and tools.",
+        links: {
+        mission: "Mission",
+        contents: "Content",
+        community: "Community",
+        },
     },
 
     marketing: {
