@@ -145,8 +145,9 @@ export default function Header() {
             </div>
 
             {/* DESKTOP */}
-            <div className="hidden md:flex md:items-center md:justify-between md:gap-2">
-              <div className="flex min-w-0 items-center gap-3 px-3 py-3 sm:px-4">
+            <div className="hidden md:flex md:items-center md:gap-3 md:px-3 md:py-3 sm:px-4">
+              {/* left: menu + logo (shrink-0 pra não esmagar) */}
+              <div className="flex shrink-0 items-center gap-3">
                 <button
                   onClick={() => setOpenMenu(true)}
                   className="inline-flex rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
@@ -161,44 +162,46 @@ export default function Header() {
                   alt="Logo"
                   width={420}
                   height={140}
-                  className="h-14 w-auto max-w-[280px] object-contain"
+                  className="h-12 w-auto max-w-[220px] object-contain lg:h-14 lg:max-w-[280px]"
                   priority
                 />
               </div>
 
-              <nav className="hidden items-center gap-1 px-3 py-3 md:flex">
+              {/* middle: nav ocupa o espaço e não quebra linha */}
+              <nav className="hidden md:flex flex-1 min-w-0 items-center justify-center gap-1">
                 <a
-                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
                   href={`/#${missionId}`}
                 >
                   {dict.marketing.sections.mission.title}
                 </a>
                 <a
-                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
                   href={`/#${programsId}`}
                 >
                   {dict.marketing.sections.programs.title}
                 </a>
                 <a
-                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
                   href={`/#${contentsId}`}
                 >
                   {dict.marketing.sections.contents.title}
                 </a>
                 <a
-                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
                   href={`/#${communityId}`}
                 >
                   {dict.marketing.sections.community.title}
                 </a>
               </nav>
 
-              <div className="hidden items-center gap-2 px-3 py-3 sm:px-4 md:flex">
-                <Button variant="ghost" onClick={() => setOpenLogin(true)}>
+              {/* right: ações shrink-0 */}
+              <div className="flex shrink-0 items-center gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setOpenLogin(true)}>
                   {dict.common.signIn}
                 </Button>
 
-                <Button onClick={() => alert("Depois liga no fluxo de cadastro")}>
+                <Button size="sm" onClick={() => alert("Depois liga no fluxo de cadastro")}>
                   {dict.common.join}
                 </Button>
 

@@ -31,53 +31,58 @@ export type Dict = {
     themeToDark: string;
   };
 
-  footer: {
+    footer: {
     brand: string;
     tagline: string;
     links: {
-      mission: string;
-      contents: string;
-      community: string;
+        data: string;
+        markets: string;
+        reports: string;
+        education: string;
     };
-  };
+    };
 
-  marketing: {
+    marketing: {
     hero: {
-      title: string;
-      subtitle: string;
-      ctaJoin: string;
-      ctaExplore: string;
-      cards: Array<{ title: string; desc: string }>;
+        title: string;
+        subtitle: string;
+        ctaJoin: string;
+        ctaExplore: string;
+        cards: Array<{ title: string; desc: string }>;
     };
     sections: {
-      mission: {
+        mission: {
         id: string;
         title: string;
         subtitle: string;
         bullets: string[];
-      };
-      programs: {
+        };
+        programs: {
         id: string;
         title: string;
         subtitle: string;
         cards: string[];
         cardDesc: string;
-      };
-      contents: {
+        };
+        contents: {
         id: string;
         title: string;
         subtitle: string;
         tags: string[];
-      };
-      community: {
+        ctaTitle: string;
+        ctaDesc: string;
+        ctaButton: string;
+        };
+        community: {
         id: string;
         title: string;
         subtitle: string;
+        cards: Array<{ title: string; desc: string }>;
         ctaJoin: string;
         ctaExplore: string;
-      };
+        };
     };
-  };
+    };
 
   explore: {
     title: string;
@@ -123,61 +128,109 @@ export const dictionaries: Record<Locale, Dict> = {
     },
 
     footer: {
-        brand: "Forest Institute",
-        tagline: "Conhecimento aplicado, comunidade e ferramentas.",
-        links: {
-        mission: "Missão",
-        contents: "Conteúdos",
-        community: "Comunidade",
-        },
+    brand: "Forest Institute",
+    tagline: "Dados abertos, relatórios reprodutíveis e educação aplicada para o Brasil.",
+    links: {
+        data: "Dados abertos",
+        markets: "Mercados",
+        reports: "Relatórios",
+        education: "Educação",
+    },
     },
 
     marketing: {
-      hero: {
-        title: "Um portal para aprender, construir e aplicar.",
+    hero: {
+        title: "Dados abertos para queimadas, clima e commodities.",
         subtitle:
-          "O Forest Institute organiza conhecimento em trilhas, ferramentas e comunidade. Você pode explorar como visitante ou entrar para salvar progresso, participar e acessar recursos avançados.",
-        ctaJoin: "Quero fazer parte",
-        ctaExplore: "Usar sem logar",
+        "Um portal público com datasets organizados, scrapers em código aberto e relatórios semanais gratuitos. Feito para monitoramento, prevenção e tomada de decisão com base em evidência.",
+        ctaJoin: "Criar conta (grátis)",
+        ctaExplore: "Explorar sem logar",
         cards: [
-          { title: "Trilhas", desc: "Conteúdo estruturado por objetivos, não por acaso." },
-          { title: "Ferramentas", desc: "Calculadoras, templates e checklists práticos." },
-          { title: "Comunidade", desc: "Discussão, curadoria e projetos colaborativos." },
+        {
+            title: "Dados abertos",
+            desc: "Queimadas, clima e variáveis críticas em formatos práticos e documentados.",
+        },
+        {
+            title: "Mercados de commodities",
+            desc: "Séries e indicadores para apoiar produtores, estudantes e análises de mercado.",
+        },
+        {
+            title: "Relatórios semanais",
+            desc: "Newsletter e relatórios por tema, com transparência e reprodutibilidade.",
+        },
+        {
+            title: "Educação",
+            desc: "Trilhas gratuitas: ENEM, tecnologia, Python, Git e IA aplicada.",
+        },
         ],
-      },
-      sections: {
+    },
+
+    sections: {
         mission: {
-          id: "missao",
-          title: "Missão",
-          subtitle:
-            "Educação com foco em autonomia: aprender, testar, construir e aplicar no mundo real.",
-          bullets: [
-            "Curadoria de temas-chave, com linguagem clara e referências. Sem conteúdo inchado.",
-            "Uma base viva: melhora contínua por feedback e revisão.",
-          ],
+        id: "dados",
+        title: "Dados abertos",
+        subtitle:
+            "Monitoramento e prevenção começam com acesso simples a dados confiáveis e bem organizados.",
+        bullets: [
+            "Queimadas e risco de fogo: focos, intensidade, recorrência e variáveis correlatas.",
+            "Clima e ambiente: precipitação, temperatura, vento, umidade e séries históricas.",
+            "Downloads prontos para análise: CSV, Parquet e tabelas consolidadas por período e região.",
+            "Código aberto para coleta e limpeza: scrapers e pipelines reprodutíveis (rode no seu PC).",
+        ],
         },
+
         programs: {
-          id: "programas",
-          title: "Programas",
-          subtitle:
-            "Trilhas por objetivo: fundamentos, prática guiada, e projetos para portfólio.",
-          cards: ["Fundamentos", "Projetos", "Mentorias"],
-          cardDesc: "Estrutura e entregáveis claros (você sabe onde está e pra onde vai).",
+        id: "mercados",
+        title: "Mercados de commodities",
+        subtitle:
+            "Dados e variáveis que conectam clima, safra, logística e preço. Foco em utilidade prática.",
+        cards: ["Agro", "Energia", "Metais"],
+        cardDesc:
+            "Indicadores e séries para análise e acompanhamento, com explicações e fontes claras.",
         },
+
         contents: {
-          id: "conteudos",
-          title: "Conteúdos",
-          subtitle: "Biblioteca prática: notas, guias, templates, e módulos curtos.",
-          tags: ["Guias", "Cheatsheets", "Templates", "Artigos", "Sprints", "Checklists"],
+        id: "relatorios",
+        title: "Relatórios e newsletter",
+        subtitle:
+            "Relatórios semanais gratuitos e reprodutíveis. Você recebe o insight e também o caminho para reproduzir.",
+        tags: [
+            "Newsletter semanal",
+            "Queimadas e risco",
+            "Clima e safra",
+            "Mercados e preços",
+            "Anomalias e alertas",
+            "Código aberto",
+        ],
+        ctaTitle: "Receber por email",
+        ctaDesc:
+            "Inscreva-se para receber a newsletter e relatórios temáticos semanais. Sem spam, foco em sinal.",
+        ctaButton: "Inscrever-se",
         },
+
         community: {
-          id: "comunidade",
-          title: "Comunidade",
-          subtitle: "Um espaço para perguntas boas, projetos colaborativos e curadoria real.",
-          ctaJoin: "Criar conta",
-          ctaExplore: "Explorar como visitante",
+        id: "educacao",
+        title: "Educação",
+        subtitle:
+            "Trilhas gratuitas para ampliar autonomia: estudar melhor, trabalhar melhor e usar tecnologia com propósito.",
+        cards: [
+            {
+            title: "ENEM",
+            desc: "Trilhas por competência, questões oficiais e prática guiada (inclui redação).",
+            },
+            {
+            title: "Tecnologia e dados",
+            desc: "Python, análise de dados, automação e fundamentos para entrar no mundo tech.",
+            },
+            {
+            title: "IA aplicada",
+            desc: "Como usar IA com método: produtividade, estudo, pesquisa e fluxo de trabalho.",
+            },
+        ],
+        ctaJoin: "Começar agora",
+        ctaExplore: "Ver conteúdos públicos",
         },
-      },
+    },
     },
 
     explore: {
@@ -225,61 +278,109 @@ export const dictionaries: Record<Locale, Dict> = {
     },
 
     footer: {
-        brand: "Forest Institute",
-        tagline: "Applied knowledge, community, and tools.",
-        links: {
-        mission: "Mission",
-        contents: "Content",
-        community: "Community",
-        },
+    brand: "Forest Institute",
+    tagline: "Open data, reproducible reports, and applied education for Brazil.",
+    links: {
+        data: "Open data",
+        markets: "Markets",
+        reports: "Reports",
+        education: "Education",
+    },
     },
 
     marketing: {
-      hero: {
-        title: "A portal to learn, build, and apply.",
+    hero: {
+        title: "Open data for wildfires, climate, and commodities.",
         subtitle:
-          "Forest Institute organizes knowledge into learning paths, tools, and community. You can explore as a visitor or sign in to save progress, participate, and access advanced resources.",
-        ctaJoin: "Join the Institute",
-        ctaExplore: "Use without signing in",
+        "A public portal with organized datasets, open-source scrapers, and free weekly reports. Built for monitoring, prevention, and evidence-based decision-making.",
+        ctaJoin: "Create account (free)",
+        ctaExplore: "Explore without signing in",
         cards: [
-          { title: "Tracks", desc: "Content structured by goals, not by randomness." },
-          { title: "Tools", desc: "Calculators, templates, and practical checklists." },
-          { title: "Community", desc: "Discussion, curation, and collaborative projects." },
+        {
+            title: "Open data",
+            desc: "Wildfires, climate, and key variables in practical, well-documented formats.",
+        },
+        {
+            title: "Commodities markets",
+            desc: "Time series and indicators to support producers, students, and market analysis.",
+        },
+        {
+            title: "Weekly reports",
+            desc: "Newsletter and topic-based reports with transparency and reproducibility.",
+        },
+        {
+            title: "Education",
+            desc: "Free tracks: ENEM, technology, Python, Git, and applied AI.",
+        },
         ],
-      },
-      sections: {
+    },
+
+    sections: {
         mission: {
-          id: "mission",
-          title: "Mission",
-          subtitle:
-            "Education focused on autonomy: learn, test, build, and apply in the real world.",
-          bullets: [
-            "Curated key topics with clear language and references. No bloated content.",
-            "A living base: continuous improvement through feedback and review.",
-          ],
+        id: "data",
+        title: "Open data",
+        subtitle:
+            "Monitoring and prevention start with simple access to reliable, well-structured data.",
+        bullets: [
+            "Wildfires and risk: hotspots, intensity, recurrence, and related variables.",
+            "Climate and environment: rainfall, temperature, wind, humidity, and historical series.",
+            "Analysis-ready downloads: CSV, Parquet, and consolidated tables by region and period.",
+            "Open-source collection and cleaning: scrapers and reproducible pipelines (run locally).",
+        ],
         },
+
         programs: {
-          id: "programs",
-          title: "Programs",
-          subtitle: "Goal-driven tracks: fundamentals, guided practice, and portfolio projects.",
-          cards: ["Fundamentals", "Projects", "Mentorship"],
-          cardDesc:
-            "Clear structure and deliverables (you always know where you are and what comes next).",
+        id: "markets",
+        title: "Commodities markets",
+        subtitle:
+            "Variables that connect climate, crop cycles, logistics, and price. Built for practical use.",
+        cards: ["Agriculture", "Energy", "Metals"],
+        cardDesc:
+            "Indicators and time series for tracking and analysis, with clear explanations and sources.",
         },
+
         contents: {
-          id: "content",
-          title: "Content",
-          subtitle: "A practical library: notes, guides, templates, and short modules.",
-          tags: ["Guides", "Cheat sheets", "Templates", "Articles", "Sprints", "Checklists"],
+        id: "reports",
+        title: "Reports and newsletter",
+        subtitle:
+            "Free weekly reports you can reproduce. You get the insight and the path to rebuild it.",
+        tags: [
+            "Weekly newsletter",
+            "Wildfire risk",
+            "Climate and crops",
+            "Markets and prices",
+            "Anomalies and alerts",
+            "Open source",
+        ],
+        ctaTitle: "Get it by email",
+        ctaDesc:
+            "Subscribe to receive the newsletter and weekly topic-based reports. No spam, signal first.",
+        ctaButton: "Subscribe",
         },
+
         community: {
-          id: "community",
-          title: "Community",
-          subtitle: "A place for good questions, collaborative projects, and real curation.",
-          ctaJoin: "Create an account",
-          ctaExplore: "Explore as a visitor",
+        id: "education",
+        title: "Education",
+        subtitle:
+            "Free tracks to build autonomy: study better, work better, and use technology with purpose.",
+        cards: [
+            {
+            title: "ENEM",
+            desc: "Competency-based tracks, official questions, and guided practice (includes essays).",
+            },
+            {
+            title: "Tech and data",
+            desc: "Python, data analysis, automation, and fundamentals to enter the tech world.",
+            },
+            {
+            title: "Applied AI",
+            desc: "How to use AI with method: productivity, study, research, and workflows.",
+            },
+        ],
+        ctaJoin: "Start now",
+        ctaExplore: "Browse public content",
         },
-      },
+    },
     },
 
     explore: {
