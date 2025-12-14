@@ -4,9 +4,6 @@
 
 /* =========================
    Paletas (tokens)
-   - default: light (via :root)
-   - dark via prefers-color-scheme
-   - override manual via html.theme-light / html.theme-dark
    ========================= */
 
 :root {
@@ -44,7 +41,15 @@
   /* Visual */
   --shadow-float: 0 14px 36px -22px rgba(29, 68, 50, 0.35);
 
+  /* Fonte global (controlada pelo provider) */
+  --fp-font-scale: 1;
+
   color-scheme: light;
+}
+
+/* IMPORTANT: rem scale do site todo */
+html {
+  font-size: calc(16px * var(--fp-font-scale));
 }
 
 /* Dark default (auto) */

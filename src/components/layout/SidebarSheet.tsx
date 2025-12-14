@@ -51,7 +51,17 @@ export default function SidebarSheet({
   open: boolean;
   onClose: () => void;
 }) {
-  const { locale, setLocale, dict } = useI18n();
+  const {
+    locale,
+    setLocale,
+    dict,
+    fontLevel,
+    increaseFont,
+    decreaseFont,
+  } = useI18n();
+
+  const canDec = fontLevel > -2;
+  const canInc = fontLevel < 2;
 
   const missionId = dict.marketing.sections.mission.id;
   const programsId = dict.marketing.sections.programs.id;
@@ -205,16 +215,32 @@ export default function SidebarSheet({
                   </div>
                 </div>
 
-                {/* Fonte (placeholder) */}
+                {/* Fonte (agora real) */}
                 <div>
                   <div className="mb-2 text-xs font-semibold text-[color:var(--muted)]">
                     {dict.common.textSize}
                   </div>
+
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" onClick={() => alert(dict.common.textSoon)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={decreaseFont}
+                      disabled={!canDec}
+                      aria-label="Decrease text size"
+                      title="Decrease text size"
+                    >
                       A-
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => alert(dict.common.textSoon)}>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={increaseFont}
+                      disabled={!canInc}
+                      aria-label="Increase text size"
+                      title="Increase text size"
+                    >
                       A+
                     </Button>
                   </div>
