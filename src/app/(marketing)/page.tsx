@@ -1,7 +1,11 @@
 // src/app/(marketing)/page.tsx
 
+"use client";
+
 import Link from "next/link";
 import Button from "@/components/ui/Button";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import { useI18n } from "@/i18n/I18nProvider";
 
 function Section({
   id,
@@ -30,43 +34,44 @@ function Section({
 }
 
 export default function MarketingHome() {
+  const { dict } = useI18n();
+
   return (
     <div>
       {/* HERO */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
+          <div className="mb-4 flex justify-end">
+            <LanguageSwitcher />
+          </div>
+
           <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-8 md:p-12 backdrop-blur-xl">
             <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-              Um portal para aprender, construir e aplicar.
+              {dict.marketing.hero.title}
             </h1>
+
             <p className="mt-4 max-w-2xl text-zinc-300">
-              O Forest Institute organiza conhecimento em trilhas, ferramentas e
-              comunidade. Você pode explorar como visitante ou entrar para salvar
-              progresso, participar e acessar recursos avançados.
+              {dict.marketing.hero.subtitle}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="/join">
-                <Button>Quero fazer parte</Button>
+                <Button>{dict.marketing.hero.ctaJoin}</Button>
               </Link>
 
               <Link href="/explore">
-                <Button variant="ghost">Usar sem logar</Button>
+                <Button variant="ghost">{dict.marketing.hero.ctaExplore}</Button>
               </Link>
             </div>
 
             <div className="mt-10 grid gap-3 md:grid-cols-3">
-              {[
-                ["Trilhas", "Conteúdo estruturado por objetivos, não por acaso."],
-                ["Ferramentas", "Calculadoras, templates e checklists práticos."],
-                ["Comunidade", "Discussão, curadoria e projetos colaborativos."],
-              ].map(([t, d]) => (
+              {dict.marketing.hero.cards.map((c) => (
                 <div
-                  key={t}
+                  key={c.title}
                   className="rounded-2xl border border-white/10 bg-black/20 p-5"
                 >
-                  <div className="font-semibold">{t}</div>
-                  <div className="mt-1 text-sm text-zinc-300">{d}</div>
+                  <div className="font-semibold">{c.title}</div>
+                  <div className="mt-1 text-sm text-zinc-300">{c.desc}</div>
                 </div>
               ))}
             </div>
@@ -76,36 +81,36 @@ export default function MarketingHome() {
 
       {/* 4 SEÇÕES */}
       <Section
-        id="missao"
-        title="Missão"
-        subtitle="Educação com foco em autonomia: aprender, testar, construir e aplicar no mundo real."
+        id={dict.marketing.sections.mission.id}
+        title={dict.marketing.sections.mission.title}
+        subtitle={dict.marketing.sections.mission.subtitle}
       >
         <div className="grid gap-3 md:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-zinc-300">
-            Curadoria de temas-chave, com linguagem clara e referências. Sem
-            conteúdo inchado.
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-zinc-300">
-            Uma base viva: melhora contínua por feedback e revisão.
-          </div>
+          {dict.marketing.sections.mission.bullets.map((text) => (
+            <div
+              key={text}
+              className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-zinc-300"
+            >
+              {text}
+            </div>
+          ))}
         </div>
       </Section>
 
       <Section
-        id="programas"
-        title="Programas"
-        subtitle="Trilhas por objetivo: fundamentos, prática guiada, e projetos para portfólio."
+        id={dict.marketing.sections.programs.id}
+        title={dict.marketing.sections.programs.title}
+        subtitle={dict.marketing.sections.programs.subtitle}
       >
         <div className="grid gap-3 md:grid-cols-3">
-          {["Fundamentos", "Projetos", "Mentorias"].map((x) => (
+          {dict.marketing.sections.programs.cards.map((x) => (
             <div
               key={x}
               className="rounded-2xl border border-white/10 bg-black/20 p-5"
             >
               <div className="font-semibold">{x}</div>
               <div className="mt-1 text-sm text-zinc-300">
-                Estrutura e entregáveis claros (você sabe onde está e pra onde
-                vai).
+                {dict.marketing.sections.programs.cardDesc}
               </div>
             </div>
           ))}
@@ -113,19 +118,12 @@ export default function MarketingHome() {
       </Section>
 
       <Section
-        id="conteudos"
-        title="Conteúdos"
-        subtitle="Biblioteca prática: notas, guias, templates, e módulos curtos."
+        id={dict.marketing.sections.contents.id}
+        title={dict.marketing.sections.contents.title}
+        subtitle={dict.marketing.sections.contents.subtitle}
       >
         <div className="flex flex-wrap gap-2">
-          {[
-            "Guias",
-            "Cheatsheets",
-            "Templates",
-            "Artigos",
-            "Sprints",
-            "Checklists",
-          ].map((tag) => (
+          {dict.marketing.sections.contents.tags.map((tag) => (
             <span
               key={tag}
               className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-200"
@@ -137,17 +135,17 @@ export default function MarketingHome() {
       </Section>
 
       <Section
-        id="comunidade"
-        title="Comunidade"
-        subtitle="Um espaço para perguntas boas, projetos colaborativos e curadoria real."
+        id={dict.marketing.sections.community.id}
+        title={dict.marketing.sections.community.title}
+        subtitle={dict.marketing.sections.community.subtitle}
       >
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link href="/join">
-            <Button>Criar conta</Button>
+            <Button>{dict.marketing.sections.community.ctaJoin}</Button>
           </Link>
 
           <Link href="/explore">
-            <Button variant="ghost">Explorar como visitante</Button>
+            <Button variant="ghost">{dict.marketing.sections.community.ctaExplore}</Button>
           </Link>
         </div>
       </Section>
