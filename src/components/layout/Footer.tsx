@@ -2,15 +2,11 @@
 
 "use client";
 
+import Link from "next/link";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Footer() {
   const { dict } = useI18n();
-
-  const dataId = dict.marketing.sections.mission.id;
-  const marketsId = dict.marketing.sections.programs.id;
-  const reportsId = dict.marketing.sections.contents.id;
-  const educationId = dict.marketing.sections.community.id;
 
   return (
     <footer className="border-t border-[color:var(--border)] bg-[color:var(--surface)]">
@@ -22,18 +18,21 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-wrap gap-4 text-xs">
-            <a className="hover:text-[color:var(--foreground)]" href={`/#${dataId}`}>
-              {dict.footer.links.data}
-            </a>
-            <a className="hover:text-[color:var(--foreground)]" href={`/#${marketsId}`}>
-              {dict.footer.links.markets}
-            </a>
-            <a className="hover:text-[color:var(--foreground)]" href={`/#${reportsId}`}>
+            <Link className="hover:text-[color:var(--foreground)]" href="/">
+              {dict.footer.links.home}
+            </Link>
+            <Link className="hover:text-[color:var(--foreground)]" href="/open-data">
+              {dict.footer.links.openData}
+            </Link>
+            <Link className="hover:text-[color:var(--foreground)]" href="/commodities">
+              {dict.footer.links.commodities}
+            </Link>
+            <Link className="hover:text-[color:var(--foreground)]" href="/reports">
               {dict.footer.links.reports}
-            </a>
-            <a className="hover:text-[color:var(--foreground)]" href={`/#${educationId}`}>
+            </Link>
+            <Link className="hover:text-[color:var(--foreground)]" href="/education">
               {dict.footer.links.education}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -4,12 +4,12 @@ export type Locale = "pt" | "en";
 
 export type Dict = {
   common: {
-    // já tinha
     language: string;
     pt: string;
     en: string;
 
-    // novo - header/sidebar/modal
+    home: string;
+
     menuTitle: string;
     openMenu: string;
     closeMenu: string;
@@ -19,8 +19,6 @@ export type Dict = {
     textSoon: string;
 
     signIn: string;
-    join: string;
-    explore: string;
 
     email: string;
     password: string;
@@ -31,58 +29,57 @@ export type Dict = {
     themeToDark: string;
   };
 
-    footer: {
+  footer: {
     brand: string;
     tagline: string;
     links: {
-        data: string;
-        markets: string;
-        reports: string;
-        education: string;
+      home: string;
+      openData: string;
+      commodities: string;
+      reports: string;
+      education: string;
     };
-    };
+  };
 
-    marketing: {
+  marketing: {
     hero: {
-        title: string;
-        subtitle: string;
-        ctaJoin: string;
-        ctaExplore: string;
-        cards: Array<{ title: string; desc: string }>;
+      title: string;
+      subtitle: string;
+      ctaPrimary: string;
+      cards: Array<{ title: string; desc: string }>;
     };
     sections: {
-        mission: {
+      mission: {
         id: string;
         title: string;
         subtitle: string;
         bullets: string[];
-        };
-        programs: {
+        cta: string;
+      };
+      programs: {
         id: string;
         title: string;
         subtitle: string;
         cards: string[];
         cardDesc: string;
-        };
-        contents: {
+        cta: string;
+      };
+      contents: {
         id: string;
         title: string;
         subtitle: string;
         tags: string[];
-        ctaTitle: string;
-        ctaDesc: string;
-        ctaButton: string;
-        };
-        community: {
+        cta: string;
+      };
+      community: {
         id: string;
         title: string;
         subtitle: string;
-        cards: Array<{ title: string; desc: string }>;
-        ctaJoin: string;
-        ctaExplore: string;
-        };
+        ctaPrimary: string;
+        ctaSecondary: string;
+      };
     };
-    };
+  };
 
   explore: {
     title: string;
@@ -106,6 +103,8 @@ export const dictionaries: Record<Locale, Dict> = {
       pt: "Português",
       en: "Inglês",
 
+      home: "Home",
+
       menuTitle: "Menu",
       openMenu: "Abrir menu",
       closeMenu: "Fechar menu",
@@ -115,8 +114,6 @@ export const dictionaries: Record<Locale, Dict> = {
       textSoon: "Em breve",
 
       signIn: "Entrar",
-      join: "Fazer parte",
-      explore: "Usar sem logar",
 
       email: "Email",
       password: "Senha",
@@ -128,111 +125,84 @@ export const dictionaries: Record<Locale, Dict> = {
     },
 
     footer: {
-    brand: "Forest Institute",
-    tagline: "Dados abertos, relatórios reprodutíveis e educação aplicada para o Brasil.",
-    links: {
-        data: "Dados abertos",
-        markets: "Mercados",
-        reports: "Relatórios",
+      brand: "Forest Institute",
+      tagline: "Dados abertos, relatórios e educação aplicada.",
+      links: {
+        home: "Home",
+        openData: "Dados abertos",
+        commodities: "Commodities",
+        reports: "Reports",
         education: "Educação",
-    },
+      },
     },
 
     marketing: {
-    hero: {
-        title: "Dados abertos para queimadas, clima e commodities.",
+      hero: {
+        title: "Dados abertos para clima, queimadas e decisão no mundo real.",
         subtitle:
-        "Um portal público com datasets organizados, scrapers em código aberto e relatórios semanais gratuitos. Feito para monitoramento, prevenção e tomada de decisão com base em evidência.",
-        ctaJoin: "Criar conta (grátis)",
-        ctaExplore: "Explorar sem logar",
+          "O Forest Institute organiza dados públicos e scripts de coleta em pipelines reproduzíveis. Publicamos relatórios semanais e trilhas educacionais gratuitas para ampliar autonomia e capacidade técnica.",
+        ctaPrimary: "Explorar dados abertos",
         cards: [
-        {
+          {
             title: "Dados abertos",
-            desc: "Queimadas, clima e variáveis críticas em formatos práticos e documentados.",
-        },
-        {
-            title: "Mercados de commodities",
-            desc: "Séries e indicadores para apoiar produtores, estudantes e análises de mercado.",
-        },
-        {
-            title: "Relatórios semanais",
-            desc: "Newsletter e relatórios por tema, com transparência e reprodutibilidade.",
-        },
-        {
+            desc: "Clima, queimadas e variáveis ambientais organizadas e documentadas.",
+          },
+          {
+            title: "Commodities",
+            desc: "Indicadores e variáveis que conectam clima, produção e mercado.",
+          },
+          {
+            title: "Reports",
+            desc: "Relatórios semanais e newsletter com leitura orientada por dados.",
+          },
+          {
             title: "Educação",
-            desc: "Trilhas gratuitas: ENEM, tecnologia, Python, Git e IA aplicada.",
-        },
+            desc: "Trilhas ENEM e tecnologia com prática, ferramentas e projetos.",
+          },
         ],
-    },
-
-    sections: {
+      },
+      sections: {
         mission: {
-        id: "dados",
-        title: "Dados abertos",
-        subtitle:
-            "Monitoramento e prevenção começam com acesso simples a dados confiáveis e bem organizados.",
-        bullets: [
-            "Queimadas e risco de fogo: focos, intensidade, recorrência e variáveis correlatas.",
-            "Clima e ambiente: precipitação, temperatura, vento, umidade e séries históricas.",
-            "Downloads prontos para análise: CSV, Parquet e tabelas consolidadas por período e região.",
-            "Código aberto para coleta e limpeza: scrapers e pipelines reprodutíveis (rode no seu PC).",
-        ],
+          id: "open-data",
+          title: "Dados abertos",
+          subtitle:
+            "Base pública organizada para monitoramento e prevenção de queimadas no Brasil, com foco em reprodutibilidade.",
+          bullets: [
+            "Consolidação de fontes públicas em formatos consistentes e prontos para análise.",
+            "Documentação clara de variáveis, periodicidade e limitações dos dados.",
+          ],
+          cta: "Abrir página de dados abertos",
         },
-
         programs: {
-        id: "mercados",
-        title: "Mercados de commodities",
-        subtitle:
-            "Dados e variáveis que conectam clima, safra, logística e preço. Foco em utilidade prática.",
-        cards: ["Agro", "Energia", "Metais"],
-        cardDesc:
-            "Indicadores e séries para análise e acompanhamento, com explicações e fontes claras.",
+          id: "commodities",
+          title: "Mercados de commodities",
+          subtitle:
+            "Variáveis climáticas e de mercado para apoiar produtores, analistas e decisões sob risco.",
+          cards: ["Clima e produção", "Indicadores de mercado", "Risco e proteção"],
+          cardDesc:
+            "Dados e contexto para acompanhar plantio, colheita, oferta, demanda e volatilidade.",
+          cta: "Abrir página de commodities",
         },
-
         contents: {
-        id: "relatorios",
-        title: "Relatórios e newsletter",
-        subtitle:
-            "Relatórios semanais gratuitos e reprodutíveis. Você recebe o insight e também o caminho para reproduzir.",
-        tags: [
-            "Newsletter semanal",
-            "Queimadas e risco",
-            "Clima e safra",
-            "Mercados e preços",
-            "Anomalias e alertas",
-            "Código aberto",
-        ],
-        ctaTitle: "Receber por email",
-        ctaDesc:
-            "Inscreva-se para receber a newsletter e relatórios temáticos semanais. Sem spam, foco em sinal.",
-        ctaButton: "Inscrever-se",
+          id: "reports",
+          title: "Reports e newsletter",
+          subtitle:
+            "Relatórios gratuitos, recorrentes, baseados nos dados e nos pipelines do instituto.",
+          tags: ["Relatório semanal", "Newsletter", "Mercado", "Clima", "Queimadas", "Código aberto"],
+          cta: "Abrir página de reports",
         },
-
         community: {
-        id: "educacao",
-        title: "Educação",
-        subtitle:
-            "Trilhas gratuitas para ampliar autonomia: estudar melhor, trabalhar melhor e usar tecnologia com propósito.",
-        cards: [
-            {
-            title: "ENEM",
-            desc: "Trilhas por competência, questões oficiais e prática guiada (inclui redação).",
-            },
-            {
-            title: "Tecnologia e dados",
-            desc: "Python, análise de dados, automação e fundamentos para entrar no mundo tech.",
-            },
-            {
-            title: "IA aplicada",
-            desc: "Como usar IA com método: produtividade, estudo, pesquisa e fluxo de trabalho.",
-            },
-        ],
-        ctaJoin: "Começar agora",
-        ctaExplore: "Ver conteúdos públicos",
+          id: "education",
+          title: "Educação",
+          subtitle:
+            "Trilhas gratuitas para ENEM e tecnologia, com prática guiada, exercícios e ferramentas de estudo.",
+          ctaPrimary: "Abrir educação",
+          ctaSecondary: "Ver trilhas",
         },
-    },
+      },
     },
 
+    // Mantive essas rotas por compatibilidade com seu projeto atual.
     explore: {
       title: "Explorar como visitante",
       body:
@@ -256,6 +226,8 @@ export const dictionaries: Record<Locale, Dict> = {
       pt: "Portuguese",
       en: "English",
 
+      home: "Home",
+
       menuTitle: "Menu",
       openMenu: "Open menu",
       closeMenu: "Close menu",
@@ -265,8 +237,6 @@ export const dictionaries: Record<Locale, Dict> = {
       textSoon: "Soon",
 
       signIn: "Sign in",
-      join: "Join",
-      explore: "Use without signing in",
 
       email: "Email",
       password: "Password",
@@ -278,109 +248,81 @@ export const dictionaries: Record<Locale, Dict> = {
     },
 
     footer: {
-    brand: "Forest Institute",
-    tagline: "Open data, reproducible reports, and applied education for Brazil.",
-    links: {
-        data: "Open data",
-        markets: "Markets",
+      brand: "Forest Institute",
+      tagline: "Open data, weekly reports, and applied education.",
+      links: {
+        home: "Home",
+        openData: "Open data",
+        commodities: "Commodities",
         reports: "Reports",
         education: "Education",
-    },
+      },
     },
 
     marketing: {
-    hero: {
-        title: "Open data for wildfires, climate, and commodities.",
+      hero: {
+        title: "Open data for climate, fires, and real-world decision-making.",
         subtitle:
-        "A public portal with organized datasets, open-source scrapers, and free weekly reports. Built for monitoring, prevention, and evidence-based decision-making.",
-        ctaJoin: "Create account (free)",
-        ctaExplore: "Explore without signing in",
+          "Forest Institute organizes public data and scraping scripts into reproducible pipelines. We publish weekly reports and free learning tracks to expand autonomy and technical capacity.",
+        ctaPrimary: "Explore open data",
         cards: [
-        {
+          {
             title: "Open data",
-            desc: "Wildfires, climate, and key variables in practical, well-documented formats.",
-        },
-        {
-            title: "Commodities markets",
-            desc: "Time series and indicators to support producers, students, and market analysis.",
-        },
-        {
-            title: "Weekly reports",
-            desc: "Newsletter and topic-based reports with transparency and reproducibility.",
-        },
-        {
+            desc: "Climate, fires, and environmental variables, organized and documented.",
+          },
+          {
+            title: "Commodities",
+            desc: "Indicators that connect climate, production, and markets.",
+          },
+          {
+            title: "Reports",
+            desc: "Weekly reports and a newsletter with data-driven analysis.",
+          },
+          {
             title: "Education",
-            desc: "Free tracks: ENEM, technology, Python, Git, and applied AI.",
-        },
+            desc: "ENEM prep and tech learning with practice, tools, and projects.",
+          },
         ],
-    },
-
-    sections: {
+      },
+      sections: {
         mission: {
-        id: "data",
-        title: "Open data",
-        subtitle:
-            "Monitoring and prevention start with simple access to reliable, well-structured data.",
-        bullets: [
-            "Wildfires and risk: hotspots, intensity, recurrence, and related variables.",
-            "Climate and environment: rainfall, temperature, wind, humidity, and historical series.",
-            "Analysis-ready downloads: CSV, Parquet, and consolidated tables by region and period.",
-            "Open-source collection and cleaning: scrapers and reproducible pipelines (run locally).",
-        ],
+          id: "open-data",
+          title: "Open data",
+          subtitle:
+            "A curated public base for monitoring and preventing fires in Brazil, focused on reproducibility.",
+          bullets: [
+            "Unified public sources in consistent formats ready for analysis.",
+            "Clear documentation of variables, frequency, and limitations.",
+          ],
+          cta: "Open the open data page",
         },
-
         programs: {
-        id: "markets",
-        title: "Commodities markets",
-        subtitle:
-            "Variables that connect climate, crop cycles, logistics, and price. Built for practical use.",
-        cards: ["Agriculture", "Energy", "Metals"],
-        cardDesc:
-            "Indicators and time series for tracking and analysis, with clear explanations and sources.",
+          id: "commodities",
+          title: "Commodities markets",
+          subtitle:
+            "Climate and market variables to support producers, analysts, and risk-aware decisions.",
+          cards: ["Climate and production", "Market indicators", "Risk and hedging"],
+          cardDesc:
+            "Data and context to track planting, harvest, supply, demand, and volatility.",
+          cta: "Open the commodities page",
         },
-
         contents: {
-        id: "reports",
-        title: "Reports and newsletter",
-        subtitle:
-            "Free weekly reports you can reproduce. You get the insight and the path to rebuild it.",
-        tags: [
-            "Weekly newsletter",
-            "Wildfire risk",
-            "Climate and crops",
-            "Markets and prices",
-            "Anomalies and alerts",
-            "Open source",
-        ],
-        ctaTitle: "Get it by email",
-        ctaDesc:
-            "Subscribe to receive the newsletter and weekly topic-based reports. No spam, signal first.",
-        ctaButton: "Subscribe",
+          id: "reports",
+          title: "Reports and newsletter",
+          subtitle:
+            "Free recurring reports based on the institute data and pipelines.",
+          tags: ["Weekly report", "Newsletter", "Market", "Climate", "Fires", "Open source"],
+          cta: "Open the reports page",
         },
-
         community: {
-        id: "education",
-        title: "Education",
-        subtitle:
-            "Free tracks to build autonomy: study better, work better, and use technology with purpose.",
-        cards: [
-            {
-            title: "ENEM",
-            desc: "Competency-based tracks, official questions, and guided practice (includes essays).",
-            },
-            {
-            title: "Tech and data",
-            desc: "Python, data analysis, automation, and fundamentals to enter the tech world.",
-            },
-            {
-            title: "Applied AI",
-            desc: "How to use AI with method: productivity, study, research, and workflows.",
-            },
-        ],
-        ctaJoin: "Start now",
-        ctaExplore: "Browse public content",
+          id: "education",
+          title: "Education",
+          subtitle:
+            "Free learning tracks for ENEM and technology, with guided practice, exercises, and study tools.",
+          ctaPrimary: "Open education",
+          ctaSecondary: "View tracks",
         },
-    },
+      },
     },
 
     explore: {

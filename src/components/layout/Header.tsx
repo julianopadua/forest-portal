@@ -3,6 +3,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import SidebarSheet from "./SidebarSheet";
 import Modal from "@/components/ui/Modal";
@@ -48,11 +49,6 @@ function MoonIcon({ className }: { className?: string }) {
 
 export default function Header() {
   const { dict } = useI18n();
-
-  const missionId = dict.marketing.sections.mission.id;
-  const programsId = dict.marketing.sections.programs.id;
-  const contentsId = dict.marketing.sections.contents.id;
-  const communityId = dict.marketing.sections.community.id;
 
   const [openMenu, setOpenMenu] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
@@ -111,9 +107,12 @@ export default function Header() {
   };
 
   const logoSrc =
-    theme === "dark"
-      ? "/images/logos/002-wbig-logo.png"
-      : "/images/logos/002-big-logo.png";
+    theme === "dark" ? "/images/logos/002-wbig-logo.png" : "/images/logos/002-big-logo.png";
+
+  const openDataId = dict.marketing.sections.mission.id;
+  const commoditiesId = dict.marketing.sections.programs.id;
+  const reportsId = dict.marketing.sections.contents.id;
+  const educationId = dict.marketing.sections.community.id;
 
   return (
     <>
@@ -134,19 +133,21 @@ export default function Header() {
                 ☰
               </button>
 
-              <Image
-                src={logoSrc}
-                alt="Logo"
-                width={420}
-                height={140}
-                className="h-11 w-auto max-w-[210px] object-contain"
-                priority
-              />
+              <Link href="/" aria-label={dict.common.home} title={dict.common.home}>
+                <Image
+                  src={logoSrc}
+                  alt="Logo"
+                  width={420}
+                  height={140}
+                  className="h-11 w-auto max-w-[210px] object-contain"
+                  priority
+                />
+              </Link>
             </div>
 
             {/* DESKTOP */}
             <div className="hidden md:flex md:items-center md:gap-3 md:px-3 md:py-3 sm:px-4">
-              {/* left: menu + logo (shrink-0 pra não esmagar) */}
+              {/* left */}
               <div className="flex shrink-0 items-center gap-3">
                 <button
                   onClick={() => setOpenMenu(true)}
@@ -157,52 +158,50 @@ export default function Header() {
                   ☰
                 </button>
 
-                <Image
-                  src={logoSrc}
-                  alt="Logo"
-                  width={420}
-                  height={140}
-                  className="h-12 w-auto max-w-[220px] object-contain lg:h-14 lg:max-w-[280px]"
-                  priority
-                />
+                <Link href="/" aria-label={dict.common.home} title={dict.common.home}>
+                  <Image
+                    src={logoSrc}
+                    alt="Logo"
+                    width={420}
+                    height={140}
+                    className="h-12 w-auto max-w-[220px] object-contain lg:h-14 lg:max-w-[280px]"
+                    priority
+                  />
+                </Link>
               </div>
 
-              {/* middle: nav ocupa o espaço e não quebra linha */}
+              {/* middle */}
               <nav className="hidden md:flex flex-1 min-w-0 items-center justify-center gap-1">
-                <a
+                <Link
                   className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
-                  href={`/#${missionId}`}
+                  href={`/${openDataId}`}
                 >
                   {dict.marketing.sections.mission.title}
-                </a>
-                <a
+                </Link>
+                <Link
                   className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
-                  href={`/#${programsId}`}
+                  href={`/${commoditiesId}`}
                 >
                   {dict.marketing.sections.programs.title}
-                </a>
-                <a
+                </Link>
+                <Link
                   className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
-                  href={`/#${contentsId}`}
+                  href={`/${reportsId}`}
                 >
                   {dict.marketing.sections.contents.title}
-                </a>
-                <a
+                </Link>
+                <Link
                   className="whitespace-nowrap rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)] lg:px-3 lg:text-sm"
-                  href={`/#${communityId}`}
+                  href={`/${educationId}`}
                 >
                   {dict.marketing.sections.community.title}
-                </a>
+                </Link>
               </nav>
 
-              {/* right: ações shrink-0 */}
+              {/* right */}
               <div className="flex shrink-0 items-center gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setOpenLogin(true)}>
                   {dict.common.signIn}
-                </Button>
-
-                <Button size="sm" onClick={() => alert("Depois liga no fluxo de cadastro")}>
-                  {dict.common.join}
                 </Button>
 
                 <button

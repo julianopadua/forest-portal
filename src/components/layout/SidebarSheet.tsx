@@ -2,6 +2,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
@@ -51,22 +52,12 @@ export default function SidebarSheet({
   open: boolean;
   onClose: () => void;
 }) {
-  const {
-    locale,
-    setLocale,
-    dict,
-    fontLevel,
-    increaseFont,
-    decreaseFont,
-  } = useI18n();
+  const { locale, setLocale, dict } = useI18n();
 
-  const canDec = fontLevel > -2;
-  const canInc = fontLevel < 2;
-
-  const missionId = dict.marketing.sections.mission.id;
-  const programsId = dict.marketing.sections.programs.id;
-  const contentsId = dict.marketing.sections.contents.id;
-  const communityId = dict.marketing.sections.community.id;
+  const openDataId = dict.marketing.sections.mission.id;
+  const commoditiesId = dict.marketing.sections.programs.id;
+  const reportsId = dict.marketing.sections.contents.id;
+  const educationId = dict.marketing.sections.community.id;
 
   const [openLogin, setOpenLogin] = useState(false);
   const [openSettings, setOpenSettings] = useState(true);
@@ -144,34 +135,45 @@ export default function SidebarSheet({
 
           {/* Navegação */}
           <nav className="space-y-1">
-            <a
+            <Link
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href={`/#${missionId}`}
+              href="/"
+              onClick={onClose}
+            >
+              {dict.common.home}
+            </Link>
+
+            <Link
+              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+              href={`/${openDataId}`}
               onClick={onClose}
             >
               {dict.marketing.sections.mission.title}
-            </a>
-            <a
+            </Link>
+
+            <Link
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href={`/#${programsId}`}
+              href={`/${commoditiesId}`}
               onClick={onClose}
             >
               {dict.marketing.sections.programs.title}
-            </a>
-            <a
+            </Link>
+
+            <Link
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href={`/#${contentsId}`}
+              href={`/${reportsId}`}
               onClick={onClose}
             >
               {dict.marketing.sections.contents.title}
-            </a>
-            <a
+            </Link>
+
+            <Link
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href={`/#${communityId}`}
+              href={`/${educationId}`}
               onClick={onClose}
             >
               {dict.marketing.sections.community.title}
-            </a>
+            </Link>
           </nav>
 
           {/* Configurações */}
@@ -215,62 +217,22 @@ export default function SidebarSheet({
                   </div>
                 </div>
 
-                {/* Fonte (agora real) */}
+                {/* Fonte (placeholder) */}
                 <div>
                   <div className="mb-2 text-xs font-semibold text-[color:var(--muted)]">
                     {dict.common.textSize}
                   </div>
-
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={decreaseFont}
-                      disabled={!canDec}
-                      aria-label="Decrease text size"
-                      title="Decrease text size"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => alert(dict.common.textSoon)}>
                       A-
                     </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={increaseFont}
-                      disabled={!canInc}
-                      aria-label="Increase text size"
-                      title="Increase text size"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => alert(dict.common.textSoon)}>
                       A+
                     </Button>
                   </div>
                 </div>
               </div>
             ) : null}
-          </div>
-
-          {/* CTAs */}
-          <div className="mt-6 space-y-2">
-            <Button
-              className="w-full"
-              onClick={() => {
-                alert("Depois liga no cadastro");
-                onClose();
-              }}
-            >
-              {dict.common.join}
-            </Button>
-
-            <Button
-              className="w-full"
-              variant="ghost"
-              onClick={() => {
-                alert("Depois liga no modo visitante");
-                onClose();
-              }}
-            >
-              {dict.common.explore}
-            </Button>
           </div>
         </aside>
       </div>
