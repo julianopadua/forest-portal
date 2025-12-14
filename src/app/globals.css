@@ -167,10 +167,9 @@ html.theme-dark {
   --color-warning: var(--warning);
   --color-success: var(--success);
 
-  --shadow-float: var(--shadow-float);
-
-  /* Montserrat via next/font in layout.tsx */
-  --font-sans: var(--font-sans);
+  /* Importante:
+     Nao redefina --shadow-float nem --font-sans aqui, pra evitar referencia circular.
+     O --font-sans vem do next/font (layout.tsx) e herda para todo mundo. */
 }
 
 /* Base styles */

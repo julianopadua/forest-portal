@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import SidebarSheet from "./SidebarSheet";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type ThemeMode = "light" | "dark";
 
@@ -46,6 +47,13 @@ function MoonIcon({ className }: { className?: string }) {
 }
 
 export default function Header() {
+  const { dict } = useI18n();
+
+  const missionId = dict.marketing.sections.mission.id;
+  const programsId = dict.marketing.sections.programs.id;
+  const contentsId = dict.marketing.sections.contents.id;
+  const communityId = dict.marketing.sections.community.id;
+
   const [openMenu, setOpenMenu] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [theme, setTheme] = useState<ThemeMode>("light");
@@ -115,12 +123,13 @@ export default function Header() {
             className="mt-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] backdrop-blur-xl"
             style={{ boxShadow: "var(--shadow-float)" }}
           >
-            {/* MOBILE ROW: ☰ (esquerda) + logo (direita) */}
+            {/* MOBILE */}
             <div className="flex items-center justify-between px-3 py-3 sm:px-4 md:hidden">
               <button
                 onClick={() => setOpenMenu(true)}
                 className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
-                aria-label="Abrir menu"
+                aria-label={dict.common.openMenu}
+                title={dict.common.openMenu}
               >
                 ☰
               </button>
@@ -135,9 +144,18 @@ export default function Header() {
               />
             </div>
 
-            {/* DESKTOP ROW: logo + nav + ações */}
+            {/* DESKTOP */}
             <div className="hidden md:flex md:items-center md:justify-between md:gap-2">
-              <div className="flex min-w-0 items-center gap-2 px-3 py-3 sm:gap-3 sm:px-4">
+              <div className="flex min-w-0 items-center gap-3 px-3 py-3 sm:px-4">
+                <button
+                  onClick={() => setOpenMenu(true)}
+                  className="inline-flex rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
+                  aria-label={dict.common.openMenu}
+                  title={dict.common.openMenu}
+                >
+                  ☰
+                </button>
+
                 <Image
                   src={logoSrc}
                   alt="Logo"
@@ -149,32 +167,46 @@ export default function Header() {
               </div>
 
               <nav className="hidden items-center gap-1 px-3 py-3 md:flex">
-                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#missao">
-                  Missão
+                <a
+                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  href={`/#${missionId}`}
+                >
+                  {dict.marketing.sections.mission.title}
                 </a>
-                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#programas">
-                  Programas
+                <a
+                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  href={`/#${programsId}`}
+                >
+                  {dict.marketing.sections.programs.title}
                 </a>
-                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#conteudos">
-                  Conteúdos
+                <a
+                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  href={`/#${contentsId}`}
+                >
+                  {dict.marketing.sections.contents.title}
                 </a>
-                <a className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]" href="#comunidade">
-                  Comunidade
+                <a
+                  className="rounded-xl px-3 py-2 text-sm text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
+                  href={`/#${communityId}`}
+                >
+                  {dict.marketing.sections.community.title}
                 </a>
               </nav>
 
               <div className="hidden items-center gap-2 px-3 py-3 sm:px-4 md:flex">
                 <Button variant="ghost" onClick={() => setOpenLogin(true)}>
-                  Entrar
+                  {dict.common.signIn}
                 </Button>
 
-                <Button onClick={() => alert("Depois liga no fluxo de cadastro")}>Fazer parte</Button>
+                <Button onClick={() => alert("Depois liga no fluxo de cadastro")}>
+                  {dict.common.join}
+                </Button>
 
                 <button
                   onClick={toggleTheme}
                   className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
-                  aria-label="Alternar tema"
-                  title={theme === "dark" ? "Trocar para light" : "Trocar para dark"}
+                  aria-label={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
+                  title={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
                 >
                   {theme === "dark" ? (
                     <SunIcon className="h-4 w-4 text-[color:var(--foreground)]" />
@@ -190,25 +222,25 @@ export default function Header() {
 
       <SidebarSheet open={openMenu} onClose={() => setOpenMenu(false)} />
 
-      <Modal open={openLogin} onClose={() => setOpenLogin(false)} title="Entrar">
+      <Modal open={openLogin} onClose={() => setOpenLogin(false)} title={dict.common.signIn}>
         <div className="space-y-3">
           <input
             className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 outline-none focus:border-[color:var(--ring)]"
-            placeholder="Email"
+            placeholder={dict.common.email}
           />
           <input
             className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 outline-none focus:border-[color:var(--ring)]"
-            placeholder="Senha"
+            placeholder={dict.common.password}
             type="password"
           />
           <Button className="w-full" onClick={() => alert("Depois integra autenticação")}>
-            Entrar
+            {dict.common.submit}
           </Button>
           <button
             className="w-full text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)]"
             onClick={() => alert("Depois integra cadastro")}
           >
-            Não tenho conta - criar agora
+            {dict.common.createAccount}
           </button>
         </div>
       </Modal>

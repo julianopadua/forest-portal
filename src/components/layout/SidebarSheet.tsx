@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type ThemeMode = "light" | "dark";
 
@@ -50,7 +51,15 @@ export default function SidebarSheet({
   open: boolean;
   onClose: () => void;
 }) {
+  const { locale, setLocale, dict } = useI18n();
+
+  const missionId = dict.marketing.sections.mission.id;
+  const programsId = dict.marketing.sections.programs.id;
+  const contentsId = dict.marketing.sections.contents.id;
+  const communityId = dict.marketing.sections.community.id;
+
   const [openLogin, setOpenLogin] = useState(false);
+  const [openSettings, setOpenSettings] = useState(true);
   const [theme, setTheme] = useState<ThemeMode>("light");
 
   useEffect(() => {
@@ -91,34 +100,29 @@ export default function SidebarSheet({
           style={{ boxShadow: "var(--shadow-float)" }}
         >
           <div className="mb-4 flex items-center justify-between">
-            <div className="text-sm font-semibold">Menu</div>
+            <div className="text-sm font-semibold">{dict.common.menuTitle}</div>
 
             <button
               onClick={onClose}
               className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 hover:bg-[color:var(--surface-3)]"
-              aria-label="Fechar menu"
+              aria-label={dict.common.closeMenu}
+              title={dict.common.closeMenu}
             >
               ✕
             </button>
           </div>
 
-          {/* Ações rápidas no topo (mobile) */}
+          {/* Ações rápidas */}
           <div className="mb-4 flex items-center gap-2">
-            <Button
-              className="flex-1"
-              variant="ghost"
-              onClick={() => {
-                setOpenLogin(true);
-              }}
-            >
-              Entrar
+            <Button className="flex-1" variant="ghost" onClick={() => setOpenLogin(true)}>
+              {dict.common.signIn}
             </Button>
 
             <button
               onClick={toggleTheme}
               className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
-              aria-label="Alternar tema"
-              title={theme === "dark" ? "Trocar para light" : "Trocar para dark"}
+              aria-label={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
+              title={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
             >
               {theme === "dark" ? (
                 <SunIcon className="h-4 w-4 text-[color:var(--foreground)]" />
@@ -128,37 +132,98 @@ export default function SidebarSheet({
             </button>
           </div>
 
+          {/* Navegação */}
           <nav className="space-y-1">
             <a
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href="#missao"
+              href={`/#${missionId}`}
               onClick={onClose}
             >
-              Missão
+              {dict.marketing.sections.mission.title}
             </a>
             <a
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href="#programas"
+              href={`/#${programsId}`}
               onClick={onClose}
             >
-              Programas
+              {dict.marketing.sections.programs.title}
             </a>
             <a
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href="#conteudos"
+              href={`/#${contentsId}`}
               onClick={onClose}
             >
-              Conteúdos
+              {dict.marketing.sections.contents.title}
             </a>
             <a
               className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--foreground)]"
-              href="#comunidade"
+              href={`/#${communityId}`}
               onClick={onClose}
             >
-              Comunidade
+              {dict.marketing.sections.community.title}
             </a>
           </nav>
 
+          {/* Configurações */}
+          <div className="mt-5">
+            <button
+              onClick={() => setOpenSettings((v) => !v)}
+              className="flex w-full items-center justify-between rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 text-sm hover:bg-[color:var(--surface-3)]"
+              aria-label={dict.common.settings}
+              title={dict.common.settings}
+            >
+              <span className="font-medium">{dict.common.settings}</span>
+              <span className="text-[color:var(--muted)]">{openSettings ? "▾" : "▸"}</span>
+            </button>
+
+            {openSettings ? (
+              <div className="mt-3 space-y-3 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-3">
+                {/* Idioma */}
+                <div>
+                  <div className="mb-2 text-xs font-semibold text-[color:var(--muted)]">
+                    {dict.common.language}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={locale === "pt" ? "opacity-100" : "opacity-60"}
+                      onClick={() => setLocale("pt")}
+                    >
+                      {dict.common.pt}
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={locale === "en" ? "opacity-100" : "opacity-60"}
+                      onClick={() => setLocale("en")}
+                    >
+                      {dict.common.en}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Fonte (placeholder) */}
+                <div>
+                  <div className="mb-2 text-xs font-semibold text-[color:var(--muted)]">
+                    {dict.common.textSize}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => alert(dict.common.textSoon)}>
+                      A-
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => alert(dict.common.textSoon)}>
+                      A+
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {/* CTAs */}
           <div className="mt-6 space-y-2">
             <Button
               className="w-full"
@@ -167,7 +232,7 @@ export default function SidebarSheet({
                 onClose();
               }}
             >
-              Fazer parte do Instituto
+              {dict.common.join}
             </Button>
 
             <Button
@@ -178,22 +243,21 @@ export default function SidebarSheet({
                 onClose();
               }}
             >
-              Usar sem logar
+              {dict.common.explore}
             </Button>
           </div>
         </aside>
       </div>
 
-      {/* Login modal (mobile, acionado pelo menu) */}
-      <Modal open={openLogin} onClose={() => setOpenLogin(false)} title="Entrar">
+      <Modal open={openLogin} onClose={() => setOpenLogin(false)} title={dict.common.signIn}>
         <div className="space-y-3">
           <input
             className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 outline-none focus:border-[color:var(--ring)]"
-            placeholder="Email"
+            placeholder={dict.common.email}
           />
           <input
             className="w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 outline-none focus:border-[color:var(--ring)]"
-            placeholder="Senha"
+            placeholder={dict.common.password}
             type="password"
           />
           <Button
@@ -204,13 +268,13 @@ export default function SidebarSheet({
               onClose();
             }}
           >
-            Entrar
+            {dict.common.submit}
           </Button>
           <button
             className="w-full text-sm text-[color:var(--muted)] hover:text-[color:var(--foreground)]"
             onClick={() => alert("Depois integra cadastro")}
           >
-            Não tenho conta - criar agora
+            {dict.common.createAccount}
           </button>
         </div>
       </Modal>

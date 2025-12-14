@@ -4,10 +4,33 @@ export type Locale = "pt" | "en";
 
 export type Dict = {
   common: {
+    // já tinha
     language: string;
     pt: string;
     en: string;
+
+    // novo - header/sidebar/modal
+    menuTitle: string;
+    openMenu: string;
+    closeMenu: string;
+
+    settings: string;
+    textSize: string;
+    textSoon: string;
+
+    signIn: string;
+    join: string;
+    explore: string;
+
+    email: string;
+    password: string;
+    submit: string;
+    createAccount: string;
+
+    themeToLight: string;
+    themeToDark: string;
   };
+
   marketing: {
     hero: {
       title: string;
@@ -45,12 +68,14 @@ export type Dict = {
       };
     };
   };
+
   explore: {
     title: string;
     body: string;
     backHome: string;
     join: string;
   };
+
   join: {
     title: string;
     body: string;
@@ -65,7 +90,28 @@ export const dictionaries: Record<Locale, Dict> = {
       language: "Idioma",
       pt: "Português",
       en: "Inglês",
+
+      menuTitle: "Menu",
+      openMenu: "Abrir menu",
+      closeMenu: "Fechar menu",
+
+      settings: "Configurações",
+      textSize: "Tamanho do texto",
+      textSoon: "Em breve",
+
+      signIn: "Entrar",
+      join: "Fazer parte",
+      explore: "Usar sem logar",
+
+      email: "Email",
+      password: "Senha",
+      submit: "Entrar",
+      createAccount: "Não tenho conta - criar agora",
+
+      themeToLight: "Trocar para light",
+      themeToDark: "Trocar para dark",
     },
+
     marketing: {
       hero: {
         title: "Um portal para aprender, construir e aplicar.",
@@ -113,6 +159,7 @@ export const dictionaries: Record<Locale, Dict> = {
         },
       },
     },
+
     explore: {
       title: "Explorar como visitante",
       body:
@@ -120,6 +167,7 @@ export const dictionaries: Record<Locale, Dict> = {
       backHome: "Voltar para a home",
       join: "Fazer parte do Instituto",
     },
+
     join: {
       title: "Fazer parte do Instituto",
       body:
@@ -134,7 +182,28 @@ export const dictionaries: Record<Locale, Dict> = {
       language: "Language",
       pt: "Portuguese",
       en: "English",
+
+      menuTitle: "Menu",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
+
+      settings: "Settings",
+      textSize: "Text size",
+      textSoon: "Soon",
+
+      signIn: "Sign in",
+      join: "Join",
+      explore: "Use without signing in",
+
+      email: "Email",
+      password: "Password",
+      submit: "Sign in",
+      createAccount: "I do not have an account - create now",
+
+      themeToLight: "Switch to light",
+      themeToDark: "Switch to dark",
     },
+
     marketing: {
       hero: {
         title: "A portal to learn, build, and apply.",
@@ -164,7 +233,8 @@ export const dictionaries: Record<Locale, Dict> = {
           title: "Programs",
           subtitle: "Goal-driven tracks: fundamentals, guided practice, and portfolio projects.",
           cards: ["Fundamentals", "Projects", "Mentorship"],
-          cardDesc: "Clear structure and deliverables (you always know where you are and what comes next).",
+          cardDesc:
+            "Clear structure and deliverables (you always know where you are and what comes next).",
         },
         contents: {
           id: "content",
@@ -181,6 +251,7 @@ export const dictionaries: Record<Locale, Dict> = {
         },
       },
     },
+
     explore: {
       title: "Explore as a visitor",
       body:
@@ -188,6 +259,7 @@ export const dictionaries: Record<Locale, Dict> = {
       backHome: "Back to home",
       join: "Join the Institute",
     },
+
     join: {
       title: "Join the Institute",
       body:
