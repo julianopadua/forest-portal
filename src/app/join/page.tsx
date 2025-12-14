@@ -4,7 +4,6 @@
 
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function JoinPage() {
@@ -12,9 +11,6 @@ export default function JoinPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-24">
-      <div className="mb-4 flex justify-end">
-        <LanguageSwitcher />
-      </div>
 
       <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
         <h1 className="text-3xl font-semibold">{dict.join.title}</h1>

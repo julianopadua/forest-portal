@@ -4,7 +4,6 @@
 
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import { useI18n } from "@/i18n/I18nProvider";
 
 function Section({
@@ -41,9 +40,6 @@ export default function MarketingHome() {
       {/* HERO */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="mb-4 flex justify-end">
-            <LanguageSwitcher />
-          </div>
 
           <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-8 md:p-12 backdrop-blur-xl">
             <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
