@@ -110,11 +110,17 @@ export default function Header() {
 
   const modalKey = useMemo(() => `auth-${authMode}`, [authMode]);
 
+  const navLinkClass =
+    "rounded-xl px-4 py-2.5 text-sm font-medium text-[color:var(--text)] hover:bg-[color:var(--surface-2)] lg:px-5 lg:text-base";
+
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-auto max-w-6xl px-3 sm:px-4">
-          <div className="mt-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] backdrop-blur-xl" style={{ boxShadow: "var(--shadow-float)" }}>
+          <div
+            className="mt-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] backdrop-blur-xl"
+            style={{ boxShadow: "var(--shadow-float)" }}
+          >
             {/* MOBILE */}
             <div className="flex items-center justify-between px-3 py-3 sm:px-4 md:hidden">
               <button
@@ -125,14 +131,15 @@ export default function Header() {
               >
                 <IconMenu className="h-4 w-4" />
               </button>
-              <Link href="/" aria-label={dict.common.home}>
+
+              <Link href="/" aria-label={dict.common.home} className="ml-3">
                 <Image src={logoSrc} alt="Logo" width={420} height={140} className="h-11 w-auto max-w-[210px] object-contain" priority />
               </Link>
             </div>
 
             {/* DESKTOP */}
-            <div className="hidden md:flex md:items-center md:gap-3 md:px-3 md:py-3 sm:px-4">
-              <div className="flex shrink-0 items-center gap-3">
+            <div className="hidden md:grid md:grid-cols-[auto_1fr_auto] md:items-center md:px-5 md:py-3">
+              <div className="flex shrink-0 items-center gap-5">
                 <button
                   onClick={() => setOpenMenu(true)}
                   className="inline-flex rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
@@ -143,25 +150,27 @@ export default function Header() {
                 </button>
 
                 <Link href="/" aria-label={dict.common.home}>
-                  <Image src={logoSrc} alt="Logo" width={420} height={140} className="h-12 w-auto max-w-[220px] object-contain lg:h-14 lg:max-w-[280px]" priority />
+                  <Image src={logoSrc} alt="Logo" width={420} height={140} className="h-12 w-auto max-w-[240px] object-contain lg:h-14 lg:max-w-[300px]" priority />
                 </Link>
               </div>
 
-              <nav className="hidden md:flex flex-1 min-w-0 items-center justify-center gap-1" aria-label="Navegação principal">
-                <Link className="rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] lg:px-3 lg:text-sm" href={`/${openDataId}`}>
-                  {dict.marketing.sections.mission.title}
-                </Link>
+              <nav className="min-w-0 justify-self-center" aria-label="Navegação principal">
+                <div className="flex items-center justify-center gap-4 lg:gap-6">
+                  <Link className={`${navLinkClass} min-w-[132px] text-center lg:min-w-[160px]`} href={`/${openDataId}`}>
+                    {dict.marketing.sections.mission.title}
+                  </Link>
 
-                <Link className="rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] lg:px-3 lg:text-sm" href={`/${reportsId}`}>
-                  {dict.marketing.sections.contents.title}
-                </Link>
+                  <Link className={`${navLinkClass} min-w-[132px] text-center lg:min-w-[160px]`} href={`/${reportsId}`}>
+                    {dict.marketing.sections.contents.title}
+                  </Link>
 
-                <Link className="rounded-xl px-2 py-2 text-xs text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] lg:px-3 lg:text-sm" href={`/${educationId}`}>
-                  {dict.marketing.sections.community.title}
-                </Link>
+                  <Link className={`${navLinkClass} min-w-[132px] text-center lg:min-w-[160px]`} href={`/${educationId}`}>
+                    {dict.marketing.sections.community.title}
+                  </Link>
+                </div>
               </nav>
 
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 items-center justify-end gap-3">
                 {user ? (
                   <Link href="/settings">
                     <Button variant="ghost" size="sm">
