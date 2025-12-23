@@ -3,7 +3,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 
 type ThemeMode = "light" | "dark";
@@ -115,7 +115,7 @@ function ThemedBackdrop() {
 
   useScrollGreenBackdrop(isDark);
 
-  const darkStyle: React.CSSProperties = {
+  const darkStyle: CSSProperties = {
     backgroundImage: [
       "radial-gradient(900px circle at 18% 0%, hsl(var(--bg-0) / var(--glow-0)), transparent 58%)",
       "radial-gradient(860px circle at 82% 10%, hsl(var(--bg-1) / var(--glow-1)), transparent 60%)",
@@ -124,7 +124,7 @@ function ThemedBackdrop() {
     ].join(", "),
   };
 
-  const lightStyle: React.CSSProperties = {
+  const lightStyle: CSSProperties = {
     backgroundImage: [
       "radial-gradient(880px circle at 16% 0%, rgba(16,185,129,0.12), transparent 62%)",
       "radial-gradient(820px circle at 84% 8%, rgba(52,211,153,0.10), transparent 64%)",
@@ -151,7 +151,7 @@ function ThemedBackdrop() {
   );
 }
 
-function Reveal({ children }: { children: React.ReactNode }) {
+function Reveal({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -193,7 +193,7 @@ function Section({
   id?: string;
   title: string;
   subtitle: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <section id={id} className="py-7 md:py-9 scroll-mt-24">
@@ -212,15 +212,7 @@ function Section({
   );
 }
 
-function LinkCard({
-  href,
-  title,
-  desc,
-}: {
-  href: string;
-  title: string;
-  desc: string;
-}) {
+function LinkCard({ href, title, desc }: { href: string; title: string; desc: string }) {
   return (
     <Link
       href={href}
@@ -233,13 +225,7 @@ function LinkCard({
   );
 }
 
-function InfoCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function InfoCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-5">
       <div className="font-semibold">{title}</div>
@@ -248,37 +234,25 @@ function InfoCard({
   );
 }
 
+function Paragraphs({ items }: { items: string[] }) {
+  return (
+    <>
+      {items.map((p, idx) => (
+        <p key={`${idx}-${p.slice(0, 16)}`} className={idx === 0 ? "" : "mt-3"}>
+          {p}
+        </p>
+      ))}
+    </>
+  );
+}
+
 export default function MarketingHome() {
   const { dict } = useI18n();
 
-  const openData = dict.marketing.sections.mission;
-  const reports = dict.marketing.sections.contents;
-  const education = dict.marketing.sections.community;
-
+  const m = dict.marketing;
   const portfolioUrl = process.env.NEXT_PUBLIC_PORTFOLIO_URL;
 
-  const primaryCards = [
-    {
-      href: `/${openData.id}`,
-      title: "Dados abertos",
-      desc: "Clima, queimadas e decisão no mundo real.",
-    },
-    {
-      href: `/${reports.id}`,
-      title: "Relatórios",
-      desc: "Relatórios automatizados, customizáveis e reprodutíveis localmente.",
-    },
-    {
-      href: `/${education.id}`,
-      title: "Educação",
-      desc: "Espaço aberto que visa o aprendizado e a colaboração.",
-    },
-    {
-      href: "#sobre-o-instituto",
-      title: "Sobre o Instituto",
-      desc: "Missão pública, princípios e compromisso open source.",
-    },
-  ];
+  const openDataHref = `/${m.sections.mission.id}`;
 
   return (
     <div className="relative">
@@ -290,12 +264,21 @@ export default function MarketingHome() {
           <div className="mx-auto max-w-6xl px-4">
             <Reveal>
               <div className="rounded-3xl border border-[color:var(--border)] bg-gradient-to-b from-[color:var(--surface-2)] to-[color:var(--surface)] p-8 md:p-11 backdrop-blur-xl">
-                <h1 className="text-3xl md:text-5xl font-semibold leading-tight">{dict.marketing.hero.title}</h1>
+                <h1 className="text-3xl md:text-5xl font-semibold leading-tight">{m.hero.title}</h1>
 
-                <p className="mt-4 max-w-3xl text-[color:var(--muted)]">{dict.marketing.hero.subtitle}</p>
+                <p className="mt-4 max-w-3xl text-[color:var(--muted)]">{m.hero.subtitle}</p>
+
+                <div className="mt-6">
+                  <Link
+                    href={openDataHref}
+                    className="inline-flex items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-2 text-sm transition hover:bg-[color:var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[color:var(--border)]"
+                  >
+                    {m.hero.ctaPrimary}
+                  </Link>
+                </div>
 
                 <div className="mt-9 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-                  {primaryCards.map((c) => (
+                  {m.hero.primaryCards.map((c) => (
                     <LinkCard key={c.href} href={c.href} title={c.title} desc={c.desc} />
                   ))}
                 </div>
@@ -305,117 +288,59 @@ export default function MarketingHome() {
         </section>
 
         {/* SOBRE O INSTITUTO */}
-        <Section
-          id="sobre-o-instituto"
-          title="Instituto Forest"
-          subtitle="Organização sem fins lucrativos, open source e orientada à utilidade pública."
-        >
+        <Section id={m.aboutInstitute.id} title={m.aboutInstitute.title} subtitle={m.aboutInstitute.subtitle}>
           <div className="grid gap-3 md:grid-cols-2">
-            <InfoCard title="Propósito institucional">
-              <p>
-                Fornecer dados abertos, estruturados e auditáveis a partir de fontes relevantes para economia, logística,
-                agricultura, saúde e segurança social, com foco em aplicações práticas e decisões no mundo real.
-              </p>
-              <p className="mt-3">
-                O Instituto prioriza transparência metodológica: o dado final deve ser acompanhado do processo que o
-                produz, incluindo coleta, validação e transformação.
-              </p>
+            <InfoCard title={m.aboutInstitute.cards.purpose.title}>
+              <Paragraphs items={m.aboutInstitute.cards.purpose.paragraphs} />
             </InfoCard>
 
-            <InfoCard title="Entrega e método">
+            <InfoCard title={m.aboutInstitute.cards.delivery.title}>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Catálogo de dados abertos e séries históricas padronizadas.</li>
-                <li>
-                  Códigos completos de scraping, processamento e geração de relatórios, disponibilizados gratuitamente.
-                </li>
-                <li>Reprodutibilidade por versionamento, documentação e trilhas de auditoria.</li>
-                <li>Contribuição comunitária por práticas open source.</li>
+                {m.aboutInstitute.cards.delivery.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
               </ul>
             </InfoCard>
 
-            <InfoCard title="Compromissos">
+            <InfoCard title={m.aboutInstitute.cards.commitments.title}>
               <ul className="list-disc pl-5 space-y-1">
-                <li>Uso responsável e orientação a impacto socioambiental.</li>
-                <li>Documentação pública como requisito, não como etapa opcional.</li>
-                <li>Escalabilidade por automação, modularidade e padrões de dados.</li>
+                {m.aboutInstitute.cards.commitments.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
               </ul>
             </InfoCard>
 
-            <InfoCard title="Resultados esperados">
-              <p>
-                Reduzir assimetrias de informação e custo de acesso a dados, fortalecendo decisões técnicas em políticas
-                públicas, cadeias produtivas, logística e proteção socioambiental.
-              </p>
+            <InfoCard title={m.aboutInstitute.cards.outcomes.title}>
+              <Paragraphs items={m.aboutInstitute.cards.outcomes.paragraphs} />
             </InfoCard>
           </div>
         </Section>
 
-        {/* DEDICATÓRIA */}
-        <Section
-          id="dedicatoria"
-          title="Dedicatória"
-          subtitle="Este projeto reconhece um legado de serviço público, conservação e responsabilidade intergeracional."
-        >
+        {/* DEDICATORIA */}
+        <Section id={m.dedication.id} title={m.dedication.title} subtitle={m.dedication.subtitle}>
           <div className="grid gap-3 md:grid-cols-2">
-            <InfoCard title="Mariceia Barbosa Silva Pádua">
-              <p>
-                Engenheira florestal formada pela Universidade Federal de Lavras, com atuação técnica no serviço público
-                ambiental. Seu trabalho se associa à gestão e proteção de unidades de conservação, com ênfase em manejo,
-                monitoramento e respostas operacionais a riscos ambientais.
-              </p>
-              <p className="mt-3">
-                Ao assumir responsabilidades de gestão em unidade de conservação estadual, sua trajetória materializa o
-                componente menos visível e mais essencial da conservação: execução contínua, presença em campo e
-                disciplina institucional.
-              </p>
-              <p className="mt-3">
-                Esta dedicatória registra a dimensão pública desse compromisso e o exemplo de rigor técnico aplicado a um
-                bem coletivo.
-              </p>
-            </InfoCard>
-
-            <InfoCard title="Maria Tereza Jorge Pádua">
-              <p>
-                Engenheira agrônoma, ambientalista e conservacionista reconhecida pela contribuição decisiva na criação e
-                consolidação de áreas protegidas no Brasil, com atuação institucional e técnica em políticas de
-                conservação.
-              </p>
-              <p className="mt-3">
-                Sua trajetória se relaciona à estruturação de instrumentos e redes de conservação, articulando ciência,
-                gestão pública e proteção territorial.
-              </p>
-              <p className="mt-3">
-                Esta dedicatória sustenta que acesso aberto ao conhecimento, à evidência e ao método é parte do mesmo
-                projeto público que sustenta a conservação: ampliar capacidades e proteger a vida em escala.
-              </p>
-            </InfoCard>
+            {m.dedication.people.map((p) => (
+              <InfoCard key={p.name} title={p.name}>
+                <Paragraphs items={p.paragraphs} />
+              </InfoCard>
+            ))}
           </div>
 
           <div className="mt-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-5 text-sm text-[color:var(--muted)]">
-            <div className="font-semibold">Nota de reconhecimento</div>
-            <p className="mt-2">
-              O Instituto Forest opera sob uma premissa simples e exigente: confiança pública depende de método público.
-              A abertura do processo é parte do produto.
-            </p>
+            <div className="font-semibold">{m.dedication.note.title}</div>
+            <p className="mt-2">{m.dedication.note.body}</p>
           </div>
         </Section>
 
         {/* CRIADOR */}
-        <Section id="criador" title="Quem eu sou" subtitle="Autoria, responsabilidade e canal de contato.">
+        <Section id={m.creator.id} title={m.creator.title} subtitle={m.creator.subtitle}>
           <div className="grid gap-3 md:grid-cols-2">
-            <InfoCard title="Juliano Pádua">
-              <p>
-                Criador do Instituto Forest. Esta seção será refinada a partir do currículo, com foco em trajetória
-                técnica, pesquisa aplicada, engenharia de dados e compromisso com transparência reprodutível.
-              </p>
+            <InfoCard title={m.creator.authorCard.title}>
+              <p>{m.creator.authorCard.body}</p>
             </InfoCard>
 
-            <InfoCard title="Contato e portfólio">
-              <p>
-                {portfolioUrl
-                  ? "Canal de contato e referências profissionais via portfólio."
-                  : "Defina NEXT_PUBLIC_PORTFOLIO_URL para habilitar o redirecionamento ao portfólio."}
-              </p>
+            <InfoCard title={m.creator.contactCard.title}>
+              <p>{portfolioUrl ? m.creator.contactCard.withUrl : m.creator.contactCard.withoutUrl}</p>
 
               {portfolioUrl ? (
                 <a
@@ -424,7 +349,7 @@ export default function MarketingHome() {
                   rel="noreferrer"
                   className="mt-4 inline-flex items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-2 text-sm transition hover:bg-[color:var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[color:var(--border)]"
                 >
-                  Abrir portfólio
+                  {m.creator.contactCard.button}
                 </a>
               ) : null}
             </InfoCard>
