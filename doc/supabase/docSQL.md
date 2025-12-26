@@ -18,7 +18,7 @@ create table public.profiles (
   constraint username_length check (char_length(username) >= 3)
 );
 
--- Ativa Row Level Security (RLS)
+-- Ativa Row Level Security (RLS) 
 alter table public.profiles enable row level security;
 
 -- POLÍTICAS DE SEGURANÇA (RLS)
