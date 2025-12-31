@@ -20,10 +20,8 @@ function formatBytes(n: number) {
 function periodSortKey(period: string) {
   const p = (period || "").trim();
 
-  // "Atual" sempre no topo
   if (p.toLowerCase() === "atual") return Number.POSITIVE_INFINITY;
 
-  // "YYYY-MM"
   const ym = /^(\d{4})-(\d{2})$/.exec(p);
   if (ym) {
     const y = Number(ym[1]);
@@ -31,15 +29,30 @@ function periodSortKey(period: string) {
     if (Number.isFinite(y) && Number.isFinite(m)) return y * 12 + m;
   }
 
-  // "YYYY"
   const y = /^(\d{4})$/.exec(p);
   if (y) {
     const yy = Number(y[1]);
     if (Number.isFinite(yy)) return yy * 12;
   }
 
-  // fallback: empurra pro fim
   return Number.NEGATIVE_INFINITY;
+}
+
+function ChevronLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
 }
 
 export default async function OpenDataDatasetPage({
@@ -67,6 +80,17 @@ export default async function OpenDataDatasetPage({
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
       <header className="mb-8">
+        {/* Back para o catálogo */}
+        <div className="mb-4">
+          <Link
+            href="/open-data"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--text)]"
+          >
+            <ChevronLeftIcon className="h-4 w-4" />
+            Voltar para dados abertos
+          </Link>
+        </div>
+
         <div className="text-sm text-[color:var(--muted)]">
           {ds.category_title} · {ds.source_title}
         </div>
