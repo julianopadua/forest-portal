@@ -54,6 +54,17 @@ type CategoryNode = {
   sources: SourceNode[];
 };
 
+/**
+ * Categorias "fixas" do portal.
+ * Mesmo vazias, aparecem no catálogo (quando query estiver vazia).
+ */
+const CATALOG_CATEGORIES_ORDER = [
+  "Mercado financeiro",
+  "Variáveis climáticas",
+  "Incêndios e risco",
+  "Outros",
+];
+
 export default function OpenDataCatalog({ query }: { query: string }) {
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [openSources, setOpenSources] = useState<Record<string, boolean>>({});
@@ -63,7 +74,6 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     return init;
   });
 
-  // Carrega manifest.generated_at para exibir "Atualizado em: DD/MM/AAAA" no catálogo
   useEffect(() => {
     let cancelled = false;
 
@@ -98,27 +108,18 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     }
 
     loadAll();
-
     return () => {
       cancelled = true;
     };
   }, []);
 
-  // Monta árvore: categoria -> fonte -> datasets
   const tree = useMemo<CategoryNode[]>(() => {
     const q = normalize(query);
 
     const filtered = q
       ? OPEN_DATA_DATASETS.filter((ds) => {
           const hay = normalize(
-            [
-              ds.title,
-              ds.description,
-              ds.category_title,
-              ds.source_title,
-              ds.source_id,
-              ds.slug,
-            ].join(" ")
+            [ds.title, ds.description, ds.category_title, ds.source_title, ds.source_id, ds.slug].join(" ")
           );
           return hay.includes(q);
         })
@@ -137,24 +138,43 @@ export default function OpenDataCatalog({ query }: { query: string }) {
       srcMap.get(src)!.push(ds);
     }
 
-    const categories: CategoryNode[] = Array.from(catMap.entries())
-      .map(([catTitle, srcMap]) => {
-        const sources: SourceNode[] = Array.from(srcMap.entries())
-          .map(([sourceId, datasets]) => {
-            datasets.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
-            const title = datasets[0]?.source_title || sourceId;
-            return { key: sourceId, title, datasets };
-          })
-          .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+    let categories: CategoryNode[] = Array.from(catMap.entries()).map(([catTitle, srcMap]) => {
+      const sources: SourceNode[] = Array.from(srcMap.entries())
+        .map(([sourceId, datasets]) => {
+          datasets.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+          const title = datasets[0]?.source_title || sourceId;
+          return { key: sourceId, title, datasets };
+        })
+        .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
 
-        return { key: catTitle, title: catTitle, sources };
-      })
-      .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+      return { key: catTitle, title: catTitle, sources };
+    });
+
+    // Se não tem busca ativa, injeta categorias vazias do "catálogo oficial"
+    if (!q) {
+      const existing = new Map(categories.map((c) => [c.key, c]));
+      for (const catTitle of CATALOG_CATEGORIES_ORDER) {
+        if (!existing.has(catTitle)) {
+          categories.push({ key: catTitle, title: catTitle, sources: [] });
+        }
+      }
+
+      // ordena pela ordem fixa (e joga desconhecidas para depois)
+      const orderIndex = new Map(CATALOG_CATEGORIES_ORDER.map((t, i) => [t, i]));
+      categories.sort((a, b) => {
+        const ia = orderIndex.has(a.title) ? orderIndex.get(a.title)! : 999;
+        const ib = orderIndex.has(b.title) ? orderIndex.get(b.title)! : 999;
+        if (ia !== ib) return ia - ib;
+        return a.title.localeCompare(b.title, "pt-BR");
+      });
+    } else {
+      // em busca, ordena alfabeticamente
+      categories.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+    }
 
     return categories;
   }, [query]);
 
-  // Busca global: auto-expande apenas o que está visível (tree já filtrada)
   useEffect(() => {
     const q = normalize(query);
     if (!q) return;
@@ -183,7 +203,7 @@ export default function OpenDataCatalog({ query }: { query: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-12">
       {tree.map((cat) => {
         const isOpen = !!openCats[cat.key];
         const totalDatasets = cat.sources.reduce((acc, s) => acc + s.datasets.length, 0);
@@ -208,70 +228,76 @@ export default function OpenDataCatalog({ query }: { query: string }) {
 
             {isOpen && (
               <div className="px-5 pb-5">
-                <div className="flex flex-col gap-3">
-                  {cat.sources.map((src) => {
-                    const key = `${cat.key}__${src.key}`;
-                    const srcOpen = !!openSources[key];
+                {cat.sources.length === 0 ? (
+                  <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 text-sm text-[color:var(--muted)]">
+                    Nenhum dataset nesta categoria ainda.
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {cat.sources.map((src) => {
+                      const key = `${cat.key}__${src.key}`;
+                      const srcOpen = !!openSources[key];
 
-                    return (
-                      <div key={src.key} className="rounded-xl border border-[color:var(--border)]">
-                        <button
-                          type="button"
-                          onClick={() => toggleSource(cat.key, src.key)}
-                          aria-expanded={srcOpen}
-                          className="flex w-full items-center justify-between gap-4 bg-[color:var(--surface-2)] px-4 py-3 text-left"
-                        >
-                          <div className="text-sm font-medium text-[color:var(--text)]">
-                            {src.title}{" "}
-                            <span className="text-xs font-normal text-[color:var(--muted)]">
-                              ({src.datasets.length})
-                            </span>
-                          </div>
-                          <span className="text-[color:var(--muted)]">{srcOpen ? "−" : "+"}</span>
-                        </button>
+                      return (
+                        <div key={src.key} className="rounded-xl border border-[color:var(--border)]">
+                          <button
+                            type="button"
+                            onClick={() => toggleSource(cat.key, src.key)}
+                            aria-expanded={srcOpen}
+                            className="flex w-full items-center justify-between gap-4 bg-[color:var(--surface-2)] px-4 py-3 text-left"
+                          >
+                            <div className="text-sm font-medium text-[color:var(--text)]">
+                              {src.title}{" "}
+                              <span className="text-xs font-normal text-[color:var(--muted)]">
+                                ({src.datasets.length})
+                              </span>
+                            </div>
+                            <span className="text-[color:var(--muted)]">{srcOpen ? "−" : "+"}</span>
+                          </button>
 
-                        {srcOpen && (
-                          <ul className="divide-y divide-[color:var(--border)]">
-                            {src.datasets.map((ds) => {
-                              const st = states[ds.id];
+                          {srcOpen && (
+                            <ul className="divide-y divide-[color:var(--border)]">
+                              {src.datasets.map((ds) => {
+                                const st = states[ds.id];
 
-                              let updatedLabel = "Carregando…";
-                              if (st?.status === "ready") updatedLabel = formatDateOnly(st.generated_at);
-                              if (st?.status === "error") updatedLabel = "Erro";
+                                let updatedLabel = "Carregando…";
+                                if (st?.status === "ready") updatedLabel = formatDateOnly(st.generated_at);
+                                if (st?.status === "error") updatedLabel = "Erro";
 
-                              return (
-                                <li key={ds.id} className="px-4 py-3">
-                                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                                    <div>
-                                      <div className="text-sm font-semibold text-[color:var(--text)]">
-                                        {ds.title}
+                                return (
+                                  <li key={ds.id} className="px-4 py-3">
+                                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                      <div>
+                                        <div className="text-sm font-semibold text-[color:var(--text)]">
+                                          {ds.title}
+                                        </div>
+                                        <div className="mt-1 text-xs text-[color:var(--muted)]">
+                                          {ds.description}
+                                        </div>
+                                        <div className="mt-2 text-xs text-[color:var(--muted)]">
+                                          Atualizado em: {updatedLabel}
+                                        </div>
                                       </div>
-                                      <div className="mt-1 text-xs text-[color:var(--muted)]">
-                                        {ds.description}
-                                      </div>
-                                      <div className="mt-2 text-xs text-[color:var(--muted)]">
-                                        Atualizado em: {updatedLabel}
+
+                                      <div className="md:ml-4">
+                                        <Link
+                                          className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                                          href={`/open-data/${ds.source_id}/${ds.slug}`}
+                                        >
+                                          Ver downloads
+                                        </Link>
                                       </div>
                                     </div>
-
-                                    <div className="md:ml-4">
-                                      <Link
-                                        className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-                                        href={`/open-data/${ds.source_id}/${ds.slug}`}
-                                      >
-                                        Ver downloads
-                                      </Link>
-                                    </div>
-                                  </div>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </section>

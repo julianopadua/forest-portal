@@ -1,4 +1,5 @@
 // src/app/open-data/[source]/[dataset]/page.tsx
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OPEN_DATA_DATASETS } from "@/lib/openData/catalog";
 import type { OpenDataManifest } from "@/lib/openData/types";
