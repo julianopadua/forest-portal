@@ -1,52 +1,90 @@
 // src/components/open-data/OpenDataCatalog.tsx
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { OPEN_DATA_DATASETS } from "@/lib/openData/catalog";
+import { OPEN_DATA_DATASETS, type OpenDataDataset } from "@/lib/openData/catalog";
 import type { OpenDataManifest } from "@/lib/openData/types";
-import { getPublicObjectUrl, withDownload } from "@/lib/openData/publicUrls";
+import { getPublicObjectUrl } from "@/lib/openData/publicUrls";
 
-type DatasetState =
+type DatasetMetaState =
   | { status: "idle" | "loading" }
   | { status: "error"; error: string }
-  | { status: "ready"; manifest: OpenDataManifest };
+  | { status: "ready"; generated_at: string };
 
-function formatBytes(n: number) {
-  if (!Number.isFinite(n)) return "-";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let v = n;
-  let i = 0;
-  while (v >= 1024 && i < units.length - 1) {
-    v /= 1024;
-    i++;
-  }
-  return `${v.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
+function normalize(s: string) {
+  return (s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
 }
 
-export default function OpenDataCatalog() {
-  const [states, setStates] = useState<Record<string, DatasetState>>(() => {
-    const init: Record<string, DatasetState> = {};
+function formatDateOnly(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "-";
+  return d.toLocaleDateString("pt-BR");
+}
+
+async function runWithConcurrency<T>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<void>
+) {
+  const queue = items.slice();
+  const workers = Array.from({ length: Math.max(1, limit) }, async () => {
+    while (queue.length) {
+      const item = queue.shift();
+      if (!item) return;
+      await fn(item);
+    }
+  });
+  await Promise.all(workers);
+}
+
+type SourceNode = {
+  key: string; // source_id
+  title: string; // source_title
+  datasets: OpenDataDataset[];
+};
+
+type CategoryNode = {
+  key: string; // category_title
+  title: string; // category_title
+  sources: SourceNode[];
+};
+
+export default function OpenDataCatalog({ query }: { query: string }) {
+  const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
+  const [openSources, setOpenSources] = useState<Record<string, boolean>>({});
+  const [states, setStates] = useState<Record<string, DatasetMetaState>>(() => {
+    const init: Record<string, DatasetMetaState> = {};
     for (const ds of OPEN_DATA_DATASETS) init[ds.id] = { status: "idle" };
     return init;
   });
 
+  // Carrega manifest.generated_at para exibir "Atualizado em: DD/MM/AAAA" no catálogo
   useEffect(() => {
     let cancelled = false;
 
-    async function run() {
-      for (const ds of OPEN_DATA_DATASETS) {
+    async function loadAll() {
+      await runWithConcurrency(OPEN_DATA_DATASETS, 6, async (ds) => {
+        if (cancelled) return;
+
         setStates((s) => ({ ...s, [ds.id]: { status: "loading" } }));
 
         try {
           const url = getPublicObjectUrl(ds.manifest_path);
           const res = await fetch(url, { cache: "no-store" });
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status} ao buscar manifest`);
-          }
+          if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar manifest`);
+
           const manifest = (await res.json()) as OpenDataManifest;
 
           if (!cancelled) {
-            setStates((s) => ({ ...s, [ds.id]: { status: "ready", manifest } }));
+            setStates((s) => ({
+              ...s,
+              [ds.id]: { status: "ready", generated_at: manifest.generated_at },
+            }));
           }
         } catch (e: any) {
           if (!cancelled) {
@@ -56,118 +94,195 @@ export default function OpenDataCatalog() {
             }));
           }
         }
-      }
+      });
     }
 
-    run();
+    loadAll();
+
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const cards = useMemo(() => {
-    return OPEN_DATA_DATASETS.map((ds) => {
-      const st = states[ds.id];
+  // Monta árvore: categoria -> fonte -> datasets
+  const tree = useMemo<CategoryNode[]>(() => {
+    const q = normalize(query);
 
-      return (
-        <section
-          key={ds.id}
-          className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-[var(--shadow-float)]"
-        >
-          <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-[color:var(--text)]">{ds.title}</h2>
-              <p className="text-sm text-[color:var(--muted)]">{ds.description}</p>
-              <a
-                className="mt-2 inline-block text-sm text-[color:var(--primary)] underline decoration-transparent hover:decoration-inherit"
-                href={ds.source_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Fonte (CVM)
-              </a>
-            </div>
+    const filtered = q
+      ? OPEN_DATA_DATASETS.filter((ds) => {
+          const hay = normalize(
+            [
+              ds.title,
+              ds.description,
+              ds.category_title,
+              ds.source_title,
+              ds.source_id,
+              ds.slug,
+            ].join(" ")
+          );
+          return hay.includes(q);
+        })
+      : OPEN_DATA_DATASETS;
 
-            <div className="mt-2 md:mt-0">
-              {st?.status === "loading" && (
-                <span className="text-sm text-[color:var(--muted)]">Carregando…</span>
-              )}
-              {st?.status === "error" && (
-                <span className="text-sm text-red-600">Erro: {st.error}</span>
-              )}
-              {st?.status === "ready" && (
-                <span className="text-sm text-[color:var(--muted)]">
-                  Atualizado em: {new Date(st.manifest.generated_at).toLocaleString()}
-                </span>
-              )}
-            </div>
-          </div>
+    const catMap = new Map<string, Map<string, OpenDataDataset[]>>();
 
-          {st?.status === "ready" && (
-            <div className="mt-4">
-              {st.manifest.meta && (
-                <div className="mb-4 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-4">
-                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <div className="text-sm font-medium text-[color:var(--text)]">
-                        Dicionário de dados
-                      </div>
-                      <div className="text-xs text-[color:var(--muted)]">
-                        {st.manifest.meta.filename} · {formatBytes(st.manifest.meta.size_bytes)}
-                      </div>
-                    </div>
-                    <a
-                      className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-                      href={withDownload(st.manifest.meta.public_url, st.manifest.meta.filename)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Baixar
-                    </a>
-                  </div>
-                </div>
-              )}
+    for (const ds of filtered) {
+      const cat = ds.category_title || "Outros";
+      const src = ds.source_id || "fonte";
 
-              <div className="overflow-hidden rounded-xl border border-[color:var(--border)]">
-                <div className="grid grid-cols-12 bg-[color:var(--surface-2)] px-4 py-2 text-xs font-semibold text-[color:var(--muted)]">
-                  <div className="col-span-3">Período</div>
-                  <div className="col-span-6">Arquivo</div>
-                  <div className="col-span-2 text-right">Tamanho</div>
-                  <div className="col-span-1 text-right"> </div>
-                </div>
+      if (!catMap.has(cat)) catMap.set(cat, new Map());
+      const srcMap = catMap.get(cat)!;
 
-                <ul className="divide-y divide-[color:var(--border)]">
-                  {st.manifest.items
-                    .slice()
-                    .sort((a, b) => (a.period < b.period ? 1 : -1))
-                    .map((it) => (
-                      <li key={`${it.period}-${it.filename}`} className="grid grid-cols-12 px-4 py-3 text-sm">
-                        <div className="col-span-3 text-[color:var(--text)]">{it.period}</div>
-                        <div className="col-span-6 text-[color:var(--text)]">{it.filename}</div>
-                        <div className="col-span-2 text-right text-[color:var(--muted)]">
-                          {formatBytes(it.size_bytes)}
-                        </div>
-                        <div className="col-span-1 flex justify-end">
-                          <a
-                            className="rounded-lg px-3 py-1 text-sm font-medium text-[color:var(--primary)] hover:bg-[color:var(--surface-2)]"
-                            href={withDownload(it.public_url, it.filename)}
-                            target="_blank"
-                            rel="noreferrer"
-                            title="Baixar"
-                          >
-                            ↓
-                          </a>
-                        </div>
-                      </li>
-                    ))}
-                </ul>
+      if (!srcMap.has(src)) srcMap.set(src, []);
+      srcMap.get(src)!.push(ds);
+    }
+
+    const categories: CategoryNode[] = Array.from(catMap.entries())
+      .map(([catTitle, srcMap]) => {
+        const sources: SourceNode[] = Array.from(srcMap.entries())
+          .map(([sourceId, datasets]) => {
+            datasets.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+            const title = datasets[0]?.source_title || sourceId;
+            return { key: sourceId, title, datasets };
+          })
+          .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+
+        return { key: catTitle, title: catTitle, sources };
+      })
+      .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+
+    return categories;
+  }, [query]);
+
+  // Busca global: auto-expande apenas o que está visível (tree já filtrada)
+  useEffect(() => {
+    const q = normalize(query);
+    if (!q) return;
+
+    const nextCats: Record<string, boolean> = {};
+    const nextSources: Record<string, boolean> = {};
+
+    for (const cat of tree) {
+      nextCats[cat.key] = true;
+      for (const src of cat.sources) {
+        nextSources[`${cat.key}__${src.key}`] = true;
+      }
+    }
+
+    setOpenCats((prev) => ({ ...prev, ...nextCats }));
+    setOpenSources((prev) => ({ ...prev, ...nextSources }));
+  }, [query, tree]);
+
+  function toggleCat(catKey: string) {
+    setOpenCats((s) => ({ ...s, [catKey]: !s[catKey] }));
+  }
+
+  function toggleSource(catKey: string, sourceKey: string) {
+    const k = `${catKey}__${sourceKey}`;
+    setOpenSources((s) => ({ ...s, [k]: !s[k] }));
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {tree.map((cat) => {
+        const isOpen = !!openCats[cat.key];
+        const totalDatasets = cat.sources.reduce((acc, s) => acc + s.datasets.length, 0);
+
+        return (
+          <section
+            key={cat.key}
+            className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)]"
+          >
+            <button
+              type="button"
+              onClick={() => toggleCat(cat.key)}
+              aria-expanded={isOpen}
+              className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+            >
+              <div>
+                <h2 className="text-base font-semibold text-[color:var(--text)]">{cat.title}</h2>
+                <div className="mt-1 text-xs text-[color:var(--muted)]">{totalDatasets} datasets</div>
               </div>
-            </div>
-          )}
-        </section>
-      );
-    });
-  }, [states]);
+              <span className="text-[color:var(--muted)]">{isOpen ? "−" : "+"}</span>
+            </button>
 
-  return <div className="flex flex-col gap-6">{cards}</div>;
+            {isOpen && (
+              <div className="px-5 pb-5">
+                <div className="flex flex-col gap-3">
+                  {cat.sources.map((src) => {
+                    const key = `${cat.key}__${src.key}`;
+                    const srcOpen = !!openSources[key];
+
+                    return (
+                      <div key={src.key} className="rounded-xl border border-[color:var(--border)]">
+                        <button
+                          type="button"
+                          onClick={() => toggleSource(cat.key, src.key)}
+                          aria-expanded={srcOpen}
+                          className="flex w-full items-center justify-between gap-4 bg-[color:var(--surface-2)] px-4 py-3 text-left"
+                        >
+                          <div className="text-sm font-medium text-[color:var(--text)]">
+                            {src.title}{" "}
+                            <span className="text-xs font-normal text-[color:var(--muted)]">
+                              ({src.datasets.length})
+                            </span>
+                          </div>
+                          <span className="text-[color:var(--muted)]">{srcOpen ? "−" : "+"}</span>
+                        </button>
+
+                        {srcOpen && (
+                          <ul className="divide-y divide-[color:var(--border)]">
+                            {src.datasets.map((ds) => {
+                              const st = states[ds.id];
+
+                              let updatedLabel = "Carregando…";
+                              if (st?.status === "ready") updatedLabel = formatDateOnly(st.generated_at);
+                              if (st?.status === "error") updatedLabel = "Erro";
+
+                              return (
+                                <li key={ds.id} className="px-4 py-3">
+                                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                    <div>
+                                      <div className="text-sm font-semibold text-[color:var(--text)]">
+                                        {ds.title}
+                                      </div>
+                                      <div className="mt-1 text-xs text-[color:var(--muted)]">
+                                        {ds.description}
+                                      </div>
+                                      <div className="mt-2 text-xs text-[color:var(--muted)]">
+                                        Atualizado em: {updatedLabel}
+                                      </div>
+                                    </div>
+
+                                    <div className="md:ml-4">
+                                      <Link
+                                        className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                                        href={`/open-data/${ds.source_id}/${ds.slug}`}
+                                      >
+                                        Ver downloads
+                                      </Link>
+                                    </div>
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      })}
+
+      {tree.length === 0 && (
+        <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 text-sm text-[color:var(--muted)] shadow-[var(--shadow-float)]">
+          Nenhum dataset encontrado.
+        </div>
+      )}
+    </div>
+  );
 }
