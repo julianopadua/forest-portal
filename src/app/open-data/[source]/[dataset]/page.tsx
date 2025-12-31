@@ -16,6 +16,31 @@ function formatBytes(n: number) {
   return `${v.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
 }
 
+function periodSortKey(period: string) {
+  const p = (period || "").trim();
+
+  // "Atual" sempre no topo
+  if (p.toLowerCase() === "atual") return Number.POSITIVE_INFINITY;
+
+  // "YYYY-MM"
+  const ym = /^(\d{4})-(\d{2})$/.exec(p);
+  if (ym) {
+    const y = Number(ym[1]);
+    const m = Number(ym[2]);
+    if (Number.isFinite(y) && Number.isFinite(m)) return y * 12 + m;
+  }
+
+  // "YYYY"
+  const y = /^(\d{4})$/.exec(p);
+  if (y) {
+    const yy = Number(y[1]);
+    if (Number.isFinite(yy)) return yy * 12;
+  }
+
+  // fallback: empurra pro fim
+  return Number.NEGATIVE_INFINITY;
+}
+
 export default async function OpenDataDatasetPage({
   params,
 }: {
@@ -61,7 +86,8 @@ export default async function OpenDataDatasetPage({
         </a>
 
         <div className="mt-3 text-sm text-[color:var(--muted)]">
-          Atualizado em: {new Date(manifest.generated_at).toLocaleString("pt-BR")}
+          Atualizado em:{" "}
+          {new Date(manifest.generated_at).toLocaleString("pt-BR")}
         </div>
       </header>
 
@@ -74,13 +100,17 @@ export default async function OpenDataDatasetPage({
                   Dicionário de dados
                 </div>
                 <div className="text-xs text-[color:var(--muted)]">
-                  {manifest.meta.filename} · {formatBytes(manifest.meta.size_bytes)}
+                  {manifest.meta.filename} ·{" "}
+                  {formatBytes(manifest.meta.size_bytes)}
                 </div>
               </div>
 
               <a
                 className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-                href={withDownload(manifest.meta.public_url, manifest.meta.filename)}
+                href={withDownload(
+                  manifest.meta.public_url,
+                  manifest.meta.filename
+                )}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -101,14 +131,18 @@ export default async function OpenDataDatasetPage({
           <ul className="divide-y divide-[color:var(--border)]">
             {manifest.items
               .slice()
-              .sort((a, b) => (a.period < b.period ? 1 : -1))
+              .sort((a, b) => periodSortKey(b.period) - periodSortKey(a.period))
               .map((it) => (
                 <li
                   key={`${it.period}-${it.filename}`}
                   className="grid grid-cols-12 px-4 py-3 text-sm"
                 >
-                  <div className="col-span-3 text-[color:var(--text)]">{it.period}</div>
-                  <div className="col-span-6 text-[color:var(--text)]">{it.filename}</div>
+                  <div className="col-span-3 text-[color:var(--text)]">
+                    {it.period}
+                  </div>
+                  <div className="col-span-6 text-[color:var(--text)]">
+                    {it.filename}
+                  </div>
                   <div className="col-span-2 text-right text-[color:var(--muted)]">
                     {formatBytes(it.size_bytes)}
                   </div>

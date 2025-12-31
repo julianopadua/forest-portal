@@ -1,7 +1,7 @@
 // src/lib/openData/types.ts
 export type OpenDataItem = {
   kind: "data";
-  period: string; // "YYYY-MM"
+  period: string; // "YYYY-MM" | "YYYY" | "Atual" (depende do dataset)
   filename: string;
   sha256: string;
   size_bytes: number;
