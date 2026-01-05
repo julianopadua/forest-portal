@@ -1,4 +1,3 @@
-// src/components/open-data/OpenDataCatalog.tsx
 "use client";
 
 import Link from "next/link";
@@ -48,18 +47,25 @@ type SourceNode = {
   datasets: OpenDataDataset[];
 };
 
+type SubCategoryNode = {
+  key: string; // subcategory_title
+  title: string; // subcategory_title
+  sources: SourceNode[];
+};
+
 type CategoryNode = {
   key: string; // category_title
   title: string; // category_title
-  sources: SourceNode[];
+  subcategories: SubCategoryNode[];
 };
 
 /**
  * Categorias "fixas" do portal.
- * Mesmo vazias, aparecem no catálogo (quando query estiver vazia).
+ * Adicionado "Mercado de commodities" para garantir que apareça no catálogo.
  */
 const CATALOG_CATEGORIES_ORDER = [
   "Mercado financeiro",
+  "Mercado de commodities",
   "Variáveis climáticas",
   "Incêndios e risco",
   "Outros",
@@ -80,14 +86,12 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     async function loadAll() {
       await runWithConcurrency(OPEN_DATA_DATASETS, 6, async (ds) => {
         if (cancelled) return;
-
         setStates((s) => ({ ...s, [ds.id]: { status: "loading" } }));
 
         try {
           const url = getPublicObjectUrl(ds.manifest_path);
           const res = await fetch(url, { cache: "no-store" });
           if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar manifest`);
-
           const manifest = (await res.json()) as OpenDataManifest;
 
           if (!cancelled) {
@@ -108,9 +112,7 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     }
 
     loadAll();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const tree = useMemo<CategoryNode[]>(() => {
@@ -119,62 +121,65 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     const filtered = q
       ? OPEN_DATA_DATASETS.filter((ds) => {
           const hay = normalize(
-            [ds.title, ds.description, ds.category_title, ds.source_title, ds.source_id, ds.slug].join(" ")
+            [ds.title, ds.description, ds.category_title, ds.subcategory_title, ds.source_title, ds.source_id, ds.slug].join(" ")
           );
           return hay.includes(q);
         })
       : OPEN_DATA_DATASETS;
 
-    const catMap = new Map<string, Map<string, OpenDataDataset[]>>();
+    // Mapa de 3 níveis: Categoria -> Subcategoria -> Fonte
+    const catMap = new Map<string, Map<string, Map<string, OpenDataDataset[]>>>();
 
     for (const ds of filtered) {
       const cat = ds.category_title || "Outros";
+      const sub = ds.subcategory_title || "Geral";
       const src = ds.source_id || "fonte";
 
       if (!catMap.has(cat)) catMap.set(cat, new Map());
-      const srcMap = catMap.get(cat)!;
+      const subMap = catMap.get(cat)!;
+
+      if (!subMap.has(sub)) subMap.set(sub, new Map());
+      const srcMap = subMap.get(sub)!;
 
       if (!srcMap.has(src)) srcMap.set(src, []);
       srcMap.get(src)!.push(ds);
     }
 
-    let categories: CategoryNode[] = Array.from(catMap.entries()).map(([catTitle, srcMap]) => {
-      const sources: SourceNode[] = Array.from(srcMap.entries())
-        .map(([sourceId, datasets]) => {
+    let categories: CategoryNode[] = Array.from(catMap.entries()).map(([catTitle, subMap]) => {
+      const subcategories: SubCategoryNode[] = Array.from(subMap.entries()).map(([subTitle, srcMap]) => {
+        const sources: SourceNode[] = Array.from(srcMap.entries()).map(([sourceId, datasets]) => {
           datasets.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
-          const title = datasets[0]?.source_title || sourceId;
-          return { key: sourceId, title, datasets };
-        })
-        .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+          return { key: sourceId, title: datasets[0]?.source_title || sourceId, datasets };
+        }).sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
 
-      return { key: catTitle, title: catTitle, sources };
+        return { key: subTitle, title: subTitle, sources };
+      }).sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+
+      return { key: catTitle, title: catTitle, subcategories };
     });
 
-    // Se não tem busca ativa, injeta categorias vazias do "catálogo oficial"
     if (!q) {
       const existing = new Map(categories.map((c) => [c.key, c]));
       for (const catTitle of CATALOG_CATEGORIES_ORDER) {
         if (!existing.has(catTitle)) {
-          categories.push({ key: catTitle, title: catTitle, sources: [] });
+          categories.push({ key: catTitle, title: catTitle, subcategories: [] });
         }
       }
 
-      // ordena pela ordem fixa (e joga desconhecidas para depois)
       const orderIndex = new Map(CATALOG_CATEGORIES_ORDER.map((t, i) => [t, i]));
       categories.sort((a, b) => {
         const ia = orderIndex.has(a.title) ? orderIndex.get(a.title)! : 999;
         const ib = orderIndex.has(b.title) ? orderIndex.get(b.title)! : 999;
-        if (ia !== ib) return ia - ib;
-        return a.title.localeCompare(b.title, "pt-BR");
+        return ia !== ib ? ia - ib : a.title.localeCompare(b.title, "pt-BR");
       });
     } else {
-      // em busca, ordena alfabeticamente
       categories.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
     }
 
     return categories;
   }, [query]);
 
+  // Expandir automaticamente categorias em busca
   useEffect(() => {
     const q = normalize(query);
     if (!q) return;
@@ -184,8 +189,10 @@ export default function OpenDataCatalog({ query }: { query: string }) {
 
     for (const cat of tree) {
       nextCats[cat.key] = true;
-      for (const src of cat.sources) {
-        nextSources[`${cat.key}__${src.key}`] = true;
+      for (const sub of cat.subcategories) {
+        for (const src of sub.sources) {
+          nextSources[`${cat.key}__${src.key}`] = true;
+        }
       }
     }
 
@@ -206,7 +213,9 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     <div className="flex flex-col gap-4 pb-12">
       {tree.map((cat) => {
         const isOpen = !!openCats[cat.key];
-        const totalDatasets = cat.sources.reduce((acc, s) => acc + s.datasets.length, 0);
+        const totalDatasets = cat.subcategories.reduce(
+          (acc, sub) => acc + sub.sources.reduce((acc2, s) => acc2 + s.datasets.length, 0), 0
+        );
 
         return (
           <section
@@ -228,74 +237,76 @@ export default function OpenDataCatalog({ query }: { query: string }) {
 
             {isOpen && (
               <div className="px-5 pb-5">
-                {cat.sources.length === 0 ? (
+                {cat.subcategories.length === 0 ? (
                   <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 text-sm text-[color:var(--muted)]">
                     Nenhum dataset nesta categoria ainda.
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-3">
-                    {cat.sources.map((src) => {
-                      const key = `${cat.key}__${src.key}`;
-                      const srcOpen = !!openSources[key];
+                  <div className="flex flex-col gap-8">
+                    {cat.subcategories.map((sub) => (
+                      <div key={sub.key}>
+                        {/* Título da Subcategoria (Ex: Petróleo ou Fundos) */}
+                        <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--muted)]">
+                          <span className="h-px w-4 bg-[color:var(--border)]"></span>
+                          {sub.title}
+                        </h3>
 
-                      return (
-                        <div key={src.key} className="rounded-xl border border-[color:var(--border)]">
-                          <button
-                            type="button"
-                            onClick={() => toggleSource(cat.key, src.key)}
-                            aria-expanded={srcOpen}
-                            className="flex w-full items-center justify-between gap-4 bg-[color:var(--surface-2)] px-4 py-3 text-left"
-                          >
-                            <div className="text-sm font-medium text-[color:var(--text)]">
-                              {src.title}{" "}
-                              <span className="text-xs font-normal text-[color:var(--muted)]">
-                                ({src.datasets.length})
-                              </span>
-                            </div>
-                            <span className="text-[color:var(--muted)]">{srcOpen ? "−" : "+"}</span>
-                          </button>
+                        <div className="flex flex-col gap-3">
+                          {sub.sources.map((src) => {
+                            const key = `${cat.key}__${src.key}`;
+                            const srcOpen = !!openSources[key];
 
-                          {srcOpen && (
-                            <ul className="divide-y divide-[color:var(--border)]">
-                              {src.datasets.map((ds) => {
-                                const st = states[ds.id];
+                            return (
+                              <div key={src.key} className="rounded-xl border border-[color:var(--border)]">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleSource(cat.key, src.key)}
+                                  aria-expanded={srcOpen}
+                                  className="flex w-full items-center justify-between gap-4 bg-[color:var(--surface-2)] px-4 py-3 text-left"
+                                >
+                                  <div className="text-sm font-medium text-[color:var(--text)]">
+                                    {src.title}{" "}
+                                    <span className="text-xs font-normal text-[color:var(--muted)]">
+                                      ({src.datasets.length})
+                                    </span>
+                                  </div>
+                                  <span className="text-[color:var(--muted)]">{srcOpen ? "−" : "+"}</span>
+                                </button>
 
-                                let updatedLabel = "Carregando…";
-                                if (st?.status === "ready") updatedLabel = formatDateOnly(st.generated_at);
-                                if (st?.status === "error") updatedLabel = "Erro";
+                                {srcOpen && (
+                                  <ul className="divide-y divide-[color:var(--border)]">
+                                    {src.datasets.map((ds) => {
+                                      const st = states[ds.id];
+                                      let updatedLabel = st?.status === "ready" ? formatDateOnly(st.generated_at) : st?.status === "error" ? "Erro" : "Carregando…";
 
-                                return (
-                                  <li key={ds.id} className="px-4 py-3">
-                                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                                      <div>
-                                        <div className="text-sm font-semibold text-[color:var(--text)]">
-                                          {ds.title}
-                                        </div>
-                                        <div className="mt-1 text-xs text-[color:var(--muted)]">
-                                          {ds.description}
-                                        </div>
-                                        <div className="mt-2 text-xs text-[color:var(--muted)]">
-                                          Atualizado em: {updatedLabel}
-                                        </div>
-                                      </div>
-
-                                      <div className="md:ml-4">
-                                        <Link
-                                          className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-                                          href={`/open-data/${ds.source_id}/${ds.slug}`}
-                                        >
-                                          Ver downloads
-                                        </Link>
-                                      </div>
-                                    </div>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          )}
+                                      return (
+                                        <li key={ds.id} className="px-4 py-3">
+                                          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                            <div>
+                                              <div className="text-sm font-semibold text-[color:var(--text)]">{ds.title}</div>
+                                              <div className="mt-1 text-xs text-[color:var(--muted)]">{ds.description}</div>
+                                              <div className="mt-2 text-xs text-[color:var(--muted)]">Atualizado em: {updatedLabel}</div>
+                                            </div>
+                                            <div className="md:ml-4">
+                                              <Link
+                                                className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                                                href={`/open-data/${ds.source_id}/${ds.slug}`}
+                                              >
+                                                Ver downloads
+                                              </Link>
+                                            </div>
+                                          </div>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
