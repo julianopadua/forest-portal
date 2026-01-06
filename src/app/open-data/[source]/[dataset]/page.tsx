@@ -1,3 +1,5 @@
+// src/app/open-data/[source]/[dataset]/page.tsx
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OPEN_DATA_DATASETS } from "@/lib/openData/catalog";
@@ -17,9 +19,15 @@ function formatBytes(n: number) {
   return `${v.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
 }
 
+/**
+ * Lógica de ordenação robusta para períodos.
+ * Suporta "Atual", datas ISO (YYYY-MM-DD), meses (YYYY-MM) e anos (YYYY).
+ */
 function itemSortKey(item: any) {
   const p = (item.period || "").trim();
   if (p.toLowerCase() === "atual") return Number.POSITIVE_INFINITY;
+
+  // Tenta capturar YYYY-MM-DD ou YYYY-MM
   const isoMatch = /^(\d{4})-(\d{2})(-(\d{2}))?$/.exec(p);
   if (isoMatch) {
     const y = Number(isoMatch[1]);
@@ -27,8 +35,11 @@ function itemSortKey(item: any) {
     const d = isoMatch[4] ? Number(isoMatch[4]) : 0;
     return y * 400 + m * 32 + d;
   }
+
+  // Tenta capturar apenas o Ano
   const yMatch = /^(\d{4})$/.exec(p);
   if (yMatch) return Number(yMatch[1]) * 400;
+
   return Number.NEGATIVE_INFINITY;
 }
 
@@ -58,56 +69,68 @@ export default async function OpenDataDatasetPage({
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
-      <header className="mb-8">
+      <header className="mb-10">
         <div className="mb-6">
-          <Link href="/open-data" className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--text)] transition-colors">
+          <Link 
+            href="/open-data" 
+            className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors"
+          >
             <ChevronLeftIcon className="h-4 w-4" />
             Voltar para o catálogo
           </Link>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
           <div className="flex-1">
-            <div className="text-xs font-bold text-[color:var(--primary)] uppercase tracking-widest mb-2">
-              {ds.category_title} <span className="mx-1 opacity-30">/</span> {ds.subcategory_title}
+            <div className="text-[10px] font-black text-[color:var(--primary)] uppercase tracking-[0.2em] mb-2">
+              {ds.category_title} / {ds.subcategory_title}
             </div>
-            <h1 className="text-3xl font-extrabold text-[color:var(--text)] tracking-tight">{ds.title}</h1>
-            <p className="mt-3 max-w-2xl text-[color:var(--muted)] leading-relaxed">{ds.description}</p>
+            <h1 className="text-4xl font-black text-[color:var(--foreground)] tracking-tight">{ds.title}</h1>
+            <p className="mt-3 max-w-2xl text-base text-[color:var(--muted)] leading-relaxed">{ds.description}</p>
           </div>
 
-          <div className="shrink-0">
+          <div className="shrink-0 pt-2">
             <DownloadAllButton urls={manifest.items.map(it => ({ url: it.public_url, name: it.filename }))} />
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-[color:var(--muted)] border-t border-[color:var(--border)] pt-6">
+        {/* Faixa de Informações: Generalizável e Enxuta */}
+        <div className="mt-8 flex flex-wrap items-center gap-y-3 gap-x-8 text-[11px] font-bold text-[color:var(--muted)] uppercase tracking-wider border-t border-[color:var(--border)] pt-6">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-[color:var(--text)]">Varredura:</span>
-            {new Date(manifest.generated_at).toLocaleString("pt-BR")}
+            <span className="opacity-50">Varredura:</span>
+            <span className="text-[color:var(--foreground)]">{new Date(manifest.generated_at).toLocaleDateString("pt-BR")}</span>
           </div>
 
-          <a href={ds.source_url} target="_blank" rel="noreferrer" className="hover:text-[color:var(--text)] underline decoration-[color:var(--border)] underline-offset-4">
+          <a 
+            href={ds.source_url} 
+            target="_blank" 
+            rel="noreferrer" 
+            className="hover:text-[color:var(--primary)] transition-colors border-b border-transparent hover:border-[color:var(--primary)]"
+          >
             Fonte Oficial ({ds.source_title})
           </a>
 
-          {manifest.meta?.filename && (
-            <a href={withDownload(manifest.meta.public_url, manifest.meta.filename)} className="flex items-center gap-1.5 font-medium text-[color:var(--primary)] hover:underline">
+          {/* Dicionário: Renderiza apenas se houver filename E public_url (Corrige o erro TS) */}
+          {manifest.meta?.filename && manifest.meta?.public_url && (
+            <a 
+              href={withDownload(manifest.meta.public_url, manifest.meta.filename)} 
+              className="text-[color:var(--primary)] hover:opacity-80"
+            >
               Dicionário de Dados
             </a>
           )}
 
+          {/* Release: Renderiza apenas se existir a info no meta */}
           {manifest.meta?.last_release_iso && (
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[color:var(--surface-2)] border border-[color:var(--border)] text-[color:var(--text)]">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
+            <div className="flex items-center gap-2 text-[color:var(--success)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
               Último release: {new Date(manifest.meta.last_release_iso).toLocaleDateString("pt-BR")}
             </div>
           )}
         </div>
       </header>
 
+      {/* Tabela de Arquivos */}
       <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-sm overflow-hidden">
         <div className="grid grid-cols-12 bg-[color:var(--surface-2)] px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[color:var(--muted)] border-b border-[color:var(--border)]">
           <div className="col-span-3">Referência</div>
@@ -122,15 +145,33 @@ export default async function OpenDataDatasetPage({
             .sort((a, b) => itemSortKey(b) - itemSortKey(a))
             .map((it) => (
               <li key={`${it.period}-${it.filename}`} className="grid grid-cols-12 px-6 py-4 text-sm items-center hover:bg-[color:var(--surface-2)]/40 transition-colors group">
-                <div className="col-span-3 font-medium text-[color:var(--text)]">{it.period}</div>
-                <div className="col-span-6 truncate pr-4">
-                  <div className="text-[color:var(--text)] font-medium truncate group-hover:text-[color:var(--primary)] transition-colors">{it.title || it.filename}</div>
-                  <div className="text-[10px] text-[color:var(--muted)] font-mono mt-0.5 opacity-50">{it.filename}</div>
+                <div className="col-span-3 font-medium text-[color:var(--text)]">
+                  {it.period}
                 </div>
-                <div className="col-span-2 text-right text-[color:var(--muted)] font-mono text-xs">{formatBytes(it.size_bytes)}</div>
+                
+                <div className="col-span-6 truncate pr-4">
+                  <div className="text-[color:var(--text)] font-medium truncate group-hover:text-[color:var(--primary)] transition-colors">
+                    {it.title || it.filename}
+                  </div>
+                  <div className="text-[10px] text-[color:var(--muted)] font-mono mt-0.5 opacity-50">
+                    {it.filename}
+                  </div>
+                </div>
+
+                <div className="col-span-2 text-right text-[color:var(--muted)] font-mono text-xs">
+                  {formatBytes(it.size_bytes)}
+                </div>
+
                 <div className="col-span-1 flex justify-end">
-                  <a className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text)] hover:bg-[color:var(--primary)] hover:text-white transition-all" href={withDownload(it.public_url, it.filename)} target="_blank" rel="noreferrer">
-                    ↓
+                  <a 
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text)] hover:bg-[color:var(--primary)] hover:text-white transition-all" 
+                    href={withDownload(it.public_url, it.filename)} 
+                    target="_blank" 
+                    rel="noreferrer"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 11.75L12 16.25m0 0l4.5-4.5M12 16.25V3" />
+                    </svg>
                   </a>
                 </div>
               </li>
