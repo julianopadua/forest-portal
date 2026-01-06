@@ -1,0 +1,209 @@
+{
+  "files": {
+    "src/app/join/page.tsx": {
+      "sha256": "6ebb7823847e361c0349a2fc33d5ad989b4f9bcdcb0e7e0e4c484f30f00258f7",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:39:12.314854+00:00"
+    },
+    "src/app/reports/page.tsx": {
+      "sha256": "fb1731f6c15916f5ddec3ec3f13c9450a8d625a59f774a1723ac59eb6b15bed1",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:39:15.998543+00:00"
+    },
+    "src/components/layout/Header.tsx": {
+      "sha256": "e06d07299e0ed32b0ff967aae63b2b333bb97554e0a2401b22044d69fcd0d9c7",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:39:21.138637+00:00"
+    },
+    "src/app/(marketing)/page.tsx": {
+      "sha256": "38629da3c7da504c15d1e18b09c05a4189e71c0b14e416394a7adf7cd2b5c6b6",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:40:25.760264+00:00"
+    },
+    "src/lib/openData/publicUrls.ts": {
+      "sha256": "6216fb641d131943cb4d59d6d5338814668972a1d24cc994e7adb54c2b5c0db3",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:40:28.877961+00:00"
+    },
+    "src/app/explore/page.tsx": {
+      "sha256": "1ec7de6752b38a27ace50c516ced532dd92890c34626384af548ed1e5bb0b47b",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:41:29.339676+00:00"
+    },
+    "src/lib/database.types.ts": {
+      "sha256": "a3995d2413d44deff73bf1e6799b2f537f655bae735c1ca3bc378651d5d30193",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:41:33.010938+00:00"
+    },
+    "src/lib/supabase/server.ts": {
+      "sha256": "a34deb03637ba05f3f86e40128c3c263badbb1bde130731c1015ea307e16322e",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:41:36.672711+00:00"
+    },
+    "src/app/education/page.tsx": {
+      "sha256": "78239991591203219b8b32e1b9b33bedb6149d69ecce8aa7972d9421c8be5a7f",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:41:40.475535+00:00"
+    },
+    "src/app/layout.tsx": {
+      "sha256": "27f7320cc1c13b84ce7aacbf6a7717bde0d47681b768d5007328decf6008e78f",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:41:44.767808+00:00"
+    },
+    "src/i18n/I18nProvider.tsx": {
+      "sha256": "1236c229677510f3aabc8ac121346b6e2ddd4bff7a69bc0fce7995edec7c4806",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:42:47.726818+00:00"
+    },
+    "src/components/open-data/OpenDataPageClient.tsx": {
+      "sha256": "e3f1cc3a1817f747d8ce71c0688bc97a7377c48e0049ece65338151d16e67018",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:42:51.351384+00:00"
+    },
+    "src/components/settings/ProfileForm.tsx": {
+      "sha256": "7b68fd65a825f166888b22980c0f8dbb5e9b3e6a29a2ed5c76e859408bbf7b67",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:42:55.517684+00:00"
+    },
+    "src/middleware.ts": {
+      "sha256": "5c582a30f4a529cef7951412b0a32b5760d88674bc284cc84e0ee76e8ed5e2bf",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:43:59.159392+00:00"
+    },
+    "src/app/api/auth/signup/route.ts": {
+      "sha256": "bdb65aa7397487b7ce1ad9290b9e497ba40f364bfbde36cb3631fdd679a5a780",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:44:03.714153+00:00"
+    },
+    "src/app/open-data/[source]/[dataset]/page.tsx": {
+      "sha256": "b0715895ad39779acc9ec26a66128bd933fb16062e58d07d413215d76b206913",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:44:09.731805+00:00"
+    },
+    "src/components/open-data/DownloadAllButton.tsx": {
+      "sha256": "a7adfc3921f1262b698c22c8f4c5e3b9ded1fac698d2c4706f8245d3ced3f0dc",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:45:14.576795+00:00"
+    },
+    "src/components/ui/Modal.tsx": {
+      "sha256": "69f805848253e6d6f8e11f4b810dabd235718e79aa05c3027b888d5a09e7b71a",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:45:18.426174+00:00"
+    },
+    "src/hooks/useSupabaseUser.ts": {
+      "sha256": "66acd6b06e55b69d2e049f7c7a0c422661892db6ea20ad5602d8d12ff50ca5eb",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:45:22.551837+00:00"
+    },
+    "src/lib/supabase/admin.ts": {
+      "sha256": "f285aeaac40d19aac57029cddf295b4e489825b761c9100dfa417e717f210db1",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:45:25.311016+00:00"
+    },
+    "src/app/api/auth/login/route.ts": {
+      "sha256": "88c2c58a69ef601895ef645da3f9c2cf42fd4a217ee2192459af08d5cf07564f",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:46:24.430875+00:00"
+    },
+    "src/components/layout/Footer.tsx": {
+      "sha256": "8b7d48b0f451ea5bbe2c21f0b904dc358b7931990d00c99d56447551dcfa007f",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:46:27.954719+00:00"
+    },
+    "src/app/open-data/page.tsx": {
+      "sha256": "117358a1b0611de8c77580ac7af82bd52b99c8a0f502e91bc007919f2797e9f3",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:46:30.854978+00:00"
+    },
+    "src/lib/openData/catalog.ts": {
+      "sha256": "ba0f1e50064366c1e9d3992ae77ab690d006b85a4bc528dff7995f2d7a6823ad",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:46:34.002979+00:00"
+    },
+    "src/lib/supabase/client.ts": {
+      "sha256": "d66e1c7125b3e645257e1bdc32b1642460925047c119db5d9a759f5a61019c90",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:47:37.609891+00:00"
+    },
+    "src/components/open-data/OpenDataCatalog.tsx": {
+      "sha256": "66449ddc3be211a3991defb0571579f5233c3395b8f0451810aad13ac963dd53",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:47:43.847766+00:00"
+    },
+    "src/components/ui/LanguageSwitcher.tsx": {
+      "sha256": "676b4ff5524c03b867c0959d2dcbf822ca9e70e4aee4900153e001bf391ddd2f",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:47:47.075523+00:00"
+    },
+    "src/lib/supabase/middleware.ts": {
+      "sha256": "d438ee31064eaecf21b486e268227f8109f1ff5bccfeb51e94db62492d5e28ac",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:48:51.763727+00:00"
+    },
+    "src/components/layout/SidebarSheet.tsx": {
+      "sha256": "2bce054fd515fe4e787c2c24e04e864f61ba126b25c2e433435c366e41e327a9",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:48:56.263227+00:00"
+    },
+    "src/app/auth/callback/route.ts": {
+      "sha256": "b406343f9dba71c8827d182af951c4dfb68acd55669803109baa5fb3987e4371",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:49:00.438409+00:00"
+    },
+    "src/app/commodities/page.tsx": {
+      "sha256": "025a9034b80d5ee16a5b8319eeed0df8f4967d081497835e3a2c1692e13f00b3",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:50:05.442873+00:00"
+    },
+    "src/components/ui/Button.tsx": {
+      "sha256": "efa3055f3f96cf629400bec7e398c1914b85000b7a1a433d713950b37f933992",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:50:09.320394+00:00"
+    },
+    "src/components/auth/AuthForm.tsx": {
+      "sha256": "809dd41c7e4a2dd905d297cd0c441d6703a32fa6b0df655ddc73e50ba76a8ffc",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:50:13.925646+00:00"
+    },
+    "src/lib/cn.ts": {
+      "sha256": "18084bbe805654323bec0d6ff242f2e0d83b30afdc8993548a8dd16fd71f3e1c",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:50:16.558343+00:00"
+    },
+    "src/app/settings/page.tsx": {
+      "sha256": "5f460a9cdb1603ba3e9ec2d6b784eeed62b3ad5c4e10b4d279b23ba933377b74",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:51:16.812985+00:00"
+    },
+    "src/lib/openData/types.ts": {
+      "sha256": "c7cd4862678423eb35b84cae45b69a2f692b6a85dad7b2539a9ae00a3c9b7b29",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:51:21.747369+00:00"
+    },
+    "src/app/globals.css": {
+      "sha256": "17fd9131fbc394e629c8d03a58860d54680fa224a9dd607d455f7ceec4d9399f",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:51:25.688671+00:00"
+    },
+    "src/app/actions/profile.ts": {
+      "sha256": "197a031a68bb560d4c6c3cc18a042908ce280a74876f379aa522a58a1d23d001",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:52:28.418047+00:00"
+    },
+    "src/components/auth/AuthModal.tsx": {
+      "sha256": "39fd35c4695bb790370296f7778922a8606e087c1886a4a5aa2c1357b297b5cb",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:52:32.317183+00:00"
+    },
+    "src/i18n/dictionaries.ts": {
+      "sha256": "b4264fe86b1d0dc41efe4d3f3f4c9c3f8cae310726bb490a38c5c17f4059b887",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:53:06.356135+00:00"
+    },
+    "next.config.ts": {
+      "sha256": "58d7f0d9ff632e876f172ea91e3daed804d922494a6a2e7cd312260dfb7973d0",
+      "model": "openai/gpt-oss-120b",
+      "updated_at": "2026-01-06T21:53:08.673297+00:00"
+    }
+  }
+}

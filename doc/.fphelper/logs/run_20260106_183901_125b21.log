@@ -1,0 +1,11 @@
+2026-01-06 18:39:01,231 INFO forest_portal_helper - run_id=20260106_183901_125b21
+2026-01-06 18:39:01,231 INFO forest_portal_helper - text_log=D:\Projetos\forest-portal\doc\.fphelper\logs\run_20260106_183901_125b21.log
+2026-01-06 18:39:01,231 INFO forest_portal_helper - events_log=D:\Projetos\forest-portal\doc\.fphelper\logs\events_20260106_183901_125b21.jsonl
+2026-01-06 18:39:01,232 INFO forest_portal_helper - cwd=D:\Projetos\forest-portal-helper
+2026-01-06 18:39:01,232 INFO forest_portal_helper - pid=24268
+2026-01-06 18:39:08,666 INFO httpx - HTTP Request: GET https://api.groq.com/openai/v1/models "HTTP/1.1 200 OK"
+2026-01-06 18:39:12,253 INFO httpx - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 18:39:15,996 INFO httpx - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 18:39:21,136 INFO httpx - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-06 18:39:21,310 INFO httpx - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-01-06 18:39:21,311 WARNING forest_portal_helper.router - 429 no modelo=openai/gpt-oss-120b attempt=1; aguardando janela de rate limit.
