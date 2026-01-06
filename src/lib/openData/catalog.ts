@@ -47,6 +47,20 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     manifest_path: "cvm/fi/doc/extrato/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fi-doc-extrato",
   },
+  // --- NOVO ---
+  {
+    id: "cvm_fi_doc_entrega",
+    category_title: "Mercado financeiro",
+    subcategory_title: "Fundos",
+    source_id: "cvm",
+    source_title: "CVM",
+    slug: "fi-doc-entrega",
+    title: "FI - DOC - Entrega",
+    description: "Metadados de entrega de documentos periódicos e eventuais de fundos de investimento.",
+    // Baseado no bucket_prefix: cvm/fi/doc/entrega
+    manifest_path: "cvm/fi/doc/entrega/manifest.json",
+    source_url: "https://dados.cvm.gov.br/dataset/fi-doc-entrega",
+  },
   {
     id: "cvm_fi_cad_registro_fundo_classe",
     category_title: "Mercado financeiro",
@@ -94,6 +108,34 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     description: "Informes trimestrais estruturados de FII.",
     manifest_path: "cvm/fii/doc/inf_trimestral/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_trimestral",
+  },
+  // --- NOVO ---
+  {
+    id: "cvm_fii_doc_inf_mensal",
+    category_title: "Mercado financeiro",
+    subcategory_title: "Fundos",
+    source_id: "cvm",
+    source_title: "CVM",
+    slug: "fii-doc-inf-mensal",
+    title: "FII - DOC - Informe Mensal (Estruturado)",
+    description: "Informes mensais estruturados de FII (arquivos anuais).",
+    // Baseado no bucket_prefix: cvm/fii/doc/inf_mensal
+    manifest_path: "cvm/fii/doc/inf_mensal/manifest.json",
+    source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_mensal",
+  },
+  // --- NOVO ---
+  {
+    id: "cvm_fii_doc_inf_anual",
+    category_title: "Mercado financeiro",
+    subcategory_title: "Fundos",
+    source_id: "cvm",
+    source_title: "CVM",
+    slug: "fii-doc-inf-anual",
+    title: "FII - DOC - Informe Anual (Estruturado)",
+    description: "Informes anuais estruturados de FII.",
+    // Baseado no bucket_prefix: cvm/fii/doc/inf_anual
+    manifest_path: "cvm/fii/doc/inf_anual/manifest.json",
+    source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_anual",
   },
 
   // =========================================
