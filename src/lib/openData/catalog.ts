@@ -172,7 +172,7 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     slug: "inpe-bdqueimadas-focos",
     title: "Focos de Queimadas (Brasil - Satélite de Referência)",
     description: "Dados anuais de focos de calor detectados pelo satélite de referência (Brasil), via BDQueimadas.",
-    manifest_path: "inpe/bdqueimadas/manifest.json",
+    manifest_path: "inpe/bdqueimadas/focos_br_ref/manifest.json",
     source_url: "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/anual/Brasil_sat_ref/",
   },
   {

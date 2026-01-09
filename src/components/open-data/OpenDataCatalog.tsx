@@ -67,7 +67,7 @@ const CATALOG_CATEGORIES_ORDER = [
   "Mercado financeiro",
   "Mercado de commodities",
   "Variáveis climáticas",
-  "Incêndios e risco",
+  "Meio ambiente",
   "Outros",
 ];
 
