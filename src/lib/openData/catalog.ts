@@ -175,4 +175,32 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     manifest_path: "inpe/bdqueimadas/manifest.json",
     source_url: "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/anual/Brasil_sat_ref/",
   },
+  {
+    id: "inpe_area_queimada_focos1km",
+    category_title: "Meio ambiente",
+    subcategory_title: "Queimadas",
+    source_id: "inpe",
+    source_title: "INPE",
+    slug: "area-queimada-focos-1km",
+    title: "Área Queimada - FOCOS 1km (TIF)",
+    description: "Arquivos mensais em formato GeoTIFF contendo o mapeamento de áreas queimadas detectadas com resolução de 1km.",
+    manifest_path: "inpe/area_queimada/focos1km/manifest.json",
+    source_url: "https://dataserver-coids.inpe.br/queimadas/queimadas/area_queimada/FOCOS1km/tif/",
+  },
+
+  // Variáveis climáticas -> Clima -> INMET
+  // =========================================
+  {
+    id: "inmet_dados_historicos",
+    category_title: "Variáveis climáticas",
+    subcategory_title: "Clima",
+    source_id: "inmet",
+    source_title: "INMET",
+    slug: "inmet-dados-historicos",
+    title: "Dados Históricos Anuais (Estações Automáticas)",
+    description: "Conjunto de dados históricos anuais provenientes de estações meteorológicas automáticas, abrangendo todo o território brasileiro com registros de temperatura, umidade e precipitação.",
+    // Baseado no bucket_prefix: inmet/dados_historicos
+    manifest_path: "inmet/dados_historicos/manifest.json",
+    source_url: "https://portal.inmet.gov.br/dadoshistoricos",
+  },
 ];
