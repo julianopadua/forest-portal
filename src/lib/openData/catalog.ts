@@ -4,10 +4,10 @@ export type OpenDataDataset = {
   id: string;
 
   // Navegação/organização (catálogo)
-  category_title: string;    // ex: "Mercado financeiro" ou "Mercado de commodities"
-  subcategory_title: string; // ex: "Fundos" ou "Petróleo"
-  source_id: string;         // ex: "cvm" ou "eia"
-  source_title: string;      // ex: "CVM" ou "EIA"
+  category_title: string;    // ex: "Mercado financeiro" ou "Meio ambiente"
+  subcategory_title: string; // ex: "Fundos" ou "Queimadas"
+  source_id: string;         // ex: "cvm", "eia", "inpe"
+  source_title: string;      // ex: "CVM", "EIA", "INPE"
   slug: string;              // ex: "fi-informe-diario"
 
   // Conteúdo
@@ -47,7 +47,6 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     manifest_path: "cvm/fi/doc/extrato/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fi-doc-extrato",
   },
-  // --- NOVO ---
   {
     id: "cvm_fi_doc_entrega",
     category_title: "Mercado financeiro",
@@ -57,7 +56,6 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     slug: "fi-doc-entrega",
     title: "FI - DOC - Entrega",
     description: "Metadados de entrega de documentos periódicos e eventuais de fundos de investimento.",
-    // Baseado no bucket_prefix: cvm/fi/doc/entrega
     manifest_path: "cvm/fi/doc/entrega/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fi-doc-entrega",
   },
@@ -109,7 +107,6 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     manifest_path: "cvm/fii/doc/inf_trimestral/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_trimestral",
   },
-  // --- NOVO ---
   {
     id: "cvm_fii_doc_inf_mensal",
     category_title: "Mercado financeiro",
@@ -119,11 +116,9 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     slug: "fii-doc-inf-mensal",
     title: "FII - DOC - Informe Mensal (Estruturado)",
     description: "Informes mensais estruturados de FII (arquivos anuais).",
-    // Baseado no bucket_prefix: cvm/fii/doc/inf_mensal
     manifest_path: "cvm/fii/doc/inf_mensal/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_mensal",
   },
-  // --- NOVO ---
   {
     id: "cvm_fii_doc_inf_anual",
     category_title: "Mercado financeiro",
@@ -133,7 +128,6 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     slug: "fii-doc-inf-anual",
     title: "FII - DOC - Informe Anual (Estruturado)",
     description: "Informes anuais estruturados de FII.",
-    // Baseado no bucket_prefix: cvm/fii/doc/inf_anual
     manifest_path: "cvm/fii/doc/inf_anual/manifest.json",
     source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_anual",
   },
@@ -164,5 +158,21 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     description: "Preços semanais e mensais de óleo de aquecimento e propano por área (Dollars per Gallon).",
     manifest_path: "eia/heating_oil_propane/manifest.json",
     source_url: "https://www.eia.gov/dnav/pet/pet_pri_wfr_a_EPD2F_prs_dpgal_w.htm",
+  },
+
+  // =========================================
+  // Meio Ambiente -> Queimadas -> INPE
+  // =========================================
+  {
+    id: "inpe_bdqueimadas_focos",
+    category_title: "Meio ambiente",
+    subcategory_title: "Queimadas",
+    source_id: "inpe",
+    source_title: "INPE",
+    slug: "inpe-bdqueimadas-focos",
+    title: "Focos de Queimadas (Brasil - Satélite de Referência)",
+    description: "Dados anuais de focos de calor detectados pelo satélite de referência (Brasil), via BDQueimadas.",
+    manifest_path: "inpe/bdqueimadas/manifest.json",
+    source_url: "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/anual/Brasil_sat_ref/",
   },
 ];
