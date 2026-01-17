@@ -132,7 +132,7 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_anual",
   },
 
-  // =========================================
+// =========================================
   // Mercado de commodities -> Petróleo -> EIA
   // =========================================
   {
@@ -148,6 +148,18 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     source_url: "https://www.eia.gov/petroleum/supply/weekly/",
   },
   {
+    id: "eia_petroleum_monthly",
+    category_title: "Mercado de commodities",
+    subcategory_title: "Petróleo",
+    source_id: "eia",
+    source_title: "EIA",
+    slug: "petroleum-monthly",
+    title: "Petroleum Supply Monthly",
+    description: "Série histórica completa da oferta e disposição de petróleo bruto e derivados em nível nacional e regional.",
+    manifest_path: "eia/petroleum_monthly/manifest.json",
+    source_url: "https://www.eia.gov/petroleum/supply/monthly/",
+  },
+  {
     id: "eia_heating_oil_propane",
     category_title: "Mercado de commodities",
     subcategory_title: "Petróleo",
@@ -159,7 +171,7 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     manifest_path: "eia/heating_oil_propane/manifest.json",
     source_url: "https://www.eia.gov/dnav/pet/pet_pri_wfr_a_EPD2F_prs_dpgal_w.htm",
   },
-
+  
   // =========================================
   // Meio Ambiente -> Queimadas -> INPE
   // =========================================
