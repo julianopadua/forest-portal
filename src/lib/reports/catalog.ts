@@ -1,5 +1,4 @@
 // src/lib/reports/catalog.ts
-
 export type ReportCatalogItem = {
   id: string;
   slug: string;
@@ -9,6 +8,7 @@ export type ReportCatalogItem = {
   categoryTitle: string;
   manifestPath: string;
   stableReportPath: string;
+  sourcePortalHref?: string;
   tags: string[];
 };
 
@@ -18,12 +18,13 @@ export const REPORTS_CATALOG: ReportCatalogItem[] = [
     slug: "bdqueimadas-overview",
     title: "BDQueimadas - Panorama Sintético de Focos",
     description:
-      "Leitura sintética da série recente de focos de queimadas, com destaques, comparação anual, série mensal e tabela comparativa por estado.",
+      "Leitura sintética da série histórica de focos de queimadas, com destaques automatizados, filtros por período e bioma, comparação anual e visão comparativa por UF.",
     sourceTitle: "INPE - Programa Queimadas",
     categoryTitle: "Meio ambiente",
     manifestPath: "reports/bdqueimadas/overview/manifest.json",
     stableReportPath: "reports/bdqueimadas/overview/report.json",
-    tags: ["queimadas", "inpe", "focos", "série temporal", "comparação anual"],
+    sourcePortalHref: "/open-data/inpe/inpe-bdqueimadas-focos",
+    tags: ["queimadas", "inpe", "focos", "série temporal", "bioma", "comparação anual"],
   },
 ];
 

@@ -1,12 +1,7 @@
 // src/app/reports/[report]/page.tsx
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReportAnalysis from "@/components/reports/ReportAnalysis";
-import ReportHero from "@/components/reports/ReportHero";
-import ReportHighlights from "@/components/reports/ReportHighlights";
-import ReportMethodology from "@/components/reports/ReportMethodology";
-import ReportSectionRenderer from "@/components/reports/ReportSectionRenderer";
+import ReportPageClient from "@/components/reports/ReportPageClient";
 import { getReportBySlug } from "@/lib/reports/catalog";
 import { fetchStableReport } from "@/lib/reports/fetch";
 
@@ -43,26 +38,14 @@ export default async function ReportDetailPage({
       <div className="mb-6">
         <Link
           href="/reports"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] transition-colors hover:text-[color:var(--foreground)]"
         >
           <ChevronLeftIcon className="h-4 w-4" />
           Voltar para relatórios
         </Link>
       </div>
 
-      <div className="space-y-8">
-        <ReportHero catalogItem={catalogItem} report={document} />
-        <ReportHighlights highlights={document.highlights} />
-        <ReportAnalysis analysis={document.analysis} />
-
-        <div className="space-y-8">
-          {document.sections.map((section) => (
-            <ReportSectionRenderer key={section.id} section={section} />
-          ))}
-        </div>
-
-        <ReportMethodology methodology={document.methodology} />
-      </div>
+      <ReportPageClient catalogItem={catalogItem} report={document} />
     </main>
   );
 }
