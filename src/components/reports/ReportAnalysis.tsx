@@ -1,87 +1,70 @@
-// src/components/reports/ReportHero.tsx
-import Link from "next/link";
-import type { Locale } from "@/lib/reports/types";
+// src/components/reports/ReportAnalysis.tsx
+import type {
+  Locale,
+  ResolvedReportAnalysisDetails,
+  ResolvedReportAnalysisIntro,
+} from "@/lib/reports/types";
 
-function formatDateTime(iso: string, locale: Locale) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleString(locale === "en" ? "en-US" : "pt-BR");
-}
-
-export default function ReportHero({
+export default function ReportAnalysis({
   locale,
-  catalogItem,
-  title,
-  summary,
-  generatedAt,
-  yearRange,
-  latestPeriod,
-  sourcePortalHref,
+  mode,
+  analysis,
 }: {
   locale: Locale;
-  catalogItem: {
-    categoryTitle: string;
-    sourceTitle: string;
-  };
-  title: string;
-  summary?: string | null;
-  generatedAt: string;
-  yearRange?: string | null;
-  latestPeriod?: string | null;
-  sourcePortalHref?: string;
+  mode: "intro" | "details";
+  analysis: ResolvedReportAnalysisIntro | ResolvedReportAnalysisDetails;
 }) {
-  return (
-    <section className="space-y-4">
-      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[color:var(--primary)]">
-        {catalogItem.categoryTitle} / {catalogItem.sourceTitle}
-      </div>
+  if (mode === "intro") {
+    const intro = analysis as ResolvedReportAnalysisIntro;
 
-      <h1 className="max-w-5xl text-3xl font-black tracking-tight text-[color:var(--foreground)] md:text-5xl">
-        {title}
-      </h1>
+    return (
+      <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-float)]">
+        <div className="space-y-2">
 
-      {summary ? (
-        <p className="max-w-4xl text-base leading-relaxed text-[color:var(--muted)]">
-          {summary}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[color:var(--muted)]">
-        <div>
-          <span className="font-semibold">
-            {locale === "en" ? "Updated" : "Atualizado"}:
-          </span>{" "}
-          {formatDateTime(generatedAt, locale)}
+          <h2 className="text-2xl font-black leading-tight tracking-tight text-[color:var(--foreground)] md:text-3xl">
+            {intro.headline}
+          </h2>
         </div>
 
-        {yearRange ? (
-          <div>
-            <span className="font-semibold">
-              {locale === "en" ? "Coverage" : "Cobertura"}:
-            </span>{" "}
-            {yearRange}
-          </div>
-        ) : null}
+        <div className="mt-5 space-y-3">
+          <h3 className="text-sm font-black uppercase tracking-wider text-[color:var(--muted)]">
+            {locale === "en" ? "Overview" : "Visão geral"}
+          </h3>
 
-        {latestPeriod ? (
-          <div>
-            <span className="font-semibold">
-              {locale === "en" ? "Latest period" : "Último período"}:
-            </span>{" "}
-            {latestPeriod}
-          </div>
-        ) : null}
+          <p className="whitespace-pre-line text-justify text-sm leading-7 text-[color:var(--foreground)] md:text-base">
+            {intro.overview}
+          </p>
+        </div>
 
-        {sourcePortalHref ? (
-          <div>
-            <Link
-              href={sourcePortalHref}
-              className="font-semibold text-[color:var(--primary)] transition-colors hover:opacity-80"
-            >
-              {locale === "en" ? "View source dataset" : "Ver base de origem"}
-            </Link>
-          </div>
-        ) : null}
+        <p className="mt-4 text-justify text-xs leading-relaxed text-[color:var(--muted)]">
+          {locale === "en"
+            ? "This textual reading is automatically generated with support from LLM/AI models. It should be checked against the data, charts and original source before analytical or decision-making use."
+            : "Esta leitura textual é gerada automaticamente com apoio de modelos de LLMs/IAs. Ela deve ser conferida com os dados, gráficos e fonte original antes de qualquer uso analítico ou decisório."}
+        </p>
+      </section>
+    );
+  }
+
+  const details = analysis as ResolvedReportAnalysisDetails;
+
+  return (
+    <section className="grid gap-6 md:grid-cols-2">
+      <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-float)]">
+        <h3 className="text-sm font-black uppercase tracking-wider text-[color:var(--muted)]">
+          {locale === "en" ? "Comparison" : "Comparação"}
+        </h3>
+        <p className="mt-3 whitespace-pre-line text-justify text-sm leading-7 text-[color:var(--foreground)] md:text-base">
+          {details.comparison}
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-float)]">
+        <h3 className="text-sm font-black uppercase tracking-wider text-[color:var(--muted)]">
+          {locale === "en" ? "Limitations" : "Limitações"}
+        </h3>
+        <p className="mt-3 whitespace-pre-line text-justify text-sm leading-7 text-[color:var(--foreground)] md:text-base">
+          {details.limitations}
+        </p>
       </div>
     </section>
   );

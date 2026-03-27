@@ -10,77 +10,63 @@ function formatDateTime(iso: string, locale: Locale) {
 
 export default function ReportHero({
   locale,
-  catalogItem,
+  categoryTitle,
+  sourceTitle,
   title,
-  summary,
   generatedAt,
   yearRange,
   latestPeriod,
   sourcePortalHref,
 }: {
   locale: Locale;
-  catalogItem: {
-    categoryTitle: string;
-    sourceTitle: string;
-  };
+  categoryTitle: string;
+  sourceTitle: string;
   title: string;
-  summary?: string | null;
   generatedAt: string;
   yearRange?: string | null;
   latestPeriod?: string | null;
   sourcePortalHref?: string;
 }) {
   return (
-    <section className="space-y-4">
-      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[color:var(--primary)]">
-        {catalogItem.categoryTitle} / {catalogItem.sourceTitle}
-      </div>
-
-      <h1 className="max-w-5xl text-3xl font-black tracking-tight text-[color:var(--foreground)] md:text-5xl">
-        {title}
+    <section className="space-y-3 border-b border-[color:var(--border)] pb-5">
+      <h1 className="text-lg font-semibold tracking-tight text-[color:var(--foreground)] md:text-xl">
+        <span>{title}</span>
+        <span className="text-[color:var(--muted)]"> {" - "}{categoryTitle} / {sourceTitle}</span>
       </h1>
 
-      {summary ? (
-        <p className="max-w-4xl text-base leading-relaxed text-[color:var(--muted)]">
-          {summary}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-[color:var(--muted)]">
-        <div>
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-[color:var(--muted)]">
+        <span>
           <span className="font-semibold">
             {locale === "en" ? "Updated" : "Atualizado"}:
           </span>{" "}
           {formatDateTime(generatedAt, locale)}
-        </div>
+        </span>
 
         {yearRange ? (
-          <div>
+          <span>
             <span className="font-semibold">
               {locale === "en" ? "Coverage" : "Cobertura"}:
             </span>{" "}
             {yearRange}
-          </div>
+          </span>
         ) : null}
 
         {latestPeriod ? (
-          <div>
+          <span>
             <span className="font-semibold">
               {locale === "en" ? "Latest period" : "Último período"}:
             </span>{" "}
             {latestPeriod}
-          </div>
+          </span>
         ) : null}
 
         {sourcePortalHref ? (
-          <div>
-            <Link
-              href={sourcePortalHref}
-              className="font-semibold text-[color:var(--primary)] transition-colors hover:opacity-80"
-            >
-              {locale === "en" ? "View source dataset" : "Ver base de origem"}
-            </Link>
-          </div>
+          <Link
+            href={sourcePortalHref}
+            className="font-semibold text-[color:var(--primary)] transition-colors hover:opacity-80"
+          >
+            {locale === "en" ? "View source dataset" : "Ver base de origem"}
+          </Link>
         ) : null}
       </div>
     </section>

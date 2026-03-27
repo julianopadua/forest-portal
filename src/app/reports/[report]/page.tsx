@@ -34,7 +34,7 @@ export default async function ReportDetailPage({
   const document = await fetchStableReport(catalogItem.stableReportPath);
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-10">
+    <main className="mx-auto w-full max-w-6xl px-4 py-10">
       <div className="mb-6">
         <Link
           href="/reports"

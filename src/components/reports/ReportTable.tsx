@@ -1,16 +1,42 @@
 // src/components/reports/ReportTable.tsx
+import type { Locale, ResolvedReportTableSection } from "@/lib/reports/types";
 
-import type { ReportTableSection } from "@/lib/reports/types";
-
-function formatCell(value: unknown) {
+function formatCell(value: unknown, key: string, locale: Locale) {
   if (value === null || value === undefined) return "-";
-  if (typeof value === "number") return value.toLocaleString("pt-BR");
+
+  if (typeof value === "number") {
+    if (key === "pct_change") {
+      return `${value.toLocaleString(locale === "en" ? "en-US" : "pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}%`;
+    }
+
+    return value.toLocaleString(locale === "en" ? "en-US" : "pt-BR");
+  }
+
   return String(value);
 }
 
-export default function ReportTable({ section }: { section: ReportTableSection }) {
+export default function ReportTable({
+  locale,
+  section,
+}: {
+  locale: Locale;
+  section: ResolvedReportTableSection;
+}) {
+  if (!section.rows.length) {
+    return (
+      <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)] shadow-[var(--shadow-float)]">
+        {locale === "en"
+          ? "No rows available for the selected filters."
+          : "Sem linhas disponíveis para os filtros selecionados."}
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)] overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)]">
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="bg-[color:var(--surface-2)]">
@@ -27,10 +53,13 @@ export default function ReportTable({ section }: { section: ReportTableSection }
           </thead>
           <tbody className="divide-y divide-[color:var(--border)]">
             {section.rows.map((row, idx) => (
-              <tr key={idx} className="hover:bg-[color:var(--surface-2)]/40 transition-colors">
+              <tr
+                key={idx}
+                className="transition-colors hover:bg-[color:var(--surface-2)]/40"
+              >
                 {section.columns.map((col) => (
                   <td key={col.key} className="px-4 py-3 text-[color:var(--foreground)]">
-                    {formatCell(row[col.key])}
+                    {formatCell(row[col.key], col.key, locale)}
                   </td>
                 ))}
               </tr>

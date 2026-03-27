@@ -18,13 +18,13 @@ export const REPORTS_CATALOG: ReportCatalogItem[] = [
     slug: "bdqueimadas-overview",
     title: "BDQueimadas - Panorama Sintético de Focos",
     description:
-      "Leitura sintética da série histórica de focos de queimadas, com destaques automatizados, filtros por período e bioma, comparação anual e visão comparativa por UF.",
+      "Leitura sintética da série histórica de focos de queimadas, com filtros por período e bioma, comparação anual e visão comparativa por UF.",
     sourceTitle: "INPE - Programa Queimadas",
     categoryTitle: "Meio ambiente",
     manifestPath: "reports/bdqueimadas/overview/manifest.json",
     stableReportPath: "reports/bdqueimadas/overview/report.json",
     sourcePortalHref: "/open-data/inpe/inpe-bdqueimadas-focos",
-    tags: ["queimadas", "inpe", "focos", "série temporal", "bioma", "comparação anual"],
+    tags: ["queimadas", "inpe", "focos"],
   },
 ];
 

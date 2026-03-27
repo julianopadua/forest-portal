@@ -1,285 +1,191 @@
 # Instituto Forest Portal
 
-Repositório do portal web do Instituto Forest.
+Repositório oficial do portal web do Instituto Forest. O sistema consolida presença institucional, acesso a dados abertos, publicação de relatórios analíticos e fluxos de autenticação com perfil de usuário, sobre uma base técnica em Next.js (App Router), TypeScript e Supabase.
 
-O objetivo do portal é oferecer uma experiência unificada para:
-- Educação gratuita (tecnologia, ENEM e temas aplicados)
-- Comunidade (fórum e discussões)
-- Distribuição gratuita de dados (ex: queimadas, mercados financeiros, commodities)
-- Área logada (progresso, favoritos, recursos avançados e personalização)
+## Sumário
 
-## Table of Contents
-
-- [Visão geral](#visão-geral)
-- [Escopo](#escopo)
-- [Status atual](#status-atual)
-- [Stack](#stack)
-- [Arquitetura e rotas](#arquitetura-e-rotas)
+- [Objetivos](#objetivos)
+- [Visão do sistema](#visão-do-sistema)
+- [Pilha tecnológica](#pilha-tecnológica)
+- [Arquitetura e fluxos principais](#arquitetura-e-fluxos-principais)
+- [Rotas e módulos](#rotas-e-módulos)
+- [Internacionalização](#internacionalização)
+- [Temas e tokens de interface](#temas-e-tokens-de-interface)
+- [Dados abertos e pipeline externo](#dados-abertos-e-pipeline-externo)
+- [Relatórios analíticos](#relatórios-analíticos)
 - [Estrutura do repositório](#estrutura-do-repositório)
-- [UI e layout](#ui-e-layout)
-- [Temas e estilo](#temas-e-estilo)
-- [Dados e pipeline externo](#dados-e-pipeline-externo)
-- [Como rodar localmente](#como-rodar-localmente)
+- [Documentação de código](#documentação-de-código)
 - [Variáveis de ambiente](#variáveis-de-ambiente)
-- [Deploy](#deploy)
-- [Roadmap](#roadmap)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
+- [Execução local](#execução-local)
+- [Build e produção](#build-e-produção)
+- [Implantação](#implantação)
+- [Evolução planejada](#evolução-planejada)
+- [Contribuição e licença](#contribuição-e-licença)
 
-## Visão geral
+## Objetivos
 
-O Instituto Forest é um projeto de longo prazo para organizar conhecimento, estimular aprendizado aplicado e viabilizar acesso aberto a dados e ferramentas.
+O portal visa oferecer experiência unificada para:
 
-Este repositório contém o portal do Instituto, implementado com Next.js (App Router), com foco em:
-- Design consistente (paleta green-based, estética "floating")
-- Base sólida de layout e componentes
-- Crescimento modular por rotas e áreas (marketing, explore, join e futura área logada)
+- Educação e conteúdo aplicado (incluindo rotas dedicadas a educação e exploração).
+- Comunidade e engajamento (com âncoras na landing e rotas de entrada).
+- Distribuição de dados abertos (catálogo, metadados e downloads alinhados ao Storage).
+- Área autenticada (perfil, sessão e ações de servidor para atualização de dados do usuário).
 
-## Escopo
+## Visão do sistema
 
-Dentro deste repositório:
-- Páginas públicas e base do site
-- Estrutura de layout (Header, Footer, Sidebar mobile)
-- Componentes UI reutilizáveis (Button, Modal)
-- Catálogo e navegação do conteúdo (planejado)
-- Login e autenticação (planejado)
-- Fórum (planejado)
-- Portal de dados para download (planejado)
+A aplicação é um monólito frontend desacoplado de jobs de extração e transformação de dados. O Next.js entrega páginas e rotas de API leves; o Supabase fornece autenticação, banco relacional e armazenamento de objetos para arquivos públicos. O middleware renova cookies de sessão em cada requisição compatível com o matcher, mantendo coerência entre cliente e servidor. Componentes de interface seguem tokens CSS centralizados e padrão responsivo com navegação principal fixa e menu lateral em viewports reduzidos.
 
-Fora do escopo (recomendado manter separado):
-- Scripts e jobs de coleta, limpeza e atualização de dados (ETL)
-- Processamento pesado, agregações e geração de datasets
-- Treinamento de modelos e notebooks
+## Pilha tecnológica
 
-## Status atual
+| Camada | Tecnologia |
+|--------|------------|
+| Framework | Next.js 16 (App Router) |
+| Linguagem | TypeScript 5 |
+| UI | React 19, Tailwind CSS 4 (`@import "tailwindcss"` em `globals.css`) |
+| Autenticação e backend gerenciado | Supabase (`@supabase/ssr`, `@supabase/supabase-js`) |
+| Compilação React | React Compiler habilitado em `next.config.ts` |
+| Runtime local | Node.js (LTS recomendado), npm |
 
-Implementado (MVP):
-- Landing page em `src/app/(marketing)/page.tsx` com seções e CTAs
-- Rotas iniciais: `/explore` e `/join`
-- Layout base: Header fixo, Footer, menu lateral (mobile)
-- Tema light e dark com tokens CSS em `src/app/globals.css`
+Configuração de build: consulte [doc/src/next.config/next.config.md](doc/src/next.config/next.config.md).
 
-A implementar (curto prazo):
-- Autenticação real (ex: Supabase Auth)
-- Integração de rotas protegidas e sessão
-- Páginas e modelos iniciais do fórum
-- Catálogo e download de datasets
+## Arquitetura e fluxos principais
 
-## Stack
+1. **Solicitação HTTP**: `src/middleware.ts` delega a [atualização de sessão Supabase](doc/src/src/lib/supabase/middleware/middleware.md) antes de servir rotas aplicáveis.
+2. **Renderização**: o [layout raiz](doc/src/src/app/layout/layout.md) aplica fonte, provedor de i18n, cabeçalho e rodapé; o conteúdo roteado ocupa a área principal.
+3. **Autenticação**: rotas de API [login](doc/src/src/app/api/auth/login/route/route.md) e [cadastro](doc/src/src/app/api/auth/signup/route/route.md) utilizam o cliente adequado; o [callback OAuth](doc/src/src/app/auth/callback/route/route.md) troca o código por sessão e redireciona com validação de `next` interno.
+4. **Dados do usuário**: [ações de servidor para perfil](doc/src/src/app/actions/profile/profile.md) atualizam tabelas como `profiles` com revalidação de cache.
+5. **Dados abertos**: catálogo e URLs públicas derivam de variáveis e convenções de bucket; ver biblioteca em [catalog](doc/src/src/lib/openData/catalog/catalog.md) e [publicUrls](doc/src/src/lib/openData/publicUrls/publicUrls.md).
 
-- Next.js (App Router)
-- TypeScript
-- Tailwind CSS (v4, via `@import "tailwindcss"`)
-- Node.js e npm (padrão do `create-next-app`)
+Documentação do middleware de borda: [doc/src/src/middleware/middleware.md](doc/src/src/middleware/middleware.md).
 
-Planejado:
-- Supabase (Auth, Postgres e Storage)
-- Deploy na Vercel
+## Rotas e módulos
 
-## Arquitetura e rotas
+Cada rota principal possui nota técnica em `doc/` quando indexada em [doc/INDEX.md](doc/INDEX.md).
 
-O projeto está organizado para crescer como um portal único, com módulos por rota:
+| Rota | Descrição | Documentação |
+|------|-----------|--------------|
+| `/` | Landing institucional, seções e CTAs | [page.md (marketing)](doc/src/src/app/(marketing)/page/page.md) |
+| `/explore` | Exploração de conteúdo | [explore/page.md](doc/src/src/app/explore/page/page.md) |
+| `/join` | Entrada para cadastro e autenticação | [join/page.md](doc/src/src/app/join/page/page.md) |
+| `/education` | Educação | [education/page.md](doc/src/src/app/education/page/page.md) |
+| `/commodities` | Commodities | [commodities/page.md](doc/src/src/app/commodities/page/page.md) |
+| `/open-data` | Catálogo de dados abertos | [open-data/page.md](doc/src/src/app/open-data/page/page.md) |
+| `/open-data/[source]/[dataset]` | Detalhe de conjunto de dados | [dataset page.md](doc/src/src/app/open-data/[source]/[dataset]/page/page.md) |
+| `/reports` | Listagem de relatórios | [reports/page.md](doc/src/src/app/reports/page/page.md) |
+| `/reports/[report]` | Relatório dinâmico (manifest JSON, seções) | Implementação em `src/app/reports/[report]/page.tsx` (documentação granular pendente no índice) |
+| `/settings` | Configurações e perfil | [settings/page.md](doc/src/src/app/settings/page/page.md) |
 
-- `/` (marketing) em `src/app/(marketing)/page.tsx`
-  - Página pública, scrolável, com seções (Missão, Programas, Conteúdos, Comunidade)
-  - CTAs apontando para `/join` e `/explore`
+A navegação da landing utiliza âncoras (por exemplo `#missao`, `#programas`). O [Header](doc/src/src/components/layout/Header/Header.md) concentra tema, idioma, autenticação e links responsivos; o [SidebarSheet](doc/src/src/components/layout/SidebarSheet/SidebarSheet.md) atende ao menu em telas estreitas.
 
-- `/explore` em `src/app/explore/page.tsx`
-  - Modo visitante (planejado)
+## Internacionalização
 
-- `/join` em `src/app/join/page.tsx`
-  - Entrada para criação de conta (planejado)
+Textos são organizados via [I18nProvider](doc/src/src/i18n/I18nProvider/I18nProvider.md) e [dicionários](doc/src/src/i18n/dictionaries/dictionaries.md). O componente [LanguageSwitcher](doc/src/src/components/ui/LanguageSwitcher/LanguageSwitcher.md) altera o idioma da interface conforme a estratégia definida no provedor.
 
-Observação:
-- A navegação da landing page usa âncoras (`#missao`, `#programas`, etc.)
-- O Header tem comportamento responsivo: no mobile abre menu lateral e no desktop exibe navegação completa
+## Temas e tokens de interface
+
+Tokens e paletas light e dark estão em [globals.md](doc/src/src/app/globals/globals.md). O modo pode seguir `prefers-color-scheme` ou classes `theme-light` / `theme-dark` no elemento `html`, com persistência em `localStorage` sob a chave `fp_theme`. Superfícies e sombras seguem variáveis como `--surface`, `--border` e `--shadow-float`.
+
+Componentes base: [Button](doc/src/src/components/ui/Button/Button.md), [Modal](doc/src/src/components/ui/Modal/Modal.md). Layout: [Footer](doc/src/src/components/layout/Footer/Footer.md).
+
+## Dados abertos e pipeline externo
+
+O portal lista metadados e expõe downloads; a ingestão pesada (ETL), agregações e geração de arquivos permanece fora deste repositório, em linha com separação de responsabilidades e custos de execução. Tipos e contratos: [types.md](doc/src/src/lib/openData/types/types.md). Esquema SQL de apoio ao projeto (quando aplicável): [doc/supabase/docSQL.md](doc/supabase/docSQL.md).
+
+Componentes de catálogo e página: [OpenDataCatalog](doc/src/src/components/open-data/OpenDataCatalog/OpenDataCatalog.md), [OpenDataPageClient](doc/src/src/components/open-data/OpenDataPageClient/OpenDataPageClient.md), [DownloadAllButton](doc/src/src/components/open-data/DownloadAllButton/DownloadAllButton.md).
+
+## Relatórios analíticos
+
+Relatórios são descritos por catálogo em `src/lib/reports/catalog.ts` (entradas com `slug`, caminhos de manifest e de dados estáveis no Storage). A listagem documentada encontra-se em [reports/page.md](doc/src/src/app/reports/page/page.md). Visualizações e seções residem em `src/components/reports/` e na rota dinâmica `src/app/reports/[report]/page.tsx`.
 
 ## Estrutura do repositório
 
-Visão baseada na estrutura atual:
+Visão resumida (pastas principais):
 
 ```txt
-public/
-  images/
+doc/                    Documentação por arquivo-fonte e índice
+public/                 Ativos estáticos e imagens
 src/
-  app/
-    (marketing)/
-      page.tsx
-    explore/
-      page.tsx
-    join/
-      page.tsx
-    favicon.ico
-    globals.css
-    layout.tsx
-  components/
-    layout/
-      Footer.tsx
-      Header.tsx
-      SidebarSheet.tsx
-    ui/
-      Button.tsx
-      Modal.tsx
-  lib/
-    cn.ts
+  app/                  Rotas App Router, API routes, Server Actions
+  components/           UI, layout, auth, open-data, reports, settings
+  hooks/                Hooks (ex.: sessão Supabase no cliente)
+  i18n/                 Provedor e dicionários
+  lib/                  Utilitários, Supabase, openData, reports, tipos gerados
+middleware.ts         Sessão Supabase na borda
 ```
 
-Arquivos importantes:
+Tipos gerados do banco: [database.types.md](doc/src/src/lib/database.types/database.types.md). Utilitário de classes: [cn.md](doc/src/src/lib/cn/cn.md).
 
-* `src/app/(marketing)/page.tsx`: landing page com seções e CTAs usando `Link`
-* `src/app/globals.css`: tokens de tema, paletas light e dark e mapeamento para Tailwind
-* `src/components/layout/Header.tsx`: header fixo, tema e responsividade (desktop vs mobile)
-* `src/components/layout/SidebarSheet.tsx`: menu lateral usado no mobile
-* `src/components/ui/Button.tsx`: botão base do projeto
-* `src/components/ui/Modal.tsx`: modal base (login e outros)
+Clientes Supabase: [client](doc/src/src/lib/supabase/client/client.md), [server](doc/src/src/lib/supabase/server/server.md), [admin](doc/src/src/lib/supabase/admin/admin.md).
 
-## UI e layout
+## Documentação de código
 
-Layout base:
+O índice canônico que mapeia cada arquivo implementado para o respectivo `.md` está em **[doc/INDEX.md](doc/INDEX.md)**. Recomenda-se consultá-lo antes de alterações amplas para localizar a nota técnica correspondente.
 
-* Header fixo no topo
-* Footer no final
-* Menu lateral no mobile (SidebarSheet)
-* Componentes com estética "floating" usando:
+Referência rápida por domínio:
 
-  * `--surface`, `--surface-2`, `--surface-3`
-  * `--border`, `--ring`
-  * `--shadow-float`
+- **Autenticação (UI)**: [AuthModal](doc/src/src/components/auth/AuthModal/AuthModal.md), [AuthForm](doc/src/src/components/auth/AuthForm/AuthForm.md)
+- **Sessão no cliente**: [useSupabaseUser](doc/src/src/hooks/useSupabaseUser/useSupabaseUser.md)
+- **Perfil (settings)**: [ProfileForm](doc/src/src/components/settings/ProfileForm/ProfileForm.md)
 
-A landing page está organizada em seções reutilizáveis via componente `Section` dentro de `src/app/(marketing)/page.tsx`.
+Arquivos sem entrada dedicada no índice (por exemplo módulos somente em `src/lib/reports/` ou `src/components/reports/`) devem ser interpretados a partir do código-fonte até eventual inclusão no gerador de documentação.
 
-## Temas e estilo
+## Variáveis de ambiente
 
-O tema é baseado em tokens CSS e mapeamento via Tailwind v4 em `src/app/globals.css`.
+Crie `.env.local` na raiz do repositório. Os nomes abaixo refletem o uso atual no código.
 
-Paletas:
+| Variável | Uso |
+|----------|-----|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL do projeto Supabase (obrigatória para auth e URLs de dados abertos) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Chave publicável do Supabase (anon ou publishable, conforme painel) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Operações privilegiadas no servidor (por exemplo cliente admin); não exponha ao cliente |
+| `NEXT_PUBLIC_OPEN_DATA_BUCKET` | Nome do bucket de dados abertos (padrão `open-data` se omitido) |
+| `NEXT_PUBLIC_PORTFOLIO_URL` | URL opcional para CTA de portfólio na landing |
 
-* Light: branco, verdes e acentos (ex: azul)
-* Dark: green-based, fundo escuro, texto claro
+Variáveis listadas em documentos antigos mas não referenciadas no código-fonte atual não devem ser assumidas como obrigatórias até serem introduzidas explicitamente na aplicação.
 
-Mecanismo:
+## Execução local
 
-* Default segue `prefers-color-scheme`
-* Pode ser forçado por classe no `<html>`:
+**Pré-requisitos**: Node.js em versão LTS atual ou compatível com Next.js 16; npm incluso ou instalado separadamente.
 
-  * `html.theme-light`
-  * `html.theme-dark`
-* O toggle de tema é controlado no client e persiste no `localStorage` (chave `fp_theme`)
-
-## Dados e pipeline externo
-
-Estratégia recomendada (planejada):
-
-* Scripts Python rodam separadamente do portal (ETL fora do Next.js)
-* Esses scripts publicam:
-
-  * Metadados no Postgres (Supabase)
-  * Arquivos no Storage (Supabase), preferencialmente CSV/Parquet/JSON
-* O portal apenas lista, filtra e apresenta os datasets, oferecendo download via Storage
-
-Motivo:
-
-* Evita misturar o ciclo de deploy do frontend com jobs pesados
-* Melhor controle de limites, custos e escalabilidade
-
-TODO:
-
-* Criar pasta e especificação para pipeline (fora deste repo ou em repo separado)
-* Definir esquema de metadados (dataset, fonte, período, tags, checksum, updated_at, url)
-
-## Como rodar localmente
-
-Pré-requisitos:
-
-* Node.js (LTS recomendado)
-* npm
-
-Instalação e dev:
+**Instalação de dependências**:
 
 ```bash
 npm install
+```
+
+**Configuração**: copie ou crie `.env.local` e preencha pelo menos `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` para exercitar autenticação e fluxos que dependem do Supabase. Para downloads de dados abertos conforme implementação, a URL pública e o bucket devem estar coerentes com o ambiente.
+
+**Servidor de desenvolvimento**:
+
+```bash
 npm run dev
 ```
 
-Build e produção:
+A aplicação atende em `http://localhost:3000` por padrão do Next.js.
+
+**Análise estática**:
+
+```bash
+npm run lint
+```
+
+## Build e produção
 
 ```bash
 npm run build
 npm run start
 ```
 
-Lint:
+O comando `build` gera a saída otimizada; `start` serve a build em modo produção local. Valide variáveis de ambiente no mesmo formato esperado em produção antes de implantar.
 
-```bash
-npm run lint
-```
+## Implantação
 
-Observação:
+Arquitetura típica: hospedagem do frontend Next.js em provedor compatível (por exemplo Vercel) e projeto Supabase para Auth, Postgres e Storage. Configure as variáveis no painel do provedor de hospedagem de forma espelhada a `.env.local`, sem commitar segredos. Revise políticas de Row Level Security e buckets conforme [doc/supabase/docSQL.md](doc/supabase/docSQL.md) e a documentação oficial do Supabase.
 
-* Os scripts acima assumem o padrão do Next.js gerado pelo `create-next-app`.
-* Se você alterar scripts no `package.json`, atualize esta seção.
+## Evolução planejada
 
-## Variáveis de ambiente
+Direções plausíveis incluem: fórum e moderação; expansão do catálogo de relatórios e documentação automática de novos componentes; APIs públicas para metadados; painel administrativo; consolidação de `CONTRIBUTING.md` e arquivo `LICENSE` quando a política institucional estiver definida.
 
-Crie um arquivo `.env.local` na raiz do projeto.
+## Contribuição e licença
 
-Planejado para Supabase:
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-NEXT_PUBLIC_SITE_URL=
-```
-
-TODO:
-
-* Documentar variáveis obrigatórias por módulo (auth, storage, dados, fórum)
-* Incluir instruções de setup do Supabase (Auth, Storage, RLS)
-
-## Deploy
-
-Planejado:
-
-* Vercel para o portal (Next.js)
-* Supabase para Auth, Postgres e Storage
-
-TODO:
-
-* Documentar variáveis de ambiente na Vercel
-* Definir estratégia de preview deployments e branches
-
-## Roadmap
-
-Curto prazo:
-
-* Consolidar UX mobile do menu lateral (navegação, CTAs e login)
-* Conectar `/join` e `/explore` com fluxos reais
-* Integrar autenticação (Supabase Auth)
-* Definir modelo de dados do catálogo de datasets (metadados)
-
-Médio prazo:
-
-* Fórum (categorias, tópicos, respostas, moderação)
-* Portal de dados (catálogo, filtros, download)
-* Biblioteca de conteúdos e trilhas com progressão
-
-Longo prazo:
-
-* Pipeline externo para atualização contínua de datasets
-* API pública para catálogo e acesso programático
-* Painel administrativo para curadoria e moderação
-
-## Contribuição
-
-TODO:
-
-* Adicionar `CONTRIBUTING.md` com padrões de branch, commits e revisão
-* Definir checklist de PR (UI, acessibilidade, responsividade, testes)
-
-## Licença
-
-TODO:
-
-* Definir a licença do projeto e adicionar o arquivo `LICENSE`
-
+Padrões de branch, revisão e licença de código ainda podem ser formalizados em `CONTRIBUTING.md` e `LICENSE`. Até lá, alinhe mudanças à estrutura existente e à documentação em `doc/`.

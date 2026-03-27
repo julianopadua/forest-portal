@@ -18,7 +18,7 @@ type ReportCardData = {
   categoryTitle: string;
   tags: string[];
   generatedAt: string | null;
-  latestPeriod: string | null;
+  yearRange: string | null;
   latestYear: number | null;
 };
 
@@ -35,7 +35,7 @@ async function loadCards(): Promise<ReportCardData[]> {
           categoryTitle: item.categoryTitle,
           tags: item.tags,
           generatedAt: doc.generated_at ?? null,
-          latestPeriod: doc.coverage?.latest_period ?? null,
+          yearRange: doc.coverage?.year_range ?? null,
           latestYear: doc.coverage?.latest_year ?? null,
         };
       } catch {
@@ -47,7 +47,7 @@ async function loadCards(): Promise<ReportCardData[]> {
           categoryTitle: item.categoryTitle,
           tags: item.tags,
           generatedAt: null,
-          latestPeriod: null,
+          yearRange: null,
           latestYear: null,
         };
       }
@@ -61,18 +61,18 @@ export default async function ReportsPage() {
   const cards = await loadCards();
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-10">
-      <section className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 md:p-10 shadow-[var(--shadow-float)]">
+    <main className="mx-auto w-full max-w-6xl px-4 py-10">
+      <section className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-[var(--shadow-float)] md:p-10">
         <div className="max-w-4xl">
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[color:var(--primary)]">
             Publicações / Relatórios
           </div>
 
-          <h1 className="mt-3 text-3xl md:text-5xl font-black tracking-tight text-[color:var(--foreground)]">
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-[color:var(--foreground)] md:text-5xl">
             Relatórios analíticos
           </h1>
 
-          <p className="mt-4 text-[color:var(--muted)] leading-relaxed">
+          <p className="mt-4 leading-relaxed text-[color:var(--muted)]">
             Esta seção reúne páginas analíticas permanentes, atualizadas a partir de pipelines
             de dados e publicadas como artefatos leves consumidos diretamente pelo portal.
           </p>
@@ -117,10 +117,10 @@ export default async function ReportsPage() {
                 </span>
               </div>
 
-              {card.latestPeriod ? (
+              {card.yearRange ? (
                 <div>
-                  <span className="opacity-60">Período:</span>{" "}
-                  <span className="text-[color:var(--foreground)]">{card.latestPeriod}</span>
+                  <span className="opacity-60">Cobertura:</span>{" "}
+                  <span className="text-[color:var(--foreground)]">{card.yearRange}</span>
                 </div>
               ) : null}
 
