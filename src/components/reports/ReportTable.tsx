@@ -21,13 +21,19 @@ function formatCell(value: unknown, key: string, locale: Locale) {
 export default function ReportTable({
   locale,
   section,
+  variant = "default",
 }: {
   locale: Locale;
   section: ResolvedReportTableSection;
+  variant?: "default" | "news";
 }) {
   if (!section.rows.length) {
     return (
-      <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)] shadow-[var(--shadow-float)]">
+      <div
+        className={`border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)] ${
+          variant === "news" ? "rounded-lg" : "rounded-2xl shadow-[var(--shadow-float)]"
+        }`}
+      >
         {locale === "en"
           ? "No rows available for the selected filters."
           : "Sem linhas disponíveis para os filtros selecionados."}
@@ -36,7 +42,11 @@ export default function ReportTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)]">
+    <div
+      className={`overflow-hidden border border-[color:var(--border)] bg-[color:var(--surface)] ${
+        variant === "news" ? "rounded-lg" : "rounded-2xl shadow-[var(--shadow-float)]"
+      }`}
+    >
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="bg-[color:var(--surface-2)]">

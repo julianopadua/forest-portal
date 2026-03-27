@@ -6,6 +6,9 @@ import ReportAnalysis from "@/components/reports/ReportAnalysis";
 import ReportHero from "@/components/reports/ReportHero";
 import ReportHighlights from "@/components/reports/ReportHighlights";
 import ReportMethodology from "@/components/reports/ReportMethodology";
+import ReportMinimalFilters from "@/components/reports/ReportMinimalFilters";
+import ReportNewsHeader from "@/components/reports/ReportNewsHeader";
+import ReportNewsSidebar from "@/components/reports/ReportNewsSidebar";
 import ReportSectionRenderer from "@/components/reports/ReportSectionRenderer";
 import type { ReportCatalogItem } from "@/lib/reports/catalog";
 import {
@@ -963,6 +966,93 @@ export default function ReportPageClient({
   );
 
   const normalizedRange = normalizePeriodRange(selectedStartPeriod, selectedEndPeriod);
+
+  const heroCredit =
+    locale === "en"
+      ? catalogItem.heroImageCreditEn ?? catalogItem.heroImageCreditPt
+      : catalogItem.heroImageCreditPt ?? catalogItem.heroImageCreditEn;
+
+  const filterSlot = (
+    <ReportMinimalFilters
+      locale={locale}
+      biomeFilter={biomeFilter}
+      selectedBiome={selectedBiome}
+      onBiomeChange={setSelectedBiome}
+      selectedStartDate={selectedStartDate}
+      selectedEndDate={selectedEndDate}
+      min={minDate}
+      max={maxDate}
+      onStartDateChange={setSelectedStartDate}
+      onEndDateChange={setSelectedEndDate}
+      onReset={() => {
+        setSelectedBiome(biomeFilter?.default_value ?? ALL_BIOMES_VALUE);
+        setSelectedStartDate(initialStartDate);
+        setSelectedEndDate(initialEndDate);
+      }}
+    />
+  );
+
+  if (catalogItem.layout === "news") {
+    return (
+      <div className="space-y-10">
+        <ReportNewsHeader
+          locale={locale}
+          categoryTitle={catalogItem.categoryTitle}
+          sourceTitle={catalogItem.sourceTitle}
+          title={resolveLocalizedText(report.title, locale)}
+          generatedAt={report.generated_at}
+          heroImageSrc={catalogItem.heroImageSrc}
+          heroImageCredit={heroCredit}
+        />
+
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_17.5rem] lg:items-start lg:gap-10 xl:grid-cols-[minmax(0,1fr)_19rem]">
+          <div className="min-w-0 space-y-10">
+            <ReportAnalysis
+              locale={locale}
+              mode="intro"
+              variant="news"
+              analysis={introAnalysis}
+            />
+
+            <ReportAnalysis
+              locale={locale}
+              mode="details"
+              variant="news"
+              analysis={detailsAnalysis}
+            />
+
+            <div className="space-y-12 border-t border-[color:var(--border)] pt-10">
+              {renderableSections.map((section) => (
+                <ReportSectionRenderer
+                  key={section.id}
+                  locale={locale}
+                  section={section}
+                  variant="news"
+                  filterSlot={filterSlot}
+                />
+              ))}
+            </div>
+
+            <ReportMethodology
+              locale={locale}
+              variant="news"
+              methodology={methodology}
+              sourcePortalHref={catalogItem.sourcePortalHref}
+            />
+          </div>
+
+          <ReportNewsSidebar
+            locale={locale}
+            catalogItem={catalogItem}
+            generatedAt={report.generated_at}
+            yearRange={report.coverage.year_range}
+            latestPeriod={report.coverage.latest_period}
+            highlights={highlights}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

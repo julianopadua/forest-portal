@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
@@ -26,7 +27,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <body className={`min-h-dvh flex flex-col antialiased ${montserrat.variable}`}>
         <I18nProvider>
-          <Header />
+          <Suspense
+            fallback={
+              <header
+                className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-[color:var(--border)] bg-[color:var(--background)]/90 backdrop-blur-sm"
+                aria-hidden
+              />
+            }
+          >
+            <Header />
+          </Suspense>
 
           {/* wrapper do conteúdo com flex-1 para empurrar o footer ao fim */}
           <div className="flex-1 pt-20">{children}</div>

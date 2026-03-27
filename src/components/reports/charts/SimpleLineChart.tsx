@@ -62,14 +62,26 @@ export default function SimpleLineChart({
   locale,
   data,
   height = 280,
+  xAxisLabel,
+  yAxisLabel,
+  variant = "default",
 }: {
   locale: Locale;
   data: Point[];
   height?: number;
+  /** Rótulo do eixo horizontal (período ou categoria). */
+  xAxisLabel?: string;
+  /** Rótulo do eixo vertical (medida). */
+  yAxisLabel?: string;
+  variant?: "default" | "news";
 }) {
   if (!data.length) {
     return (
-      <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)]">
+      <div
+        className={`rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)] ${
+          variant === "news" ? "" : "rounded-2xl shadow-[var(--shadow-float)]"
+        }`}
+      >
         {locale === "en" ? "No data." : "Sem dados."}
       </div>
     );
@@ -83,11 +95,14 @@ export default function SimpleLineChart({
     : 0;
   const hasMultipleYears = yearCount > 1;
 
+  const axisLabelBottom = xAxisLabel ? 22 : 0;
+  const axisLabelLeft = yAxisLabel ? 18 : 0;
+
   const padding = {
     top: 20,
     right: 20,
-    bottom: hasMultipleYears ? 68 : 48,
-    left: 56,
+    bottom: (hasMultipleYears ? 68 : 48) + axisLabelBottom,
+    left: 56 + axisLabelLeft,
   };
 
   const values = data.map((d) => d.y);
@@ -139,7 +154,11 @@ export default function SimpleLineChart({
     : [];
 
   return (
-    <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 shadow-[var(--shadow-float)]">
+    <div
+      className={`border border-[color:var(--border)] bg-[color:var(--surface)] p-3 ${
+        variant === "news" ? "rounded-lg" : "rounded-2xl p-4 shadow-[var(--shadow-float)]"
+      }`}
+    >
       <div className="overflow-x-auto">
         <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[760px] h-auto w-full">
           {tickValues.map((tick, i) => {
@@ -205,9 +224,9 @@ export default function SimpleLineChart({
                     {index > 0 ? (
                       <line
                         x1={startX}
-                        y1={height - 42}
+                        y1={height - 42 - axisLabelBottom}
                         x2={startX}
-                        y2={height - 8}
+                        y2={height - 8 - axisLabelBottom}
                         stroke="currentColor"
                         opacity="0.12"
                       />
@@ -215,7 +234,7 @@ export default function SimpleLineChart({
 
                     <text
                       x={midX}
-                      y={height - 10}
+                      y={height - 10 - axisLabelBottom}
                       textAnchor="middle"
                       fontSize="11"
                       fill="currentColor"
@@ -239,7 +258,7 @@ export default function SimpleLineChart({
                 <text
                   key={`label-${d.x}-${i}`}
                   x={xAt(i)}
-                  y={hasMultipleYears ? height - 32 : height - 16}
+                  y={hasMultipleYears ? height - 32 - axisLabelBottom : height - 16 - axisLabelBottom}
                   textAnchor="middle"
                   fontSize="11"
                   fill="currentColor"
@@ -256,7 +275,7 @@ export default function SimpleLineChart({
               <text
                 key={`label-${d.x}-${i}`}
                 x={xAt(i)}
-                y={height - 16}
+                y={height - 16 - axisLabelBottom}
                 textAnchor="middle"
                 fontSize="11"
                 fill="currentColor"
@@ -266,6 +285,33 @@ export default function SimpleLineChart({
               </text>
             );
           })}
+
+          {yAxisLabel ? (
+            <text
+              x={12 + axisLabelLeft / 2}
+              y={padding.top + plotHeight / 2}
+              textAnchor="middle"
+              fontSize="11"
+              fill="currentColor"
+              opacity="0.72"
+              transform={`rotate(-90 ${12 + axisLabelLeft / 2} ${padding.top + plotHeight / 2})`}
+            >
+              {yAxisLabel}
+            </text>
+          ) : null}
+
+          {xAxisLabel ? (
+            <text
+              x={padding.left + plotWidth / 2}
+              y={height - 6}
+              textAnchor="middle"
+              fontSize="11"
+              fill="currentColor"
+              opacity="0.72"
+            >
+              {xAxisLabel}
+            </text>
+          ) : null}
         </svg>
       </div>
     </div>

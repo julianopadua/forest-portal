@@ -23,10 +23,55 @@ function formatPct(value: number | null | undefined, locale: Locale) {
 export default function ReportHighlights({
   locale,
   highlights,
+  variant = "grid",
 }: {
   locale: Locale;
   highlights: ResolvedReportHighlight[];
+  variant?: "grid" | "sidebar";
 }) {
+  if (variant === "sidebar") {
+    return (
+      <section className="space-y-0">
+        <h2 className="mb-3 border-b border-[color:var(--border)] pb-2 text-[11px] font-bold uppercase tracking-wider text-[color:var(--muted)]">
+          {locale === "en" ? "In short" : "Em resumo"}
+        </h2>
+        <ul className="divide-y divide-[color:var(--border)] border border-[color:var(--border)] bg-[color:var(--surface)]">
+          {highlights.map((item) => {
+            const pct = formatPct(item.pct_change, locale);
+            const pctTone =
+              item.pct_change === null || item.pct_change === undefined
+                ? "text-[color:var(--muted)]"
+                : item.pct_change >= 0
+                  ? "text-amber-600 dark:text-amber-400"
+                  : "text-emerald-600 dark:text-emerald-400";
+
+            return (
+              <li key={item.id} className="px-3 py-3">
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-[color:var(--muted)]">
+                  {item.label}
+                </div>
+                <div className="mt-1 text-lg font-bold tabular-nums text-[color:var(--foreground)]">
+                  {formatValue(item.value, locale)}
+                </div>
+                {(item.comparison_label || item.comparison_value !== null) && (
+                  <div className="mt-1 text-[11px] text-[color:var(--muted)]">
+                    {item.comparison_label ? `${item.comparison_label}: ` : ""}
+                    <span className="font-medium text-[color:var(--foreground)]">
+                      {formatValue(item.comparison_value, locale)}
+                    </span>
+                  </div>
+                )}
+                {pct ? (
+                  <div className={`mt-1 text-[11px] font-semibold ${pctTone}`}>{pct}</div>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    );
+  }
+
   return (
     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {highlights.map((item) => {

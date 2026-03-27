@@ -21,21 +21,38 @@ export default function SimpleBarChart({
   locale,
   data,
   height = 300,
+  xAxisLabel,
+  yAxisLabel,
+  variant = "default",
 }: {
   locale: Locale;
   data: Point[];
   height?: number;
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  variant?: "default" | "news";
 }) {
   if (!data.length) {
     return (
-      <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)]">
+      <div
+        className={`border border-[color:var(--border)] bg-[color:var(--surface)] p-6 text-sm text-[color:var(--muted)] ${
+          variant === "news" ? "rounded-lg" : "rounded-2xl shadow-[var(--shadow-float)]"
+        }`}
+      >
         {locale === "en" ? "No data." : "Sem dados."}
       </div>
     );
   }
 
   const width = 1000;
-  const padding = { top: 20, right: 20, bottom: 56, left: 64 };
+  const axisLabelBottom = xAxisLabel ? 22 : 0;
+  const axisLabelLeft = yAxisLabel ? 18 : 0;
+  const padding = {
+    top: 20,
+    right: 20,
+    bottom: 56 + axisLabelBottom,
+    left: 64 + axisLabelLeft,
+  };
   const plotWidth = width - padding.left - padding.right;
   const plotHeight = height - padding.top - padding.bottom;
 
@@ -51,7 +68,11 @@ export default function SimpleBarChart({
   const tickStep = getTickStep(data.length);
 
   return (
-    <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 shadow-[var(--shadow-float)]">
+    <div
+      className={`border border-[color:var(--border)] bg-[color:var(--surface)] p-3 ${
+        variant === "news" ? "rounded-lg" : "rounded-2xl p-4 shadow-[var(--shadow-float)]"
+      }`}
+    >
       <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full">
         {tickValues.map((tick, i) => {
           const y = yAt(tick);
@@ -99,7 +120,7 @@ export default function SimpleBarChart({
               {i % tickStep === 0 || i === data.length - 1 ? (
                 <text
                   x={x + barWidth / 2}
-                  y={height - 16}
+                  y={height - 16 - axisLabelBottom}
                   textAnchor="middle"
                   fontSize="11"
                   fill="currentColor"
@@ -111,6 +132,33 @@ export default function SimpleBarChart({
             </g>
           );
         })}
+
+        {yAxisLabel ? (
+          <text
+            x={12 + axisLabelLeft / 2}
+            y={padding.top + plotHeight / 2}
+            textAnchor="middle"
+            fontSize="11"
+            fill="currentColor"
+            opacity="0.72"
+            transform={`rotate(-90 ${12 + axisLabelLeft / 2} ${padding.top + plotHeight / 2})`}
+          >
+            {yAxisLabel}
+          </text>
+        ) : null}
+
+        {xAxisLabel ? (
+          <text
+            x={padding.left + plotWidth / 2}
+            y={height - 6}
+            textAnchor="middle"
+            fontSize="11"
+            fill="currentColor"
+            opacity="0.72"
+          >
+            {xAxisLabel}
+          </text>
+        ) : null}
       </svg>
     </div>
   );
