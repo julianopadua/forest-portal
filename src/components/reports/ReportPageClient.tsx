@@ -972,6 +972,7 @@ export default function ReportPageClient({
       ? catalogItem.heroImageCreditEn ?? catalogItem.heroImageCreditPt
       : catalogItem.heroImageCreditPt ?? catalogItem.heroImageCreditEn;
 
+
   const filterSlot = (
     <ReportMinimalFilters
       locale={locale}

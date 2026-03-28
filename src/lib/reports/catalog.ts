@@ -41,9 +41,9 @@ export const REPORTS_CATALOG: ReportCatalogItem[] = [
     layout: "news",
     heroImageSrc: "/images/reports/bdqueimadas-cerrado-hero.png",
     heroImageCreditPt:
-      "Savana precisa do fogo, mas a ação humana altera regimes naturais. Imagem ilustrativa do bioma Cerrado (referência visual alinhada a reportagens como Conexão UFRJ).",
+      "Imagem ilustrativa do bioma Cerrado em chamas. Fonte: Conexão UFRJ.",
     heroImageCreditEn:
-      "Savannas depend on fire, but human action changes natural fire regimes. Illustrative image of the Cerrado (visual reference aligned with outlets such as Conexão UFRJ).",
+      "Illustrative image of the Cerrado on flames. Source: Conexão UFRJ.",
     relatedArticleUrl: "https://conexao.ufrj.br/2021/07/como-o-fogo-se-comporta-no-cerrado/",
     relatedArticleLabelPt: "Como o fogo se comporta no Cerrado? (Conexão UFRJ)",
     relatedArticleLabelEn: "How does fire behave in the Cerrado? (Conexão UFRJ)",
