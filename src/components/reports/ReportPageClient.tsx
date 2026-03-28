@@ -1049,6 +1049,7 @@ export default function ReportPageClient({
             yearRange={report.coverage.year_range}
             latestPeriod={report.coverage.latest_period}
             highlights={highlights}
+            relatedAgricolasNews={catalogItem.id === "bdqueimadas_overview"}
           />
         </div>
       </div>

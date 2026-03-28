@@ -1,9 +1,9 @@
 // src/components/reports/ReportNewsSidebar.tsx
 import Link from "next/link";
-import type { Locale } from "@/lib/reports/types";
-import type { ReportCatalogItem } from "@/lib/reports/catalog";
+import NoticiasAgricolasRelatedBlock from "@/components/reports/NoticiasAgricolasRelatedBlock";
 import ReportHighlights from "@/components/reports/ReportHighlights";
-import type { ResolvedReportHighlight } from "@/lib/reports/types";
+import type { ReportCatalogItem } from "@/lib/reports/catalog";
+import type { Locale, ResolvedReportHighlight } from "@/lib/reports/types";
 
 function formatDateTime(iso: string, locale: Locale) {
   const d = new Date(iso);
@@ -21,6 +21,7 @@ export default function ReportNewsSidebar({
   yearRange,
   latestPeriod,
   highlights,
+  relatedAgricolasNews = false,
 }: {
   locale: Locale;
   catalogItem: ReportCatalogItem;
@@ -28,6 +29,8 @@ export default function ReportNewsSidebar({
   yearRange?: string | null;
   latestPeriod?: string | null;
   highlights: ResolvedReportHighlight[];
+  /** Feed JSON em Storage (Notícias Agrícolas), ex.: relatório BDQueimadas. */
+  relatedAgricolasNews?: boolean;
 }) {
   const relatedUrl = catalogItem.relatedArticleUrl;
   const relatedLabel =
@@ -38,6 +41,8 @@ export default function ReportNewsSidebar({
   return (
     <aside className="space-y-5 border-t border-[color:var(--border)] pt-6 lg:border-t-0 lg:pt-0">
       <ReportHighlights locale={locale} highlights={highlights} variant="sidebar" />
+
+      {relatedAgricolasNews ? <NoticiasAgricolasRelatedBlock locale={locale} /> : null}
 
       <div className="border border-[color:var(--border)] bg-[color:var(--surface-2)]/50 p-4 text-xs leading-relaxed text-[color:var(--foreground)]">
         <h2 className="border-b border-[color:var(--border)] pb-2 text-[11px] font-bold uppercase tracking-wider text-[color:var(--muted)]">
