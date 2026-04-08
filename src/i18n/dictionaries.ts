@@ -295,9 +295,15 @@ export const dictionaries: Record<Locale, Dict> = {
           commitments: {
             title: "Compromissos",
             bullets: [
+              "Dados abertos de órgãos públicos nacionais: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP e outras fontes relevantes.",
+              "Dados internacionais de organismos e agências globais.",
+              "Dados de sensoriamento remoto e imagens de satélite.",
+              "Dados de investimentos de organizações supranacionais como BID e Banco Mundial.",
+              "Análise de sistemas complexos e interdependentes, como a interação entre mercado de commodities e variáveis climáticas.",
+              "Trilha de aprendizado gratuita com passo a passo para reproduzir localmente as rotinas e automações do projeto.",
               "Uso responsável e orientação a impacto socioambiental.",
               "Documentação pública como requisito, não como etapa opcional.",
-              "Escalabilidade por automação, modularidade e padrões de dados.",
+              "Escalabilidade por automação, modularidade e padrões de dados abertos.",
             ],
           },
           outcomes: {
@@ -521,9 +527,15 @@ export const dictionaries: Record<Locale, Dict> = {
           commitments: {
             title: "Commitments",
             bullets: [
+              "Open data from national public agencies: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP, and other relevant sources.",
+              "International data from global organizations and agencies.",
+              "Remote sensing and satellite imagery data.",
+              "Investment data from supranational organizations such as the IDB and World Bank.",
+              "Analysis of complex and interdependent systems, such as the interaction between commodity markets and climate variables.",
+              "Free learning track with step-by-step guides to reproduce the project's routines and automations locally.",
               "Responsible use and a socio-environmental impact orientation.",
               "Public documentation as a requirement, not an optional step.",
-              "Scalability through automation, modularity, and data standards.",
+              "Scalability through automation, modularity, and open data standards.",
             ],
           },
           outcomes: {

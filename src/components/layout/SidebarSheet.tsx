@@ -4,7 +4,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Button from "@/components/ui/Button";
 import { useI18n } from "@/i18n/I18nProvider";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
@@ -104,15 +103,16 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
 
   const isLight = theme === "light";
   const panelClass = isLight
-    ? "border-emerald-500/65 bg-black/38 text-white backdrop-blur-2xl"
+    ? "border-white/15 bg-black/38 text-white backdrop-blur-2xl"
     : "border-[color:var(--border)] bg-[color:var(--surface)]/80 text-[color:var(--text)] backdrop-blur-xl";
   const mutedTextClass = isLight ? "text-white/90" : "text-[color:var(--muted)]";
   const softButtonClass = isLight
-    ? "border-emerald-400/70 bg-black/25 text-white hover:bg-black/40"
-    : "border-[color:var(--border)] bg-[color:var(--surface-2)] hover:bg-[color:var(--surface-3)]";
+    ? "border-white/20 bg-black/25 text-white hover:bg-black/40"
+    : "border-[color:var(--border)] bg-[color:var(--surface-2)] text-[color:var(--foreground)] hover:bg-[color:var(--surface-3)]";
   const navItemClass = isLight
     ? "block rounded-xl px-3 py-2 text-white/95 hover:bg-black/35"
     : "block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]";
+  const actionButtonClass = `rounded-xl border px-4 py-2 text-sm font-medium transition focus:outline-none ${softButtonClass}`;
 
   if (!open) return null;
 
@@ -145,19 +145,19 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
           <div className="mb-4 flex items-center gap-2">
             {user ? (
               <Link href="/settings" className="flex-1" onClick={onClose}>
-                <Button className="w-full" variant="ghost">
+                <button className={`w-full ${actionButtonClass}`}>
                   {dict.common.settings}
-                </Button>
+                </button>
               </Link>
             ) : (
-              <Button className="flex-1" variant="ghost" onClick={() => setOpenAuth(true)}>
+              <button className={`flex-1 ${actionButtonClass}`} onClick={() => setOpenAuth(true)}>
                 {dict.common.signIn}
-              </Button>
+              </button>
             )}
 
             <button
               onClick={toggleTheme}
-              className={`rounded-xl border px-3 py-2 ${softButtonClass}`}
+              className={`rounded-xl border px-3 py-2 focus:outline-none ${softButtonClass}`}
               aria-label={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
               title={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
             >
@@ -218,23 +218,23 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
           <div className="mt-5">
             <button
               onClick={() => setOpenSettings((v) => !v)}
-              className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-sm ${softButtonClass}`}
+              className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-sm focus:outline-none ${softButtonClass}`}
             >
               <span className="font-medium">{dict.common.settings}</span>
               {openSettings ? <ChevronDown className={`h-4 w-4 ${mutedTextClass}`} /> : <ChevronRight className={`h-4 w-4 ${mutedTextClass}`} />}
             </button>
 
             {openSettings && (
-              <div className={`mt-3 space-y-3 rounded-xl border p-3 ${isLight ? "border-emerald-400/60 bg-black/25" : "border-[color:var(--border)] bg-[color:var(--surface)]"}`}>
+              <div className={`mt-3 space-y-3 rounded-xl border p-3 ${isLight ? "border-white/15 bg-black/25" : "border-[color:var(--border)] bg-[color:var(--surface)]"}`}>
                 <div>
                   <div className={`mb-2 text-xs font-semibold ${mutedTextClass}`}>{dict.common.language}</div>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" className={locale === "pt" ? "opacity-100" : "opacity-60"} onClick={() => setLocale("pt")}>
+                    <button className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition focus:outline-none ${softButtonClass} ${locale === "pt" ? "opacity-100" : "opacity-60"}`} onClick={() => setLocale("pt")}>
                       {dict.common.pt}
-                    </Button>
-                    <Button variant="ghost" size="sm" className={locale === "en" ? "opacity-100" : "opacity-60"} onClick={() => setLocale("en")}>
+                    </button>
+                    <button className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition focus:outline-none ${softButtonClass} ${locale === "en" ? "opacity-100" : "opacity-60"}`} onClick={() => setLocale("en")}>
                       {dict.common.en}
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>

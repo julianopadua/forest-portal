@@ -8,7 +8,7 @@ export default function Footer() {
   const { dict } = useI18n();
 
   return (
-    <footer className="border-t border-[color:var(--border)] bg-[color:var(--surface)]">
+    <footer className="relative z-10 border-t border-[color:var(--border)] bg-[color:var(--background)]">
       <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-[color:var(--muted)]">
         <div className="grid gap-8 md:grid-cols-4">
           <div>

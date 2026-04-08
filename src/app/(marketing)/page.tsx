@@ -197,7 +197,7 @@ function Section({
 }) {
   return (
     <section id={id} className="py-7 md:py-9 scroll-mt-24">
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-6xl px-4">
         <Reveal>
           <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 md:p-9 backdrop-blur-xl">
             <div className="max-w-3xl">
@@ -224,7 +224,7 @@ export default function MarketingHome() {
       <div className="relative z-10">
         {/* HERO */}
         <section className="py-10 md:py-12">
-          <div className="mx-auto max-w-7xl px-4">
+          <div className="mx-auto max-w-6xl px-4">
             <Reveal>
               <div className="relative overflow-hidden rounded-3xl border border-[color:var(--border)] backdrop-blur-xl">
                 <video
@@ -264,9 +264,9 @@ export default function MarketingHome() {
 
             <div className="relative hidden h-full items-stretch justify-center md:flex">
               <div className="h-full w-px bg-[color:var(--border)]" />
-              <div className="absolute top-1/2 -translate-y-1/2 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] p-2">
+              <div className="absolute top-1/2 -translate-y-1/2 rounded-full border border-[color:var(--border)] bg-[color:var(--primary)]/20 p-2">
                 <Image
-                  src="/images/logos/002-big-logo.png"
+                  src="/images/logos/001-wlogo.png"
                   alt="Forest Institute"
                   width={48}
                   height={48}

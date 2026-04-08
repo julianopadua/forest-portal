@@ -78,7 +78,7 @@ export default function Header() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4">
           <div
             className="mt-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] backdrop-blur-xl"
             style={{ boxShadow: "var(--shadow-float)" }}
