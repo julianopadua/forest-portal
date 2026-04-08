@@ -2,6 +2,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 
@@ -201,34 +202,13 @@ function Section({
           <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 md:p-9 backdrop-blur-xl">
             <div className="max-w-3xl">
               <h2 className="text-2xl md:text-3xl font-semibold">{title}</h2>
-              <p className="mt-2 text-[color:var(--muted)]">{subtitle}</p>
+              {subtitle ? <p className="mt-2 text-[color:var(--muted)]">{subtitle}</p> : null}
             </div>
             <div className="mt-6">{children}</div>
           </div>
         </Reveal>
       </div>
     </section>
-  );
-}
-
-function InfoCard({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-5">
-      <div className="font-semibold">{title}</div>
-      <div className="mt-2 text-sm text-[color:var(--muted)]">{children}</div>
-    </div>
-  );
-}
-
-function Paragraphs({ items }: { items: string[] }) {
-  return (
-    <>
-      {items.map((p, idx) => (
-        <p key={`${idx}-${p.slice(0, 16)}`} className={idx === 0 ? "" : "mt-3"}>
-          {p}
-        </p>
-      ))}
-    </>
   );
 }
 
@@ -271,31 +251,38 @@ export default function MarketingHome() {
         </section>
 
         {/* SOBRE O INSTITUTO */}
-        <Section id={m.aboutInstitute.id} title={m.aboutInstitute.title} subtitle={m.aboutInstitute.subtitle}>
-          <div className="grid gap-3 md:grid-cols-2">
-            <InfoCard title={m.aboutInstitute.cards.purpose.title}>
-              <Paragraphs items={m.aboutInstitute.cards.purpose.paragraphs} />
-            </InfoCard>
+        <Section id={m.aboutInstitute.id} title={m.aboutInstitute.title} subtitle="">
+          <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_4.5rem_minmax(0,1fr)] md:items-start">
+            <article>
+              <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.purpose.title}</h3>
+              <div className="mt-3 space-y-3 text-sm text-[color:var(--muted)]">
+                {m.aboutInstitute.cards.purpose.paragraphs.map((text) => (
+                  <p key={text}>{text}</p>
+                ))}
+              </div>
+            </article>
 
-            <InfoCard title={m.aboutInstitute.cards.delivery.title}>
-              <ul className="list-disc pl-5 space-y-1">
-                {m.aboutInstitute.cards.delivery.bullets.map((b) => (
-                  <li key={b}>{b}</li>
+            <div className="relative hidden h-full items-stretch justify-center md:flex">
+              <div className="h-full w-px bg-[color:var(--border)]" />
+              <div className="absolute top-1/2 -translate-y-1/2 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] p-2">
+                <Image
+                  src="/images/logos/002-big-logo.png"
+                  alt="Forest Institute"
+                  width={48}
+                  height={48}
+                  className="h-10 w-10 animate-[spin_14s_linear_infinite] object-contain"
+                />
+              </div>
+            </div>
+
+            <article>
+              <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.commitments.title}</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[color:var(--muted)]">
+                {m.aboutInstitute.cards.commitments.bullets.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </InfoCard>
-
-            <InfoCard title={m.aboutInstitute.cards.commitments.title}>
-              <ul className="list-disc pl-5 space-y-1">
-                {m.aboutInstitute.cards.commitments.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </InfoCard>
-
-            <InfoCard title={m.aboutInstitute.cards.outcomes.title}>
-              <Paragraphs items={m.aboutInstitute.cards.outcomes.paragraphs} />
-            </InfoCard>
+            </article>
           </div>
         </Section>
 

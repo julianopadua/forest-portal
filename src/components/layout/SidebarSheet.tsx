@@ -102,6 +102,18 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
     setTheme(next);
   };
 
+  const isLight = theme === "light";
+  const panelClass = isLight
+    ? "border-emerald-500/65 bg-black/38 text-white backdrop-blur-2xl"
+    : "border-[color:var(--border)] bg-[color:var(--surface)]/80 text-[color:var(--text)] backdrop-blur-xl";
+  const mutedTextClass = isLight ? "text-white/90" : "text-[color:var(--muted)]";
+  const softButtonClass = isLight
+    ? "border-emerald-400/70 bg-black/25 text-white hover:bg-black/40"
+    : "border-[color:var(--border)] bg-[color:var(--surface-2)] hover:bg-[color:var(--surface-3)]";
+  const navItemClass = isLight
+    ? "block rounded-xl px-3 py-2 text-white/95 hover:bg-black/35"
+    : "block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]";
+
   if (!open) return null;
 
   return (
@@ -110,19 +122,19 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
         <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
 
         <aside
-          className="absolute left-0 top-0 h-full w-[320px] md:w-[400px] border-r border-[color:var(--border)] bg-[color:var(--surface)]/80 p-4 backdrop-blur-xl"
+          className={`absolute left-0 top-0 h-full w-[320px] md:w-[400px] border-r p-4 ${panelClass}`}
           style={{ boxShadow: "var(--shadow-float)" }}
           aria-label={dict.common.menuTitle}
         >
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <IconMenu className="h-4 w-4 text-[color:var(--muted)]" />
+              <IconMenu className={`h-4 w-4 ${mutedTextClass}`} />
               <div className="text-sm font-semibold">{dict.common.menuTitle}</div>
             </div>
 
             <button
               onClick={onClose}
-              className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-2 hover:bg-[color:var(--surface-3)]"
+              className={`rounded-lg border px-2 py-2 ${softButtonClass}`}
               aria-label={dict.common.closeMenu}
               title={dict.common.closeMenu}
             >
@@ -145,7 +157,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
 
             <button
               onClick={toggleTheme}
-              className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 hover:bg-[color:var(--surface-3)]"
+              className={`rounded-xl border px-3 py-2 ${softButtonClass}`}
               aria-label={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
               title={theme === "dark" ? dict.common.themeToLight : dict.common.themeToDark}
             >
@@ -155,7 +167,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
 
           <nav className="space-y-1" aria-label="Navegação">
             <Link
-              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              className={navItemClass}
               href="/"
               onClick={onClose}
             >
@@ -163,7 +175,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
             </Link>
 
             <Link
-              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              className={navItemClass}
               href={`/${openDataId}`}
               onClick={onClose}
             >
@@ -171,7 +183,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
             </Link>
 
             <Link
-              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              className={navItemClass}
               href={`/${reportsId}`}
               onClick={onClose}
             >
@@ -179,7 +191,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
             </Link>
 
             <Link
-              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              className={navItemClass}
               href={`/${educationId}`}
               onClick={onClose}
             >
@@ -187,7 +199,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
             </Link>
 
             <Link
-              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              className={navItemClass}
               href="/blog"
               onClick={onClose}
             >
@@ -195,7 +207,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
             </Link>
 
             <Link
-              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              className={navItemClass}
               href="/quem-somos"
               onClick={onClose}
             >
@@ -206,16 +218,16 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
           <div className="mt-5">
             <button
               onClick={() => setOpenSettings((v) => !v)}
-              className="flex w-full items-center justify-between rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2 text-sm hover:bg-[color:var(--surface-3)]"
+              className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-sm ${softButtonClass}`}
             >
               <span className="font-medium">{dict.common.settings}</span>
-              {openSettings ? <ChevronDown className="h-4 w-4 text-[color:var(--muted)]" /> : <ChevronRight className="h-4 w-4 text-[color:var(--muted)]" />}
+              {openSettings ? <ChevronDown className={`h-4 w-4 ${mutedTextClass}`} /> : <ChevronRight className={`h-4 w-4 ${mutedTextClass}`} />}
             </button>
 
             {openSettings && (
-              <div className="mt-3 space-y-3 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-3">
+              <div className={`mt-3 space-y-3 rounded-xl border p-3 ${isLight ? "border-emerald-400/60 bg-black/25" : "border-[color:var(--border)] bg-[color:var(--surface)]"}`}>
                 <div>
-                  <div className="mb-2 text-xs font-semibold text-[color:var(--muted)]">{dict.common.language}</div>
+                  <div className={`mb-2 text-xs font-semibold ${mutedTextClass}`}>{dict.common.language}</div>
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" size="sm" className={locale === "pt" ? "opacity-100" : "opacity-60"} onClick={() => setLocale("pt")}>
                       {dict.common.pt}

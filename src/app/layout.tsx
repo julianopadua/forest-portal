@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
 
           {/* wrapper do conteúdo com flex-1 para empurrar o footer ao fim */}
-          <div className="flex-1 pt-20">{children}</div>
+          <div className="flex-1 pt-24 md:pt-28">{children}</div>
 
           <Footer />
         </I18nProvider>

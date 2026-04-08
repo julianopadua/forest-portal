@@ -278,8 +278,9 @@ export const dictionaries: Record<Locale, Dict> = {
           purpose: {
             title: "Propósito institucional",
             paragraphs: [
-              "Fornecer dados abertos, estruturados e auditáveis a partir de fontes relevantes para economia, logística, agricultura, saúde e segurança social, com foco em aplicações práticas e decisões no mundo real.",
-              "O Instituto prioriza transparência metodológica: o dado final deve ser acompanhado do processo que o produz, incluindo coleta, validação e transformação.",
+              "Nossa atuação parte do entendimento contemporâneo da ciência sobre sistemas: dados públicos de diferentes domínios só geram valor quando tratados como partes interdependentes de uma mesma realidade operacional.",
+              "A Teoria Geral dos Sistemas, proposta por Ludwig von Bertalanffy entre as décadas de 1940 e 1960, orienta esta abordagem ao permitir transformar dados em bulk em insights interdisciplinares aplicáveis a decisões concretas.",
+              "Por isso, organizamos dados abertos estruturados e auditáveis com transparência metodológica completa, do processo de coleta e validação até a transformação final.",
             ],
           },
           delivery: {
@@ -503,8 +504,9 @@ export const dictionaries: Record<Locale, Dict> = {
           purpose: {
             title: "Institutional purpose",
             paragraphs: [
-              "Provide open, structured, auditable data from sources relevant to economy, logistics, agriculture, health, and social security, focused on practical applications and real-world decisions.",
-              "The Institute prioritizes methodological transparency: the final dataset must be accompanied by the process that produces it, including collection, validation, and transformation.",
+              "Our work is grounded in contemporary systems science: public data from different domains only creates value when treated as interdependent parts of the same operational reality.",
+              "General Systems Theory, proposed by Ludwig von Bertalanffy from the 1940s to the 1960s, informs this approach by enabling bulk data to be transformed into interdisciplinary insights for real decisions.",
+              "For this reason, we organize open, structured, auditable data with full methodological transparency, from collection and validation to final transformation.",
             ],
           },
           delivery: {
