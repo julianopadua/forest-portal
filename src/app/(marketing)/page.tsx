@@ -2,7 +2,7 @@
 
 "use client";
 
-import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 
@@ -202,7 +202,7 @@ function Section({
           <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 md:p-9 backdrop-blur-xl">
             <div className="max-w-3xl">
               <h2 className="text-2xl md:text-3xl font-semibold">{title}</h2>
-              <p className="mt-2 text-[color:var(--muted)]">{subtitle}</p>
+              {subtitle ? <p className="mt-2 text-[color:var(--muted)]">{subtitle}</p> : null}
             </div>
             <div className="mt-6">{children}</div>
           </div>
@@ -212,47 +212,10 @@ function Section({
   );
 }
 
-function LinkCard({ href, title, desc }: { href: string; title: string; desc: string }) {
-  return (
-    <Link
-      href={href}
-      className="block rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-5 transition hover:bg-[color:var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[color:var(--border)]"
-      aria-label={title}
-    >
-      <div className="font-semibold">{title}</div>
-      <div className="mt-1 text-sm text-[color:var(--muted)]">{desc}</div>
-    </Link>
-  );
-}
-
-function InfoCard({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-5">
-      <div className="font-semibold">{title}</div>
-      <div className="mt-2 text-sm text-[color:var(--muted)]">{children}</div>
-    </div>
-  );
-}
-
-function Paragraphs({ items }: { items: string[] }) {
-  return (
-    <>
-      {items.map((p, idx) => (
-        <p key={`${idx}-${p.slice(0, 16)}`} className={idx === 0 ? "" : "mt-3"}>
-          {p}
-        </p>
-      ))}
-    </>
-  );
-}
-
 export default function MarketingHome() {
   const { dict } = useI18n();
 
   const m = dict.marketing;
-  const portfolioUrl = process.env.NEXT_PUBLIC_PORTFOLIO_URL;
-
-  const openDataHref = `/${m.sections.mission.id}`;
 
   return (
     <div className="relative">
@@ -263,24 +226,24 @@ export default function MarketingHome() {
         <section className="py-10 md:py-12">
           <div className="mx-auto max-w-6xl px-4">
             <Reveal>
-              <div className="rounded-3xl border border-[color:var(--border)] bg-gradient-to-b from-[color:var(--surface-2)] to-[color:var(--surface)] p-8 md:p-11 backdrop-blur-xl">
-                <h1 className="text-3xl md:text-5xl font-semibold leading-tight">{m.hero.title}</h1>
+              <div className="relative overflow-hidden rounded-3xl border border-[color:var(--border)] backdrop-blur-xl">
+                <video
+                  className="absolute inset-0 h-full w-full object-cover"
+                  src="/video/cerrado_chamas.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20" />
 
-                <p className="mt-4 max-w-3xl text-[color:var(--muted)]">{m.hero.subtitle}</p>
-
-                <div className="mt-6">
-                  <Link
-                    href={openDataHref}
-                    className="inline-flex items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-2 text-sm transition hover:bg-[color:var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[color:var(--border)]"
-                  >
-                    {m.hero.ctaPrimary}
-                  </Link>
-                </div>
-
-                <div className="mt-9 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-                  {m.hero.primaryCards.map((c) => (
-                    <LinkCard key={c.href} href={c.href} title={c.title} desc={c.desc} />
-                  ))}
+                <div className="relative grid min-h-[24rem] gap-7 p-8 md:min-h-[28rem] md:p-11 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-end">
+                  <div className="max-w-3xl">
+                    <h1 className="text-[2rem] md:text-[2.35rem] font-semibold leading-tight text-white">{m.hero.title}</h1>
+                    <p className="mt-4 text-white/85">{m.hero.subtitle}</p>
+                  </div>
+                  <div />
                 </div>
               </div>
             </Reveal>
@@ -288,73 +251,41 @@ export default function MarketingHome() {
         </section>
 
         {/* SOBRE O INSTITUTO */}
-        <Section id={m.aboutInstitute.id} title={m.aboutInstitute.title} subtitle={m.aboutInstitute.subtitle}>
-          <div className="grid gap-3 md:grid-cols-2">
-            <InfoCard title={m.aboutInstitute.cards.purpose.title}>
-              <Paragraphs items={m.aboutInstitute.cards.purpose.paragraphs} />
-            </InfoCard>
+        <Section id={m.aboutInstitute.id} title={m.aboutInstitute.title} subtitle="">
+          <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_4.5rem_minmax(0,1fr)] md:items-start">
+            <article>
+              <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.purpose.title}</h3>
+              <div className="mt-3 space-y-3 text-sm text-[color:var(--muted)]">
+                {m.aboutInstitute.cards.purpose.paragraphs.map((text) => (
+                  <p key={text}>{text}</p>
+                ))}
+              </div>
+            </article>
 
-            <InfoCard title={m.aboutInstitute.cards.delivery.title}>
-              <ul className="list-disc pl-5 space-y-1">
-                {m.aboutInstitute.cards.delivery.bullets.map((b) => (
-                  <li key={b}>{b}</li>
+            <div className="relative hidden h-full items-stretch justify-center md:flex">
+              <div className="h-full w-px bg-[color:var(--border)]" />
+              <div className="absolute top-1/2 -translate-y-1/2 rounded-full border border-[color:var(--border)] bg-[color:var(--primary)]/20 p-2">
+                <Image
+                  src="/images/logos/001-wlogo.png"
+                  alt="Forest Institute"
+                  width={48}
+                  height={48}
+                  className="h-10 w-10 animate-[spin_14s_linear_infinite] object-contain"
+                />
+              </div>
+            </div>
+
+            <article>
+              <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.commitments.title}</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[color:var(--muted)]">
+                {m.aboutInstitute.cards.commitments.bullets.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </InfoCard>
-
-            <InfoCard title={m.aboutInstitute.cards.commitments.title}>
-              <ul className="list-disc pl-5 space-y-1">
-                {m.aboutInstitute.cards.commitments.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </InfoCard>
-
-            <InfoCard title={m.aboutInstitute.cards.outcomes.title}>
-              <Paragraphs items={m.aboutInstitute.cards.outcomes.paragraphs} />
-            </InfoCard>
+            </article>
           </div>
         </Section>
 
-        {/* DEDICATORIA */}
-        <Section id={m.dedication.id} title={m.dedication.title} subtitle={m.dedication.subtitle}>
-          <div className="grid gap-3 md:grid-cols-2">
-            {m.dedication.people.map((p) => (
-              <InfoCard key={p.name} title={p.name}>
-                <Paragraphs items={p.paragraphs} />
-              </InfoCard>
-            ))}
-          </div>
-
-          <div className="mt-4 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-5 text-sm text-[color:var(--muted)]">
-            <div className="font-semibold">{m.dedication.note.title}</div>
-            <p className="mt-2">{m.dedication.note.body}</p>
-          </div>
-        </Section>
-
-        {/* CRIADOR */}
-        <Section id={m.creator.id} title={m.creator.title} subtitle={m.creator.subtitle}>
-          <div className="grid gap-3 md:grid-cols-2">
-            <InfoCard title={m.creator.authorCard.title}>
-              <p>{m.creator.authorCard.body}</p>
-            </InfoCard>
-
-            <InfoCard title={m.creator.contactCard.title}>
-              <p>{portfolioUrl ? m.creator.contactCard.withUrl : m.creator.contactCard.withoutUrl}</p>
-
-              {portfolioUrl ? (
-                <a
-                  href={portfolioUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 inline-flex items-center justify-center rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-2 text-sm transition hover:bg-[color:var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[color:var(--border)]"
-                >
-                  {m.creator.contactCard.button}
-                </a>
-              ) : null}
-            </InfoCard>
-          </div>
-        </Section>
       </div>
     </div>
   );

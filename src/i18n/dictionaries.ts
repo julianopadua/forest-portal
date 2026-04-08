@@ -9,6 +9,8 @@ export type Dict = {
     en: string;
 
     home: string;
+    blog: string;
+    aboutUs: string;
 
     menuTitle: string;
     openMenu: string;
@@ -32,12 +34,22 @@ export type Dict = {
   footer: {
     brand: string;
     tagline: string;
+    quickLinks: string;
+    contact: string;
+    social: string;
+    email: string;
     links: {
       home: string;
+      blog: string;
+      aboutUs: string;
       openData: string;
       commodities: string;
       reports: string;
       education: string;
+    };
+    socialLinks: {
+      instagram: string;
+      linkedin: string;
     };
   };
 
@@ -143,6 +155,8 @@ export const dictionaries: Record<Locale, Dict> = {
       en: "Inglês",
 
       home: "Home",
+      blog: "Blog",
+      aboutUs: "Quem somos",
 
       menuTitle: "Menu",
       openMenu: "Abrir menu",
@@ -166,21 +180,31 @@ export const dictionaries: Record<Locale, Dict> = {
     footer: {
       brand: "Forest Institute",
       tagline: "Dados abertos, relatórios e educação aplicada.",
+      quickLinks: "Links rápidos",
+      contact: "Contato",
+      social: "Redes sociais",
+      email: "contato@forest.institute",
       links: {
         home: "Home",
+        blog: "Blog",
+        aboutUs: "Quem somos",
         openData: "Dados abertos",
         commodities: "Commodities",
         reports: "Reports",
         education: "Educação",
       },
+      socialLinks: {
+        instagram: "Instagram",
+        linkedin: "LinkedIn",
+      },
     },
 
     marketing: {
       hero: {
-        title: "Dados abertos para clima, queimadas e decisão no mundo real.",
+        title: "Dados abertos para queimadas, clima e decisões no mundo real.",
         subtitle:
-          "O Instituto Forest organiza dados públicos e scripts de coleta em pipelines reproduzíveis. Publicamos relatórios automatizados, documentação e trilhas de aprendizado abertas para ampliar autonomia e capacidade técnica.",
-        ctaPrimary: "Explorar dados abertos",
+          "Somos uma organização sem fins lucrativos que centraliza dados públicos, publica o esquema completo para reproduzir localmente e automatiza a extração de múltiplas fontes com pipelines abertos. Aqui você encontra dados abertos de órgãos públicos voltados a monitoramento climático, mercados financeiros, mercados de commodities e investimentos bancários.",
+        ctaPrimary: "",
 
         // Mantido por compatibilidade (title/desc apenas).
         cards: [
@@ -202,28 +226,7 @@ export const dictionaries: Record<Locale, Dict> = {
           },
         ],
 
-        primaryCards: [
-          {
-            href: "/open-data",
-            title: "Dados abertos",
-            desc: "Clima, queimadas e decisão no mundo real.",
-          },
-          {
-            href: "/reports",
-            title: "Relatórios",
-            desc: "Relatórios automatizados, customizáveis e reproduzíveis localmente.",
-          },
-          {
-            href: "/education",
-            title: "Educação",
-            desc: "Espaço aberto que visa o aprendizado e a colaboração.",
-          },
-          {
-            href: "#sobre-o-instituto",
-            title: "Sobre o Instituto",
-            desc: "Missão pública, princípios e compromisso open source.",
-          },
-        ],
+        primaryCards: [],
       },
 
       // Mantive as rotas/ids atuais.
@@ -270,13 +273,14 @@ export const dictionaries: Record<Locale, Dict> = {
       aboutInstitute: {
         id: "sobre-o-instituto",
         title: "Instituto Forest",
-        subtitle: "Organização sem fins lucrativos, open source e orientada à utilidade pública.",
+        subtitle: "Propósito público e compromissos claros para dados abertos úteis no mundo real.",
         cards: {
           purpose: {
             title: "Propósito institucional",
             paragraphs: [
-              "Fornecer dados abertos, estruturados e auditáveis a partir de fontes relevantes para economia, logística, agricultura, saúde e segurança social, com foco em aplicações práticas e decisões no mundo real.",
-              "O Instituto prioriza transparência metodológica: o dado final deve ser acompanhado do processo que o produz, incluindo coleta, validação e transformação.",
+              "Nossa atuação parte do entendimento contemporâneo da ciência sobre sistemas: dados públicos de diferentes domínios só geram valor quando tratados como partes interdependentes de uma mesma realidade operacional.",
+              "A Teoria Geral dos Sistemas, proposta por Ludwig von Bertalanffy entre as décadas de 1940 e 1960, orienta esta abordagem ao permitir transformar dados em bulk em insights interdisciplinares aplicáveis a decisões concretas.",
+              "Por isso, organizamos dados abertos estruturados e auditáveis com transparência metodológica completa, do processo de coleta e validação até a transformação final.",
             ],
           },
           delivery: {
@@ -291,9 +295,15 @@ export const dictionaries: Record<Locale, Dict> = {
           commitments: {
             title: "Compromissos",
             bullets: [
+              "Dados abertos de órgãos públicos nacionais: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP e outras fontes relevantes.",
+              "Dados internacionais de organismos e agências globais.",
+              "Dados de sensoriamento remoto e imagens de satélite.",
+              "Dados de investimentos de organizações supranacionais como BID e Banco Mundial.",
+              "Análise de sistemas complexos e interdependentes, como a interação entre mercado de commodities e variáveis climáticas.",
+              "Trilha de aprendizado gratuita com passo a passo para reproduzir localmente as rotinas e automações do projeto.",
               "Uso responsável e orientação a impacto socioambiental.",
               "Documentação pública como requisito, não como etapa opcional.",
-              "Escalabilidade por automação, modularidade e padrões de dados.",
+              "Escalabilidade por automação, modularidade e padrões de dados abertos.",
             ],
           },
           outcomes: {
@@ -377,6 +387,8 @@ export const dictionaries: Record<Locale, Dict> = {
       en: "English",
 
       home: "Home",
+      blog: "Blog",
+      aboutUs: "About us",
 
       menuTitle: "Menu",
       openMenu: "Open menu",
@@ -400,21 +412,31 @@ export const dictionaries: Record<Locale, Dict> = {
     footer: {
       brand: "Forest Institute",
       tagline: "Open data, weekly reports, and applied education.",
+      quickLinks: "Quick links",
+      contact: "Contact",
+      social: "Social",
+      email: "contact@forest.institute",
       links: {
         home: "Home",
+        blog: "Blog",
+        aboutUs: "About us",
         openData: "Open data",
         commodities: "Commodities",
         reports: "Reports",
         education: "Education",
       },
+      socialLinks: {
+        instagram: "Instagram",
+        linkedin: "LinkedIn",
+      },
     },
 
     marketing: {
       hero: {
-        title: "Open data for climate, fires, and real-world decision-making.",
+        title: "Open data for wildfires, climate, and real-world decisions.",
         subtitle:
-          "Forest Institute organizes public data and scraping scripts into reproducible pipelines. We publish automated reports, documentation, and open learning tracks to expand autonomy and technical capacity.",
-        ctaPrimary: "Explore open data",
+          "We are a nonprofit organization that centralizes public data, publishes the full local replication scheme, and automates extraction from multiple sources with open pipelines. Here you can access open data from public agencies focused on climate monitoring, financial markets, commodities markets, and banking investments.",
+        ctaPrimary: "",
 
         // Kept for compatibility (title/desc only).
         cards: [
@@ -437,28 +459,7 @@ export const dictionaries: Record<Locale, Dict> = {
         ],
 
         // New (aligned with page.tsx): includes href.
-        primaryCards: [
-          {
-            href: "/open-data",
-            title: "Open data",
-            desc: "Climate, fires, and decision-making in the real world.",
-          },
-          {
-            href: "/reports",
-            title: "Reports",
-            desc: "Automated, customizable reports that can be reproduced locally.",
-          },
-          {
-            href: "/education",
-            title: "Education",
-            desc: "An open space focused on learning and collaboration.",
-          },
-          {
-            href: "#sobre-o-instituto",
-            title: "About the Institute",
-            desc: "Public mission, principles, and an open source commitment.",
-          },
-        ],
+        primaryCards: [],
       },
 
       sections: {
@@ -504,13 +505,14 @@ export const dictionaries: Record<Locale, Dict> = {
       aboutInstitute: {
         id: "sobre-o-instituto",
         title: "Forest Institute",
-        subtitle: "A nonprofit, open source organization oriented toward public benefit.",
+        subtitle: "Public purpose and clear commitments for useful open data in the real world.",
         cards: {
           purpose: {
             title: "Institutional purpose",
             paragraphs: [
-              "Provide open, structured, auditable data from sources relevant to economy, logistics, agriculture, health, and social security, focused on practical applications and real-world decisions.",
-              "The Institute prioritizes methodological transparency: the final dataset must be accompanied by the process that produces it, including collection, validation, and transformation.",
+              "Our work is grounded in contemporary systems science: public data from different domains only creates value when treated as interdependent parts of the same operational reality.",
+              "General Systems Theory, proposed by Ludwig von Bertalanffy from the 1940s to the 1960s, informs this approach by enabling bulk data to be transformed into interdisciplinary insights for real decisions.",
+              "For this reason, we organize open, structured, auditable data with full methodological transparency, from collection and validation to final transformation.",
             ],
           },
           delivery: {
@@ -525,9 +527,15 @@ export const dictionaries: Record<Locale, Dict> = {
           commitments: {
             title: "Commitments",
             bullets: [
+              "Open data from national public agencies: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP, and other relevant sources.",
+              "International data from global organizations and agencies.",
+              "Remote sensing and satellite imagery data.",
+              "Investment data from supranational organizations such as the IDB and World Bank.",
+              "Analysis of complex and interdependent systems, such as the interaction between commodity markets and climate variables.",
+              "Free learning track with step-by-step guides to reproduce the project's routines and automations locally.",
               "Responsible use and a socio-environmental impact orientation.",
               "Public documentation as a requirement, not an optional step.",
-              "Scalability through automation, modularity, and data standards.",
+              "Scalability through automation, modularity, and open data standards.",
             ],
           },
           outcomes: {
