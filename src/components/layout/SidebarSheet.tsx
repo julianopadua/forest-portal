@@ -75,7 +75,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
   const router = useRouter();
   const { user } = useSupabaseUser();
 
-  const [openSettings, setOpenSettings] = useState(true);
+  const [openSettings, setOpenSettings] = useState(false);
   const [theme, setTheme] = useState<ThemeMode>("light");
   const [openAuth, setOpenAuth] = useState(false);
 

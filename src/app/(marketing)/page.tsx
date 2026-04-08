@@ -196,7 +196,7 @@ function Section({
 }) {
   return (
     <section id={id} className="py-7 md:py-9 scroll-mt-24">
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-7xl px-4">
         <Reveal>
           <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 md:p-9 backdrop-blur-xl">
             <div className="max-w-3xl">
@@ -244,26 +244,26 @@ export default function MarketingHome() {
       <div className="relative z-10">
         {/* HERO */}
         <section className="py-10 md:py-12">
-          <div className="mx-auto max-w-6xl px-4">
+          <div className="mx-auto max-w-7xl px-4">
             <Reveal>
-              <div className="rounded-3xl border border-[color:var(--border)] bg-gradient-to-b from-[color:var(--surface-2)] to-[color:var(--surface)] p-8 md:p-11 backdrop-blur-xl">
-                <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:items-center">
-                  <div>
-                    <h1 className="text-3xl md:text-5xl font-semibold leading-tight">{m.hero.title}</h1>
-                    <p className="mt-4 max-w-3xl text-[color:var(--muted)]">{m.hero.subtitle}</p>
-                  </div>
+              <div className="relative overflow-hidden rounded-3xl border border-[color:var(--border)] backdrop-blur-xl">
+                <video
+                  className="absolute inset-0 h-full w-full object-cover"
+                  src="/video/cerrado_chamas.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20" />
 
-                  <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-black/20">
-                    <video
-                      className="h-full w-full object-cover"
-                      src="/video/cerrado_chamas.mp4"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
+                <div className="relative grid min-h-[24rem] gap-7 p-8 md:min-h-[28rem] md:p-11 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-end">
+                  <div className="max-w-3xl">
+                    <h1 className="text-[2rem] md:text-[2.35rem] font-semibold leading-tight text-white">{m.hero.title}</h1>
+                    <p className="mt-4 text-white/85">{m.hero.subtitle}</p>
                   </div>
+                  <div />
                 </div>
               </div>
             </Reveal>

@@ -201,9 +201,9 @@ export const dictionaries: Record<Locale, Dict> = {
 
     marketing: {
       hero: {
-        title: "Organizamos dados públicos para uso prático e reprodutível.",
+        title: "Dados abertos para queimadas, clima e decisões no mundo real.",
         subtitle:
-          "Somos uma organização sem fins lucrativos que centraliza dados públicos, publica o esquema completo para reproduzir localmente e automatiza a extração de múltiplas fontes com pipelines abertos.",
+          "Somos uma organização sem fins lucrativos que centraliza dados públicos, publica o esquema completo para reproduzir localmente e automatiza a extração de múltiplas fontes com pipelines abertos. Aqui você encontra dados abertos de órgãos públicos voltados a monitoramento climático, mercados financeiros, mercados de commodities e investimentos bancários.",
         ctaPrimary: "",
 
         // Mantido por compatibilidade (title/desc apenas).
@@ -426,9 +426,9 @@ export const dictionaries: Record<Locale, Dict> = {
 
     marketing: {
       hero: {
-        title: "We organize public data for practical and reproducible use.",
+        title: "Open data for wildfires, climate, and real-world decisions.",
         subtitle:
-          "We are a nonprofit organization that centralizes public data, publishes the full local replication scheme, and automates extraction from multiple sources with open pipelines.",
+          "We are a nonprofit organization that centralizes public data, publishes the full local replication scheme, and automates extraction from multiple sources with open pipelines. Here you can access open data from public agencies focused on climate monitoring, financial markets, commodities markets, and banking investments.",
         ctaPrimary: "",
 
         // Kept for compatibility (title/desc only).
