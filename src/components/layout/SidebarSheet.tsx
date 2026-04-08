@@ -83,10 +83,6 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
   const reportsId = dict.marketing.sections.contents.id;
   const educationId = dict.marketing.sections.community.id;
 
-  const aboutId = dict.marketing.aboutInstitute.id;
-  const dedicationId = dict.marketing.dedication.id;
-  const creatorId = dict.marketing.creator.id;
-
   useEffect(() => {
     const getThemeFromHtml = (): ThemeMode => {
       const html = document.documentElement;
@@ -190,31 +186,21 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
               {dict.marketing.sections.community.title}
             </Link>
 
-            <div className="mt-3 border-t border-[color:var(--border)] pt-3">
-              <Link
-                className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
-                href={`/#${aboutId}`}
-                onClick={onClose}
-              >
-                {dict.marketing.aboutInstitute.title}
-              </Link>
+            <Link
+              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              href="/blog"
+              onClick={onClose}
+            >
+              {dict.common.blog}
+            </Link>
 
-              <Link
-                className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
-                href={`/#${dedicationId}`}
-                onClick={onClose}
-              >
-                {dict.marketing.dedication.title}
-              </Link>
-
-              <Link
-                className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
-                href={`/#${creatorId}`}
-                onClick={onClose}
-              >
-                {dict.marketing.creator.title}
-              </Link>
-            </div>
+            <Link
+              className="block rounded-xl px-3 py-2 text-[color:var(--muted)] hover:bg-[color:var(--surface-2)]"
+              href="/quem-somos"
+              onClick={onClose}
+            >
+              {dict.common.aboutUs}
+            </Link>
           </nav>
 
           <div className="mt-5">

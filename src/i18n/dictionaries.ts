@@ -9,6 +9,8 @@ export type Dict = {
     en: string;
 
     home: string;
+    blog: string;
+    aboutUs: string;
 
     menuTitle: string;
     openMenu: string;
@@ -32,12 +34,22 @@ export type Dict = {
   footer: {
     brand: string;
     tagline: string;
+    quickLinks: string;
+    contact: string;
+    social: string;
+    email: string;
     links: {
       home: string;
+      blog: string;
+      aboutUs: string;
       openData: string;
       commodities: string;
       reports: string;
       education: string;
+    };
+    socialLinks: {
+      instagram: string;
+      linkedin: string;
     };
   };
 
@@ -143,6 +155,8 @@ export const dictionaries: Record<Locale, Dict> = {
       en: "Inglês",
 
       home: "Home",
+      blog: "Blog",
+      aboutUs: "Quem somos",
 
       menuTitle: "Menu",
       openMenu: "Abrir menu",
@@ -166,21 +180,31 @@ export const dictionaries: Record<Locale, Dict> = {
     footer: {
       brand: "Forest Institute",
       tagline: "Dados abertos, relatórios e educação aplicada.",
+      quickLinks: "Links rápidos",
+      contact: "Contato",
+      social: "Redes sociais",
+      email: "contato@forest.institute",
       links: {
         home: "Home",
+        blog: "Blog",
+        aboutUs: "Quem somos",
         openData: "Dados abertos",
         commodities: "Commodities",
         reports: "Reports",
         education: "Educação",
       },
+      socialLinks: {
+        instagram: "Instagram",
+        linkedin: "LinkedIn",
+      },
     },
 
     marketing: {
       hero: {
-        title: "Dados abertos para clima, queimadas e decisão no mundo real.",
+        title: "Organizamos dados públicos para uso prático e reprodutível.",
         subtitle:
-          "O Instituto Forest organiza dados públicos e scripts de coleta em pipelines reproduzíveis. Publicamos relatórios automatizados, documentação e trilhas de aprendizado abertas para ampliar autonomia e capacidade técnica.",
-        ctaPrimary: "Explorar dados abertos",
+          "Somos uma organização sem fins lucrativos que centraliza dados públicos, publica o esquema completo para reproduzir localmente e automatiza a extração de múltiplas fontes com pipelines abertos.",
+        ctaPrimary: "",
 
         // Mantido por compatibilidade (title/desc apenas).
         cards: [
@@ -202,28 +226,7 @@ export const dictionaries: Record<Locale, Dict> = {
           },
         ],
 
-        primaryCards: [
-          {
-            href: "/open-data",
-            title: "Dados abertos",
-            desc: "Clima, queimadas e decisão no mundo real.",
-          },
-          {
-            href: "/reports",
-            title: "Relatórios",
-            desc: "Relatórios automatizados, customizáveis e reproduzíveis localmente.",
-          },
-          {
-            href: "/education",
-            title: "Educação",
-            desc: "Espaço aberto que visa o aprendizado e a colaboração.",
-          },
-          {
-            href: "#sobre-o-instituto",
-            title: "Sobre o Instituto",
-            desc: "Missão pública, princípios e compromisso open source.",
-          },
-        ],
+        primaryCards: [],
       },
 
       // Mantive as rotas/ids atuais.
@@ -270,7 +273,7 @@ export const dictionaries: Record<Locale, Dict> = {
       aboutInstitute: {
         id: "sobre-o-instituto",
         title: "Instituto Forest",
-        subtitle: "Organização sem fins lucrativos, open source e orientada à utilidade pública.",
+        subtitle: "Propósito público e compromissos claros para dados abertos úteis no mundo real.",
         cards: {
           purpose: {
             title: "Propósito institucional",
@@ -377,6 +380,8 @@ export const dictionaries: Record<Locale, Dict> = {
       en: "English",
 
       home: "Home",
+      blog: "Blog",
+      aboutUs: "About us",
 
       menuTitle: "Menu",
       openMenu: "Open menu",
@@ -400,21 +405,31 @@ export const dictionaries: Record<Locale, Dict> = {
     footer: {
       brand: "Forest Institute",
       tagline: "Open data, weekly reports, and applied education.",
+      quickLinks: "Quick links",
+      contact: "Contact",
+      social: "Social",
+      email: "contact@forest.institute",
       links: {
         home: "Home",
+        blog: "Blog",
+        aboutUs: "About us",
         openData: "Open data",
         commodities: "Commodities",
         reports: "Reports",
         education: "Education",
       },
+      socialLinks: {
+        instagram: "Instagram",
+        linkedin: "LinkedIn",
+      },
     },
 
     marketing: {
       hero: {
-        title: "Open data for climate, fires, and real-world decision-making.",
+        title: "We organize public data for practical and reproducible use.",
         subtitle:
-          "Forest Institute organizes public data and scraping scripts into reproducible pipelines. We publish automated reports, documentation, and open learning tracks to expand autonomy and technical capacity.",
-        ctaPrimary: "Explore open data",
+          "We are a nonprofit organization that centralizes public data, publishes the full local replication scheme, and automates extraction from multiple sources with open pipelines.",
+        ctaPrimary: "",
 
         // Kept for compatibility (title/desc only).
         cards: [
@@ -437,28 +452,7 @@ export const dictionaries: Record<Locale, Dict> = {
         ],
 
         // New (aligned with page.tsx): includes href.
-        primaryCards: [
-          {
-            href: "/open-data",
-            title: "Open data",
-            desc: "Climate, fires, and decision-making in the real world.",
-          },
-          {
-            href: "/reports",
-            title: "Reports",
-            desc: "Automated, customizable reports that can be reproduced locally.",
-          },
-          {
-            href: "/education",
-            title: "Education",
-            desc: "An open space focused on learning and collaboration.",
-          },
-          {
-            href: "#sobre-o-instituto",
-            title: "About the Institute",
-            desc: "Public mission, principles, and an open source commitment.",
-          },
-        ],
+        primaryCards: [],
       },
 
       sections: {
@@ -504,7 +498,7 @@ export const dictionaries: Record<Locale, Dict> = {
       aboutInstitute: {
         id: "sobre-o-instituto",
         title: "Forest Institute",
-        subtitle: "A nonprofit, open source organization oriented toward public benefit.",
+        subtitle: "Public purpose and clear commitments for useful open data in the real world.",
         cards: {
           purpose: {
             title: "Institutional purpose",

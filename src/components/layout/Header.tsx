@@ -167,6 +167,14 @@ export default function Header() {
                   <Link className={`${navLinkClass} min-w-[132px] text-center lg:min-w-[160px]`} href={`/${educationId}`}>
                     {dict.marketing.sections.community.title}
                   </Link>
+
+                  <Link className={`${navLinkClass} min-w-[110px] text-center lg:min-w-[130px]`} href="/blog">
+                    {dict.common.blog}
+                  </Link>
+
+                  <Link className={`${navLinkClass} min-w-[110px] text-center lg:min-w-[130px]`} href="/quem-somos">
+                    {dict.common.aboutUs}
+                  </Link>
                 </div>
               </nav>
 
