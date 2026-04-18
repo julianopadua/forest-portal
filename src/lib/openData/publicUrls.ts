@@ -12,8 +12,16 @@ export function getPublicObjectUrl(path: string) {
 }
 
 export function withDownload(url: string, filename?: string) {
-  const u = new URL(url);
-  // Supabase: ?download força download (opcionalmente com nome custom) :contentReference[oaicite:3]{index=3}
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return url;
+  }
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/+$/, "");
+  if (!base || !u.href.startsWith(base)) {
+    return url;
+  }
   if (filename) u.searchParams.set("download", filename);
   else u.searchParams.set("download", "");
   return u.toString();

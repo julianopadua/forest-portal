@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OPEN_DATA_DATASETS } from "@/lib/openData/catalog";
-import type { OpenDataManifest } from "@/lib/openData/types";
+import {
+  ANP_CATALOG_COMPACT_PATH,
+  buildManifestFromAnpDataset,
+  isAnpDatasetSource,
+  type AnpCatalogCompact,
+} from "@/lib/openData/anpCatalog";
+import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
 import { getPublicObjectUrl, withDownload } from "@/lib/openData/publicUrls";
 import { DownloadAllButton } from "@/components/open-data/DownloadAllButton";
 
@@ -23,7 +29,7 @@ function formatBytes(n: number) {
  * Lógica de ordenação robusta para períodos.
  * Suporta "Atual", datas ISO (YYYY-MM-DD), meses (YYYY-MM) e anos (YYYY).
  */
-function itemSortKey(item: any) {
+function itemSortKey(item: OpenDataItem) {
   const p = (item.period || "").trim();
   if (p.toLowerCase() === "atual") return Number.POSITIVE_INFINITY;
 
@@ -61,11 +67,22 @@ export default async function OpenDataDatasetPage({
 
   if (!ds) notFound();
 
-  const url = getPublicObjectUrl(ds.manifest_path);
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar manifest (${ds.id})`);
+  let manifest: OpenDataManifest;
 
-  const manifest = (await res.json()) as OpenDataManifest;
+  if (isAnpDatasetSource(ds.source_id)) {
+    const compactUrl = getPublicObjectUrl(ANP_CATALOG_COMPACT_PATH);
+    const res = await fetch(compactUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar catálogo ANP (${ds.id})`);
+    const compact = (await res.json()) as AnpCatalogCompact;
+    const built = buildManifestFromAnpDataset(compact, ds.slug, ds.source_url);
+    if (!built) notFound();
+    manifest = built;
+  } else {
+    const url = getPublicObjectUrl(ds.manifest_path);
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar manifest (${ds.id})`);
+    manifest = (await res.json()) as OpenDataManifest;
+  }
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
@@ -142,9 +159,13 @@ export default async function OpenDataDatasetPage({
         <ul className="divide-y divide-[color:var(--border)]">
           {manifest.items
             .slice()
-            .sort((a, b) => itemSortKey(b) - itemSortKey(a))
+            .sort((a, b) => {
+              const d = itemSortKey(b) - itemSortKey(a);
+              if (d !== 0) return d;
+              return (a.title || a.filename).localeCompare(b.title || b.filename, "pt-BR");
+            })
             .map((it) => (
-              <li key={`${it.period}-${it.filename}`} className="grid grid-cols-12 px-6 py-4 text-sm items-center hover:bg-[color:var(--surface-2)]/40 transition-colors group">
+              <li key={it.public_url} className="grid grid-cols-12 px-6 py-4 text-sm items-center hover:bg-[color:var(--surface-2)]/40 transition-colors group">
                 <div className="col-span-3 font-medium text-[color:var(--text)]">
                   {it.period}
                 </div>

@@ -33,20 +33,34 @@ export default function OpenDataPageClient() {
             Dados abertos
           </h1>
 
-          <div className="relative w-full md:w-[420px]">
-            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar datasets…"
-              className="w-full rounded-xl border border-[color:var(--border)] bg-transparent py-2 pl-10 pr-3 text-sm text-[color:var(--text)] outline-none placeholder:text-[color:var(--muted)] focus:ring-2 focus:ring-[color:var(--primary)]"
-              aria-label="Buscar datasets"
-            />
+          <div className="flex w-full items-center gap-2 md:max-w-[min(100%,28rem)]">
+            {query ? (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="shrink-0 rounded-lg px-2 py-1.5 text-xs font-medium text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]"
+                aria-label="Limpar busca"
+              >
+                Limpar
+              </button>
+            ) : (
+              <span className="shrink-0 w-[3.25rem]" aria-hidden />
+            )}
+            <div className="relative min-w-0 flex-1">
+              <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar datasets…"
+                className="w-full rounded-xl border border-[color:var(--border)] bg-transparent py-2 pl-10 pr-3 text-sm text-[color:var(--text)] outline-none placeholder:text-[color:var(--muted)] focus:ring-2 focus:ring-[color:var(--primary)]"
+                aria-label="Buscar datasets"
+              />
+            </div>
           </div>
         </div>
 
         <p className="mt-2 text-[color:var(--muted)]">
-          Downloads diretos do Storage público, organizados por dataset e período.
+          Arquivos no Storage público e links diretos às fontes oficiais, organizados por dataset e período.
         </p>
       </header>
 

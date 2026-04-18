@@ -1,25 +1,11 @@
 // src/lib/openData/catalog.ts
 
-export type OpenDataDataset = {
-  id: string;
+import type { OpenDataDataset } from "./openDataDataset";
+import { ANP_OPEN_DATA_DATASETS } from "./anpDatasets.generated";
 
-  // Navegação/organização (catálogo)
-  category_title: string;    // ex: "Mercado financeiro" ou "Meio ambiente"
-  subcategory_title: string; // ex: "Fundos" ou "Queimadas"
-  source_id: string;         // ex: "cvm", "eia", "inpe"
-  source_title: string;      // ex: "CVM", "EIA", "INPE"
-  slug: string;              // ex: "fi-informe-diario"
+export type { OpenDataDataset } from "./openDataDataset";
 
-  // Conteúdo
-  title: string;
-  description: string;
-
-  // Infra
-  manifest_path: string;     // path dentro do bucket público
-  source_url: string;        // link para a fonte oficial
-};
-
-export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
+const BASE_OPEN_DATA_DATASETS: OpenDataDataset[] = [
   // =========================================
   // Mercado financeiro -> Fundos -> CVM
   // =========================================
@@ -138,7 +124,8 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
   {
     id: "eia_petroleum_weekly",
     category_title: "Mercado de commodities",
-    subcategory_title: "Petróleo",
+    segment_title: "Energia",
+    subcategory_title: "Petróleo e gás",
     source_id: "eia",
     source_title: "EIA",
     slug: "petroleum-weekly",
@@ -150,7 +137,8 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
   {
     id: "eia_petroleum_monthly",
     category_title: "Mercado de commodities",
-    subcategory_title: "Petróleo",
+    segment_title: "Energia",
+    subcategory_title: "Petróleo e gás",
     source_id: "eia",
     source_title: "EIA",
     slug: "petroleum-monthly",
@@ -162,7 +150,8 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
   {
     id: "eia_heating_oil_propane",
     category_title: "Mercado de commodities",
-    subcategory_title: "Petróleo",
+    segment_title: "Energia",
+    subcategory_title: "Petróleo e gás",
     source_id: "eia",
     source_title: "EIA",
     slug: "heating-oil-propane-prices",
@@ -215,4 +204,9 @@ export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
     manifest_path: "inmet/dados_historicos/manifest.json",
     source_url: "https://portal.inmet.gov.br/dadoshistoricos",
   },
+];
+
+export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
+  ...BASE_OPEN_DATA_DATASETS,
+  ...ANP_OPEN_DATA_DATASETS,
 ];
