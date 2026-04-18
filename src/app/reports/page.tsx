@@ -1,13 +1,30 @@
 // src/app/reports/page.tsx
 
-import Link from "next/link";
+import ReportsIndexTile from "@/components/reports/ReportsIndexTile";
 import { REPORTS_CATALOG } from "@/lib/reports/catalog";
 import { fetchStableReport } from "@/lib/reports/fetch";
+import { resolveLocalizedText, resolveNullableLocalizedText } from "@/lib/reports/localize";
+import type { ReportDocument } from "@/lib/reports/types";
 
-function formatDateOnly(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleDateString("pt-BR");
+function truncateOverview(text: string, maxLen: number) {
+  const t = text.trim();
+  if (t.length <= maxLen) return t;
+  const cut = t.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(" ");
+  const head = lastSpace > 48 ? cut.slice(0, lastSpace) : cut;
+  return `${head.trim()}…`;
+}
+
+function excerptFromDocument(doc: ReportDocument, fallbackDescription: string): string {
+  const fromAnalysis = doc.analysis?.overview
+    ? resolveLocalizedText(doc.analysis.overview, "pt")
+    : "";
+  if (fromAnalysis.trim()) return truncateOverview(fromAnalysis, 260);
+
+  const fromSummary = resolveNullableLocalizedText(doc.summary ?? null, "pt");
+  if (fromSummary?.trim()) return truncateOverview(fromSummary, 260);
+
+  return truncateOverview(fallbackDescription, 260);
 }
 
 type ReportCardData = {
@@ -20,6 +37,8 @@ type ReportCardData = {
   generatedAt: string | null;
   yearRange: string | null;
   latestYear: number | null;
+  heroImageSrc?: string;
+  excerpt: string;
 };
 
 async function loadCards(): Promise<ReportCardData[]> {
@@ -37,6 +56,8 @@ async function loadCards(): Promise<ReportCardData[]> {
           generatedAt: doc.generated_at ?? null,
           yearRange: doc.coverage?.year_range ?? null,
           latestYear: doc.coverage?.latest_year ?? null,
+          heroImageSrc: item.heroImageSrc,
+          excerpt: excerptFromDocument(doc, item.description),
         };
       } catch {
         return {
@@ -49,9 +70,11 @@ async function loadCards(): Promise<ReportCardData[]> {
           generatedAt: null,
           yearRange: null,
           latestYear: null,
+          heroImageSrc: item.heroImageSrc,
+          excerpt: truncateOverview(item.description, 260),
         };
       }
-    })
+    }),
   );
 
   return cards;
@@ -61,77 +84,48 @@ export default async function ReportsPage() {
   const cards = await loadCards();
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
-      <section className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--surface)] p-8 shadow-[var(--shadow-float)] md:p-10">
-        <div className="max-w-4xl">
-          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[color:var(--primary)]">
-            Publicações / Relatórios
-          </div>
+    <main className="mx-auto w-full max-w-6xl px-3 py-10 sm:px-4">
+      <header className="w-full border-b border-[color:var(--border)] pb-10">
+        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[color:var(--primary)]">
+          Publicações / Relatórios
+        </p>
 
-          <h1 className="mt-3 text-3xl font-black tracking-tight text-[color:var(--foreground)] md:text-5xl">
-            Relatórios analíticos
-          </h1>
+        <h1 className="mt-3 w-full text-3xl font-black tracking-tight text-[color:var(--foreground)] md:text-5xl">
+          Relatórios analíticos
+        </h1>
 
-          <p className="mt-4 leading-relaxed text-[color:var(--muted)]">
-            Esta seção reúne páginas analíticas permanentes, atualizadas a partir de pipelines
-            de dados e publicadas como artefatos leves consumidos diretamente pelo portal.
+        <div className="mt-6 w-full space-y-4 text-base leading-relaxed text-[color:var(--muted)]">
+          <p>
+            Esta seção mostra o que dados públicos e automação conseguem fazer quando o método é aberto: páginas
+            analíticas que se atualizam a partir de pipelines reproduzíveis, com apoio de inteligência artificial na
+            redação e na organização do conteúdo — sempre sobre as mesmas bases que você pode auditar no catálogo de
+            dados abertos.
+          </p>
+          <p>
+            O objetivo é informar e, ao mesmo tempo, dar visibilidade ao poder da automação e ao ecossistema
+            open-source que torna isso possível. Cada relatório traz notícias e leituras de apoio escolhidas para
+            contextualizar o tema: elas têm peso próprio — use-as para ir além do que está publicado aqui e não se
+            baseie só neste resumo automatizado.
           </p>
         </div>
-      </section>
+      </header>
 
-      <section className="mt-8 grid gap-5 md:grid-cols-2">
-        {cards.map((card) => (
-          <Link
+      <section className="mt-10 grid gap-8 md:grid-cols-2">
+        {cards.map((card, index) => (
+          <ReportsIndexTile
             key={card.slug}
             href={`/reports/${card.slug}`}
-            className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-6 shadow-[var(--shadow-float)] transition hover:-translate-y-0.5 hover:bg-[color:var(--surface-2)]"
-          >
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[color:var(--primary)]">
-              {card.categoryTitle} / {card.sourceTitle}
-            </div>
-
-            <h2 className="mt-3 text-2xl font-black tracking-tight text-[color:var(--foreground)]">
-              {card.title}
-            </h2>
-
-            <p className="mt-3 text-sm leading-relaxed text-[color:var(--muted)]">
-              {card.description}
-            </p>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {card.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-1 text-[11px] font-medium text-[color:var(--muted)]"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-bold uppercase tracking-wider text-[color:var(--muted)]">
-              <div>
-                <span className="opacity-60">Atualizado:</span>{" "}
-                <span className="text-[color:var(--foreground)]">
-                  {card.generatedAt ? formatDateOnly(card.generatedAt) : "-"}
-                </span>
-              </div>
-
-              {card.yearRange ? (
-                <div>
-                  <span className="opacity-60">Cobertura:</span>{" "}
-                  <span className="text-[color:var(--foreground)]">{card.yearRange}</span>
-                </div>
-              ) : null}
-
-              {card.latestYear ? (
-                <div>
-                  <span className="opacity-60">Ano:</span>{" "}
-                  <span className="text-[color:var(--foreground)]">{card.latestYear}</span>
-                </div>
-              ) : null}
-            </div>
-          </Link>
+            categoryTitle={card.categoryTitle}
+            sourceTitle={card.sourceTitle}
+            title={card.title}
+            excerpt={card.excerpt}
+            heroImageSrc={card.heroImageSrc}
+            generatedAt={card.generatedAt}
+            yearRange={card.yearRange}
+            latestYear={card.latestYear}
+            tags={card.tags}
+            priorityImage={index === 0}
+          />
         ))}
       </section>
     </main>
