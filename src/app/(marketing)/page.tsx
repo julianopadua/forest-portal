@@ -255,7 +255,7 @@ export default function MarketingHome() {
           <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_4.5rem_minmax(0,1fr)] md:items-start">
             <article>
               <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.purpose.title}</h3>
-              <div className="mt-3 space-y-3 text-sm text-[color:var(--muted)]">
+              <div className="mt-3 space-y-3 text-justify text-sm text-[color:var(--muted)]">
                 {m.aboutInstitute.cards.purpose.paragraphs.map((text) => (
                   <p key={text}>{text}</p>
                 ))}
@@ -264,20 +264,20 @@ export default function MarketingHome() {
 
             <div className="relative hidden h-full items-stretch justify-center md:flex">
               <div className="h-full w-px bg-[color:var(--border)]" />
-              <div className="absolute top-1/2 -translate-y-1/2 rounded-full border border-[color:var(--border)] bg-[color:var(--primary)]/20 p-2">
+              <div className="absolute top-1/2 flex -translate-y-1/2 items-center justify-center">
                 <Image
                   src="/images/logos/001-wlogo.png"
                   alt="Forest Institute"
-                  width={48}
-                  height={48}
-                  className="h-10 w-10 animate-[spin_14s_linear_infinite] object-contain"
+                  width={112}
+                  height={112}
+                  className="forest-marketing-logo h-24 w-24 object-contain md:h-28 md:w-28"
                 />
               </div>
             </div>
 
             <article>
               <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.commitments.title}</h3>
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[color:var(--muted)]">
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-justify text-sm text-[color:var(--muted)]">
                 {m.aboutInstitute.cards.commitments.bullets.map((item) => (
                   <li key={item}>{item}</li>
                 ))}

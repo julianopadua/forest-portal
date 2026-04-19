@@ -184,3 +184,32 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
+
+/* Marketing / sobre o instituto: logo com rotação lenta + matiz a variar devagar */
+@keyframes forest-marketing-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes forest-marketing-logo-hue {
+  from {
+    filter: hue-rotate(0deg) saturate(1.06);
+  }
+  to {
+    filter: hue-rotate(360deg) saturate(1.12);
+  }
+}
+
+.forest-marketing-logo {
+  animation: forest-marketing-logo-spin 14s linear infinite, forest-marketing-logo-hue 88s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forest-marketing-logo {
+    animation: none;
+  }
+}
