@@ -306,7 +306,7 @@ export default function MarketingHome() {
               <div className="absolute top-1/2 flex -translate-y-1/2 items-center justify-center">
                 <Image
                   src="/images/logos/001-wlogo.png"
-                  alt="Forest Institute"
+                  alt="Instituto Forest"
                   width={112}
                   height={112}
                   className="forest-marketing-logo h-24 w-24 object-contain md:h-28 md:w-28"

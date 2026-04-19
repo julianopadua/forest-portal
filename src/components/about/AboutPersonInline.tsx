@@ -15,7 +15,7 @@ export function AboutPersonInline({ name, description, photoSrc, photoAlt, photo
     <div className="flex flex-col gap-5 border-t border-[color:var(--border)]/80 py-10 first:border-t-0 first:pt-0 sm:flex-row sm:gap-10 md:py-12">
       {photoSrc ? (
         <div className="flex w-full shrink-0 flex-col sm:w-auto sm:max-w-[7.5rem]">
-          <div className="relative mx-auto h-24 w-24 overflow-hidden sm:mx-0 sm:h-28 sm:w-28">
+          <div className="relative mx-auto h-32 w-32 overflow-hidden sm:mx-0 sm:h-28 sm:w-28">
             <Image
               src={photoSrc}
               alt={photoAlt ?? name}

@@ -177,7 +177,7 @@ export const dictionaries: Record<Locale, Dict> = {
     },
 
     footer: {
-      brand: "Forest Institute",
+      brand: "Instituto Forest",
       tagline: "Dados abertos e relatórios com método reprodutível.",
       quickLinks: "Links rápidos",
       contact: "Contato",
@@ -363,7 +363,7 @@ export const dictionaries: Record<Locale, Dict> = {
     explore: {
       title: "Explorar como visitante",
       body:
-        "Aqui você pode navegar por conteúdos públicos do Forest Institute sem criar uma conta. Algumas funcionalidades ficam restritas para membros.",
+        "Aqui você pode navegar por conteúdos públicos do Instituto Forest sem criar uma conta. Algumas funcionalidades ficam restritas para membros.",
       backHome: "Voltar para a home",
       join: "Fazer parte do Instituto",
     },
@@ -407,7 +407,7 @@ export const dictionaries: Record<Locale, Dict> = {
     },
 
     footer: {
-      brand: "Forest Institute",
+      brand: "Instituto Forest",
       tagline: "Open data and reports with a reproducible method.",
       quickLinks: "Quick links",
       contact: "Contact",
@@ -500,7 +500,7 @@ export const dictionaries: Record<Locale, Dict> = {
 
       aboutInstitute: {
         id: "sobre-o-instituto",
-        title: "Forest Institute",
+        title: "Instituto Forest",
         subtitle: "Public purpose and clear commitments for useful open data in the real world.",
         cards: {
           purpose: {
@@ -568,7 +568,7 @@ export const dictionaries: Record<Locale, Dict> = {
         note: {
           title: "Recognition note",
           body:
-            "Forest Institute operates under a simple and demanding premise: public trust depends on public method. Opening the process is part of the product.",
+            "Instituto Forest operates under a simple and demanding premise: public trust depends on public method. Opening the process is part of the product.",
         },
       },
 
@@ -579,7 +579,7 @@ export const dictionaries: Record<Locale, Dict> = {
         authorCard: {
           title: "Juliano Pádua",
           body:
-            "Creator of Forest Institute. This section will be refined from the CV, focusing on technical trajectory, applied research, data engineering, and a commitment to reproducible transparency.",
+            "Creator of Instituto Forest. This section will be refined from the CV, focusing on technical trajectory, applied research, data engineering, and a commitment to reproducible transparency.",
         },
         contactCard: {
           title: "Contact and portfolio",
@@ -592,7 +592,7 @@ export const dictionaries: Record<Locale, Dict> = {
     explore: {
       title: "Explore as a visitor",
       body:
-        "Here you can browse Forest Institute public content without creating an account. Some features are restricted to members.",
+        "Here you can browse Instituto Forest public content without creating an account. Some features are restricted to members.",
       backHome: "Back to home",
       join: "Join the Institute",
     },
