@@ -1,7 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
+/**
+ * Markdown wraps block images in <p>. We replace <img> with <figure> (block content),
+ * which must not sit inside <p>. Unwrap when the paragraph only contains that figure.
+ */
+function MarkdownParagraph({ children }: { children?: ReactNode }) {
+  const nodes = Children.toArray(children).filter(
+    (n) => !(typeof n === "string" && n.trim() === ""),
+  );
+  if (nodes.length === 1 && isValidElement(nodes[0]) && nodes[0].type === "figure") {
+    return nodes[0];
+  }
+  return <p>{children}</p>;
+}
 
 function MarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   if (!src) return null;
@@ -66,6 +81,7 @@ export default function BlogMarkdown({ content }: { content: string }) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          p: MarkdownParagraph,
           img: ({ src, alt }) => <MarkdownImage src={typeof src === "string" ? src : undefined} alt={alt} />,
           a: ({ href, children }) => (
             <MarkdownLink href={typeof href === "string" ? href : undefined}>{children}</MarkdownLink>
