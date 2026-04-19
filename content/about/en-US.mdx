@@ -1,18 +1,12 @@
 import React from "react";
-import {
-  AboutDivider,
-  AboutHero,
-  AboutImageBlock,
-  AboutPersonInline,
-  AboutQuote,
-  AboutSection,
-} from "@/components/about";
+import { AboutDivider, AboutHero, AboutPersonInline, AboutQuote, AboutSection } from "@/components/about";
 
 <AboutHero
   title="About us"
   subtitle="Forest Institute brings together technology, data, and engineering to tackle environmental challenges with systemic rigor — from conservation to monitoring and applied science."
   imageSrc="/images/whoweare/sunset-africa.JPG"
   imageAlt="Landscape at dusk with a wide horizon and vegetation"
+  imageCaption="Sunset in South Africa — Photo: Juliano Pádua"
 />
 
 <AboutSection title="Why Forest Institute exists">
@@ -31,6 +25,10 @@ import {
   title="My path"
   image="/images/whoweare/myself4.jpg"
   imageAlt="Portrait of Juliano Pádua outdoors"
+  imageCaption="Portrait — Photo: Juliano Pádua"
+  image2="/images/whoweare/ufscar.jpg"
+  image2Alt="Federal University of São Carlos — UFSCar"
+  image2Caption="UFSCar — undergraduate Computer Engineering"
   imagePosition="right"
 >
   I am **Juliano Pádua**. My path crosses computer engineering, data, and the environment: interest in infrastructure and software, curiosity for models and evidence, and the conviction that technology can serve conservation when aimed with care.
@@ -61,19 +59,38 @@ import {
 
 <AboutDivider />
 
-<AboutImageBlock
-  src="/images/whoweare/myself3.JPG"
-  alt="Contemplative photograph in an open landscape"
-  caption="Between data and territory: technology as a lens to read complexity responsibly."
-/>
-
 <AboutSection title="Inspirations behind the Institute">
   Forest Institute’s outlook has been deeply shaped by people who devoted their lives to science, environmental conservation, engineering, and protected-area stewardship. Below we gratefully record part of that legacy — as **short biographical notes** — and a dedication to their memory and work.
 
   <AboutPersonInline
+    name="Mariceia Barbosa Silva Pádua"
+    photoSrc="/images/whoweare/mae.png"
+    photoAlt="Mariceia Barbosa Silva Pádua"
+    photoCaption="Mariceia Barbosa Silva Pádua — family archive"
+    description={
+      <>
+        <p>
+          Mariceia is essential to my personal frame of reference: a presence that joins care, responsibility, and sensitivity to life in its many dimensions. Her path reminds us that conservation is also built in everyday choices — in listening and in commitment to people and surroundings.
+        </p>
+        <p className="not-prose mt-3 text-sm">
+          <a
+            href="https://www.minasgerais.com.br/pt/atracoes/parque-estadual-do-pau-furado"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
+          >
+            Pau Furado State Park
+          </a>
+        </p>
+      </>
+    }
+  />
+
+  <AboutPersonInline
     name="Maria Tereza Jorge Pádua"
-    photoSrc="/images/whoweare/Marc-e-MTereza.jpg"
-    photoAlt="Maria Tereza Jorge Pádua in a portrait with Marc Dourojeanni"
+    photoSrc="/images/whoweare/maria-tereza-jorge-padua.jpg"
+    photoAlt="Maria Tereza Jorge Pádua"
+    photoCaption="Maria Tereza Jorge-Pádua. Photo: Márcio Isensee – oeco.org.br"
     description={
       <>
         <p>
@@ -105,8 +122,9 @@ import {
 
   <AboutPersonInline
     name="Marc Dourojeanni"
-    photoSrc="/images/whoweare/marc.JPG"
-    photoAlt="Marc Dourojeanni"
+    photoSrc="/images/whoweare/Marc-e-MTereza.jpg"
+    photoAlt="Marc Dourojeanni and Maria Tereza Jorge Pádua"
+    photoCaption="Marc Dourojeanni and Maria Tereza Jorge Pádua — family archive"
     description={
       <>
         <p>
@@ -122,34 +140,12 @@ import {
           >
             O Eco — Marc Dourojeanni
           </a>
-          {" · "}
-          <a
-            href="https://www.minasgerais.com.br/pt/atracoes/parque-estadual-do-pau-furado"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
-          >
-            Pau Furado State Park
-          </a>
         </p>
       </>
     }
   />
 
-  <AboutPersonInline
-    name="Mariceia Barbosa Silva Pádua"
-    photoSrc="/images/whoweare/mom-sister.jpeg"
-    photoAlt="Mariceia Barbosa Silva Pádua"
-    description={
-      <>
-        <p>
-          Mariceia is essential to my personal frame of reference: a presence that joins care, responsibility, and sensitivity to life in its many dimensions. Her path reminds us that conservation is also built in everyday choices — in listening and in commitment to people and surroundings.
-        </p>
-      </>
-    }
-  />
-
-  <p className="mt-10 text-center text-sm italic text-[color:var(--muted)]">
+  <p className="mt-10 text-justify text-sm italic text-[color:var(--muted)]">
     Forest Institute dedicates its purpose to those who teach, by example, that science, care, and territory belong in the same equation.
   </p>
 </AboutSection>

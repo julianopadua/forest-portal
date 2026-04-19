@@ -1,18 +1,12 @@
 import React from "react";
-import {
-  AboutDivider,
-  AboutHero,
-  AboutImageBlock,
-  AboutPersonInline,
-  AboutQuote,
-  AboutSection,
-} from "@/components/about";
+import { AboutDivider, AboutHero, AboutPersonInline, AboutQuote, AboutSection } from "@/components/about";
 
 <AboutHero
   title="Quem Somos"
   subtitle="O Instituto Forest articula tecnologia, dados e engenharia para enfrentar problemas ambientais com rigor sistêmico — da conservação ao monitoramento e à ciência aplicada."
   imageSrc="/images/whoweare/sunset-africa.JPG"
   imageAlt="Paisagem ao entardecer com horizonte amplo e vegetação"
+  imageCaption="Pôr do sol na África do Sul — Foto: Juliano Pádua"
 />
 
 <AboutSection title="Por que o Instituto Forest existe?">
@@ -31,6 +25,10 @@ import {
   title="Minha trajetória"
   image="/images/whoweare/myself4.jpg"
   imageAlt="Retrato de Juliano Pádua em ambiente externo"
+  imageCaption="Retrato — Foto: Juliano Pádua"
+  image2="/images/whoweare/ufscar.jpg"
+  image2Alt="Universidade Federal de São Carlos — UFSCar"
+  image2Caption="UFSCar — graduação em Engenharia da Computação"
   imagePosition="right"
 >
   Sou **Juliano Pádua**. Minha trajetória cruza engenharia da computação, dados e meio ambiente: interesse por infraestrutura e software, curiosidade por modelos e evidências, e a convicção de que tecnologia pode servir à conservação quando bem direcionada.
@@ -61,19 +59,39 @@ import {
 
 <AboutDivider />
 
-<AboutImageBlock
-  src="/images/whoweare/myself3.JPG"
-  alt="Registro contemplativo em paisagem aberta"
-  caption="Entre dados e território: tecnologia como instrumento para ler complexidade com responsabilidade."
-/>
 
 <AboutSection title="Inspirações do Instituto">
   A visão do Instituto Forest foi fortemente influenciada por pessoas que dedicaram suas vidas à ciência, à conservação ambiental, à engenharia e à gestão de áreas protegidas. Abaixo, registramos com gratidão parte dessa herança — em forma de **mini biografias** — e uma dedicatória à memória e ao trabalho delas.
 
   <AboutPersonInline
+    name="Mariceia Barbosa Silva Pádua"
+    photoSrc="/images/whoweare/mae.png"
+    photoAlt="Mariceia Barbosa Silva Pádua"
+    photoCaption="Mariceia Barbosa Silva Pádua — arquivo pessoal"
+    description={
+      <>
+        <p>
+          Mariceia é parte fundamental do meu referencial pessoal: uma presença que une cuidado, responsabilidade e sensibilidade à vida em suas múltiplas dimensões. Sua trajetória lembra que conservação também se faz no cotidiano — nas escolhas, na escuta e no compromisso com as pessoas e com o entorno.
+        </p>
+        <p className="not-prose mt-3 text-sm">
+          <a
+            href="https://www.minasgerais.com.br/pt/atracoes/parque-estadual-do-pau-furado"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
+          >
+            Parque Estadual do Pau Furado
+          </a>
+        </p>
+      </>
+    }
+  />
+
+  <AboutPersonInline
     name="Maria Tereza Jorge Pádua"
-    photoSrc="/images/whoweare/Marc-e-MTereza.jpg"
-    photoAlt="Maria Tereza Jorge Pádua em foto de perfil com Marc Dourojeanni"
+    photoSrc="/images/whoweare/maria-tereza-jorge-padua.jpg"
+    photoAlt="Maria Tereza Jorge Pádua"
+    photoCaption="Maria Tereza Jorge-Pádua. Foto: Márcio Isensee – oeco.org.br"
     description={
       <>
         <p>
@@ -105,8 +123,9 @@ import {
 
   <AboutPersonInline
     name="Marc Dourojeanni"
-    photoSrc="/images/whoweare/marc.JPG"
-    photoAlt="Marc Dourojeanni"
+    photoSrc="/images/whoweare/Marc-e-MTereza.jpg"
+    photoAlt="Marc Dourojeanni e Maria Tereza Jorge Pádua"
+    photoCaption="Marc Dourojeanni e Maria Tereza Jorge Pádua — arquivo pessoal"
     description={
       <>
         <p>
@@ -122,34 +141,12 @@ import {
           >
             O Eco — Marc Dourojeanni
           </a>
-          {" · "}
-          <a
-            href="https://www.minasgerais.com.br/pt/atracoes/parque-estadual-do-pau-furado"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
-          >
-            Parque Estadual do Pau Furado
-          </a>
         </p>
       </>
     }
   />
 
-  <AboutPersonInline
-    name="Mariceia Barbosa Silva Pádua"
-    photoSrc="/images/whoweare/mom-sister.jpeg"
-    photoAlt="Mariceia Barbosa Silva Pádua"
-    description={
-      <>
-        <p>
-          Mariceia é parte fundamental do meu referencial pessoal: uma presença que une cuidado, responsabilidade e sensibilidade à vida em suas múltiplas dimensões. Sua trajetória lembra que conservação também se faz no cotidiano — nas escolhas, na escuta e no compromisso com as pessoas e com o entorno.
-        </p>
-      </>
-    }
-  />
-
-  <p className="mt-10 text-center text-sm italic text-[color:var(--muted)]">
+  <p className="mt-10 text-justify text-sm italic text-[color:var(--muted)]">
     O Instituto Forest dedica seu propósito a quem ensina, pelo exemplo, que ciência, cuidado e território pertencem à mesma equação.
   </p>
 </AboutSection>

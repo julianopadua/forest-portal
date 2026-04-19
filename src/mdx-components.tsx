@@ -5,7 +5,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     ...components,
     p: ({ children, ...props }: ComponentPropsWithoutRef<"p">) => (
-      <p className="mb-4 last:mb-0 leading-relaxed text-[color:var(--muted)]" {...props}>
+      <p className="mb-4 text-justify last:mb-0 leading-relaxed text-[color:var(--muted)]" {...props}>
         {children}
       </p>
     ),

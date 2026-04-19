@@ -13,7 +13,7 @@ export function AboutImageBlock({ src, alt, caption }: AboutImageBlockProps) {
         <Image src={src} alt={alt} fill sizes="(min-width: 1024px) 72rem, 100vw" className="object-cover" />
       </div>
       {caption ? (
-        <figcaption className="mt-4 text-sm text-[color:var(--muted)]">{caption}</figcaption>
+        <figcaption className="mt-4 text-justify text-sm leading-relaxed text-[color:var(--muted)]">{caption}</figcaption>
       ) : null}
     </figure>
   );
