@@ -13,7 +13,7 @@ export type BlogIndexTileProps = {
   authorLine: string;
   title: string;
   excerpt: string;
-  heroImageSrc: string;
+  heroImageSrc?: string;
   publishedAt: string;
   tags: string[];
   priorityImage?: boolean;
@@ -37,14 +37,21 @@ export default function BlogIndexTile({
         className="block outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--background)]"
       >
         <div className="relative aspect-[2/1] w-full overflow-hidden bg-[color:var(--surface-2)]">
-          <Image
-            src={heroImageSrc}
-            alt=""
-            fill
-            className="object-cover transition duration-500 group-hover:scale-[1.03]"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority={priorityImage}
-          />
+          {heroImageSrc ? (
+            <Image
+              src={heroImageSrc}
+              alt=""
+              fill
+              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority={priorityImage}
+            />
+          ) : (
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-[color:var(--primary)]/25 via-[color:var(--surface-2)] to-[color:var(--background)]"
+              aria-hidden
+            />
+          )}
 
           <div
             className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"

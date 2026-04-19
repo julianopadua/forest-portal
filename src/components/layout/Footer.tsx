@@ -34,9 +34,6 @@ export default function Footer() {
               <Link className="hover:text-[color:var(--text)]" href="/reports">
                 {dict.footer.links.reports}
               </Link>
-              <Link className="hover:text-[color:var(--text)]" href="/education">
-                {dict.footer.links.education}
-              </Link>
             </div>
           </div>
 

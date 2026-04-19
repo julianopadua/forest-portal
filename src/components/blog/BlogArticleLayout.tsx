@@ -33,23 +33,30 @@ export default function BlogArticleLayout({ post }: { post: BlogPost }) {
         </p>
       </header>
 
-      <div className="mt-10">
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] shadow-[var(--shadow-float)]">
-          <Image
-            src={frontmatter.mainImage}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 42rem"
-            priority
-          />
+      {frontmatter.mainImage ? (
+        <div className="mt-10">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] shadow-[var(--shadow-float)]">
+            <Image
+              src={frontmatter.mainImage}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 42rem"
+              priority
+            />
+          </div>
+          {frontmatter.mainImageCaption ? (
+            <p className="mt-3 text-center text-sm text-[color:var(--muted)]">{frontmatter.mainImageCaption}</p>
+          ) : null}
         </div>
-        {frontmatter.mainImageCaption ? (
-          <p className="mt-3 text-center text-sm text-[color:var(--muted)]">{frontmatter.mainImageCaption}</p>
-        ) : null}
-      </div>
+      ) : null}
 
-      <div className="mt-14 border-t border-[color:var(--border)] pt-14">
+      <div
+        className={[
+          "border-t border-[color:var(--border)] pt-14",
+          frontmatter.mainImage ? "mt-14" : "mt-10",
+        ].join(" ")}
+      >
         <BlogMarkdown content={content} />
       </div>
     </article>

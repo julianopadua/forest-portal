@@ -3,8 +3,37 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
+
+const BLOG_TGS_HREF = "/blog/teoria-geral-dos-sistemas";
+const BLOG_OPEN_SOURCE_HREF = "/blog/comunidade-open-source";
+
+const blogInlineLinkClass =
+  "font-medium text-[color:var(--primary)] underline decoration-[color:var(--primary)]/35 underline-offset-[3px] transition hover:decoration-[color:var(--primary)]";
+
+function TextWithInlineLink({
+  text,
+  linkText,
+  href,
+}: {
+  text: string;
+  linkText: string;
+  href: string;
+}) {
+  const idx = linkText ? text.indexOf(linkText) : -1;
+  if (idx < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Link href={href} className={blogInlineLinkClass}>
+        {linkText}
+      </Link>
+      {text.slice(idx + linkText.length)}
+    </>
+  );
+}
 
 type ThemeMode = "light" | "dark";
 
@@ -256,8 +285,18 @@ export default function MarketingHome() {
             <article>
               <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.purpose.title}</h3>
               <div className="mt-3 space-y-3 text-justify text-sm text-[color:var(--muted)]">
-                {m.aboutInstitute.cards.purpose.paragraphs.map((text) => (
-                  <p key={text}>{text}</p>
+                {m.aboutInstitute.cards.purpose.paragraphs.map((text, i) => (
+                  <p key={`purpose-${i}`}>
+                    {i === 1 ? (
+                      <TextWithInlineLink
+                        text={text}
+                        linkText={m.aboutInstitute.cards.purpose.tgsLinkText}
+                        href={BLOG_TGS_HREF}
+                      />
+                    ) : (
+                      text
+                    )}
+                  </p>
                 ))}
               </div>
             </article>
@@ -278,8 +317,18 @@ export default function MarketingHome() {
             <article>
               <h3 className="text-xl font-semibold">{m.aboutInstitute.cards.commitments.title}</h3>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-justify text-sm text-[color:var(--muted)]">
-                {m.aboutInstitute.cards.commitments.bullets.map((item) => (
-                  <li key={item}>{item}</li>
+                {m.aboutInstitute.cards.commitments.bullets.map((item, i) => (
+                  <li key={item}>
+                    {i === 0 ? (
+                      <TextWithInlineLink
+                        text={item}
+                        linkText={m.aboutInstitute.cards.commitments.openSourceLinkText}
+                        href={BLOG_OPEN_SOURCE_HREF}
+                      />
+                    ) : (
+                      item
+                    )}
+                  </li>
                 ))}
               </ul>
             </article>

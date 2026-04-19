@@ -19,13 +19,15 @@ function parseFrontmatter(data: Record<string, unknown>): BlogPostFrontmatter {
   const publishedAt = typeof data.publishedAt === "string" ? data.publishedAt : "";
   const author = typeof data.author === "string" ? data.author : "";
   const tags = toStringArray(data.tags);
-  const cardImage = typeof data.cardImage === "string" ? data.cardImage : "";
-  const mainImage = typeof data.mainImage === "string" ? data.mainImage : "";
+  const cardImage =
+    typeof data.cardImage === "string" && data.cardImage.trim() ? data.cardImage.trim() : undefined;
+  const mainImage =
+    typeof data.mainImage === "string" && data.mainImage.trim() ? data.mainImage.trim() : undefined;
   const mainImageCaption =
     typeof data.mainImageCaption === "string" ? data.mainImageCaption : undefined;
 
-  if (!title || !publishedAt || !author || !cardImage || !mainImage) {
-    throw new Error("Frontmatter obrigatório: title, publishedAt, author, cardImage, mainImage");
+  if (!title || !publishedAt || !author) {
+    throw new Error("Frontmatter obrigatório: title, publishedAt, author");
   }
 
   return {

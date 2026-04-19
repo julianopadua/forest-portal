@@ -5,7 +5,7 @@
   Convenções:
   - Um ficheiro por post: content/blog/{slug}.md
   - Imagens estáticas em public/images/blog/{slug}/ (referência: /images/blog/{slug}/ficheiro.png)
-  - cardImage: normalmente igual a mainImage (hero do card na listagem /blog)
+  - cardImage / mainImage: opcionais — omita ambos para post só texto (card no índice usa gradiente)
   - Corpo: Markdown (GFM: tabelas, listas, ~~riscado~~). Figuras: ![legenda](/images/...)
 -->
 
@@ -18,9 +18,9 @@ author: "Nome do autor"
 tags:
   - tag1
   - tag2
-cardImage: "/images/blog/SEU-SLUG/main-image.png"
-mainImage: "/images/blog/SEU-SLUG/main-image.png"
-mainImageCaption: "Legenda opcional abaixo da imagem principal."
+# cardImage: "/images/blog/SEU-SLUG/main-image.png"
+# mainImage: "/images/blog/SEU-SLUG/main-image.png"
+# mainImageCaption: "Legenda opcional abaixo da imagem principal."
 ---
 
 Escreva o corpo aqui em **Markdown**.

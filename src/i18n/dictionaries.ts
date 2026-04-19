@@ -45,7 +45,6 @@ export type Dict = {
       openData: string;
       commodities: string;
       reports: string;
-      education: string;
     };
     socialLinks: {
       instagram: string;
@@ -103,9 +102,9 @@ export type Dict = {
       title: string;
       subtitle: string;
       cards: {
-        purpose: { title: string; paragraphs: string[] };
+        purpose: { title: string; paragraphs: string[]; tgsLinkText: string };
         delivery: { title: string; bullets: string[] };
-        commitments: { title: string; bullets: string[] };
+        commitments: { title: string; bullets: string[]; openSourceLinkText: string };
         outcomes: { title: string; paragraphs: string[] };
       };
     };
@@ -179,7 +178,7 @@ export const dictionaries: Record<Locale, Dict> = {
 
     footer: {
       brand: "Forest Institute",
-      tagline: "Dados abertos, relatórios e educação aplicada.",
+      tagline: "Dados abertos e relatórios com método reprodutível.",
       quickLinks: "Links rápidos",
       contact: "Contato",
       social: "Redes sociais",
@@ -191,7 +190,6 @@ export const dictionaries: Record<Locale, Dict> = {
         openData: "Dados abertos",
         commodities: "Commodities",
         reports: "Reports",
-        education: "Educação",
       },
       socialLinks: {
         instagram: "Instagram",
@@ -277,6 +275,7 @@ export const dictionaries: Record<Locale, Dict> = {
         cards: {
           purpose: {
             title: "Propósito institucional",
+            tgsLinkText: "Teoria Geral dos Sistemas",
             paragraphs: [
               "Nossa atuação parte do entendimento contemporâneo da ciência sobre sistemas: dados públicos de diferentes domínios só geram valor quando tratados como partes interdependentes de uma mesma realidade operacional.",
               "A Teoria Geral dos Sistemas, proposta por Ludwig von Bertalanffy entre as décadas de 1940 e 1960, orienta esta abordagem ao permitir transformar dados em bulk em insights interdisciplinares aplicáveis a decisões concretas.",
@@ -294,15 +293,13 @@ export const dictionaries: Record<Locale, Dict> = {
           },
           commitments: {
             title: "Compromissos",
+            openSourceLinkText: "comunidade open source",
             bullets: [
+              "Ser uma instituição sem fins lucrativos que contribui de forma contínua à comunidade open source — código, documentação e melhoria pública do que publicamos.",
               "Dados abertos de órgãos públicos nacionais: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP e outras fontes relevantes.",
-              "Dados internacionais de organismos e agências globais.",
               "Dados de sensoriamento remoto e imagens de satélite.",
               "Dados de investimentos de organizações supranacionais como BID e Banco Mundial.",
-              "Análise de sistemas complexos e interdependentes, como a interação entre mercado de commodities e variáveis climáticas.",
-              "Trilha de aprendizado gratuita com passo a passo para reproduzir localmente as rotinas e automações do projeto.",
-              "Uso responsável e orientação a impacto socioambiental.",
-              "Documentação pública como requisito, não como etapa opcional.",
+              "Análise e reportagem transparentes sobre os dados, séries e relatórios que nós mesmos disponibilizamos, com método reprodutível — sem competir com estudos académicos de sistemas acoplados fora do nosso escopo.",
               "Escalabilidade por automação, modularidade e padrões de dados abertos.",
             ],
           },
@@ -411,7 +408,7 @@ export const dictionaries: Record<Locale, Dict> = {
 
     footer: {
       brand: "Forest Institute",
-      tagline: "Open data, weekly reports, and applied education.",
+      tagline: "Open data and reports with a reproducible method.",
       quickLinks: "Quick links",
       contact: "Contact",
       social: "Social",
@@ -423,7 +420,6 @@ export const dictionaries: Record<Locale, Dict> = {
         openData: "Open data",
         commodities: "Commodities",
         reports: "Reports",
-        education: "Education",
       },
       socialLinks: {
         instagram: "Instagram",
@@ -509,6 +505,7 @@ export const dictionaries: Record<Locale, Dict> = {
         cards: {
           purpose: {
             title: "Institutional purpose",
+            tgsLinkText: "General Systems Theory",
             paragraphs: [
               "Our work is grounded in contemporary systems science: public data from different domains only creates value when treated as interdependent parts of the same operational reality.",
               "General Systems Theory, proposed by Ludwig von Bertalanffy from the 1940s to the 1960s, informs this approach by enabling bulk data to be transformed into interdisciplinary insights for real decisions.",
@@ -526,15 +523,13 @@ export const dictionaries: Record<Locale, Dict> = {
           },
           commitments: {
             title: "Commitments",
+            openSourceLinkText: "open source community",
             bullets: [
+              "Operating as a nonprofit institution that contributes continuously to the open source community — code, documentation, and public improvement of what we publish.",
               "Open data from national public agencies: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP, and other relevant sources.",
-              "International data from global organizations and agencies.",
               "Remote sensing and satellite imagery data.",
               "Investment data from supranational organizations such as the IDB and World Bank.",
-              "Analysis of complex and interdependent systems, such as the interaction between commodity markets and climate variables.",
-              "Free learning track with step-by-step guides to reproduce the project's routines and automations locally.",
-              "Responsible use and a socio-environmental impact orientation.",
-              "Public documentation as a requirement, not an optional step.",
+              "Transparent analysis and reporting on the data, series, and reports we ourselves publish, with a reproducible method — without claiming coupled-systems studies outside our scope.",
               "Scalability through automation, modularity, and open data standards.",
             ],
           },

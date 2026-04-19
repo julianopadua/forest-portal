@@ -70,7 +70,6 @@ export default function Header() {
 
   const openDataId = dict.marketing.sections.mission.id;
   const reportsId = dict.marketing.sections.contents.id;
-  const educationId = dict.marketing.sections.community.id;
 
   const navLinkClass =
     "rounded-xl px-3 py-2.5 text-sm font-medium text-[color:var(--text)] hover:bg-[color:var(--surface-2)] lg:px-4 lg:text-[15px]";
@@ -124,10 +123,6 @@ export default function Header() {
 
                   <Link className={`${navLinkClass} text-center`} href={`/${reportsId}`}>
                     {dict.marketing.sections.contents.title}
-                  </Link>
-
-                  <Link className={`${navLinkClass} text-center`} href={`/${educationId}`}>
-                    {dict.marketing.sections.community.title}
                   </Link>
 
                   <Link className={`${navLinkClass} text-center`} href="/blog">

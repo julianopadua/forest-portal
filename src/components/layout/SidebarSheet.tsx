@@ -80,7 +80,6 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
 
   const openDataId = dict.marketing.sections.mission.id;
   const reportsId = dict.marketing.sections.contents.id;
-  const educationId = dict.marketing.sections.community.id;
 
   useEffect(() => {
     const getThemeFromHtml = (): ThemeMode => {
@@ -188,14 +187,6 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
               onClick={onClose}
             >
               {dict.marketing.sections.contents.title}
-            </Link>
-
-            <Link
-              className={navItemClass}
-              href={`/${educationId}`}
-              onClick={onClose}
-            >
-              {dict.marketing.sections.community.title}
             </Link>
 
             <Link

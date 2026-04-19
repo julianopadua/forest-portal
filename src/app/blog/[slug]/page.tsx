@@ -36,24 +36,44 @@ export async function generateMetadata({
 
   const { title, excerpt, mainImage } = post.frontmatter;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  const ogImage = siteUrl ? new URL(mainImage, siteUrl).toString() : mainImage;
+  const ogImage =
+    mainImage && siteUrl ? new URL(mainImage, siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`).toString() : mainImage;
+
+  const withImages =
+    ogImage && mainImage
+      ? {
+          openGraph: {
+            title,
+            description: excerpt,
+            type: "article" as const,
+            publishedTime: post.frontmatter.publishedAt,
+            images: [{ url: ogImage, alt: title }],
+          },
+          twitter: {
+            card: "summary_large_image" as const,
+            title,
+            description: excerpt,
+            images: [ogImage],
+          },
+        }
+      : {
+          openGraph: {
+            title,
+            description: excerpt,
+            type: "article" as const,
+            publishedTime: post.frontmatter.publishedAt,
+          },
+          twitter: {
+            card: "summary" as const,
+            title,
+            description: excerpt,
+          },
+        };
 
   return {
     title: `${title} · Blog`,
     description: excerpt,
-    openGraph: {
-      title,
-      description: excerpt,
-      type: "article",
-      publishedTime: post.frontmatter.publishedAt,
-      images: [{ url: ogImage, alt: title }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description: excerpt,
-      images: [ogImage],
-    },
+    ...withImages,
   };
 }
 
