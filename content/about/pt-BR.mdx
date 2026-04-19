@@ -1,0 +1,163 @@
+import React from "react";
+import {
+  AboutDivider,
+  AboutHero,
+  AboutImageBlock,
+  AboutPersonInline,
+  AboutQuote,
+  AboutSection,
+} from "@/components/about";
+
+<AboutHero
+  title="Quem Somos"
+  subtitle="O Instituto Forest articula tecnologia, dados e engenharia para enfrentar problemas ambientais com rigor sistêmico — da conservação ao monitoramento e à ciência aplicada."
+  imageSrc="/images/whoweare/sunset-africa.JPG"
+  imageAlt="Paisagem ao entardecer com horizonte amplo e vegetação"
+/>
+
+<AboutSection title="Por que o Instituto Forest existe?">
+  O Instituto Forest nasce da convicção de que **tecnologia, dados e engenharia** podem contribuir de forma direta para responder a desafios ambientais reais — não como um adorno, mas como parte do método.
+
+  Muitas pessoas ainda enxergam computação e meio ambiente como áreas distantes. Na prática, porém, problemas ambientais são **sistemas complexos e interconectados**: ecologia, clima, uso do solo, economia, políticas públicas e dinâmicas sociais se influenciam mutuamente. Ignorar essa interdependência tende a produzir soluções frágeis.
+
+  Inspirados pela **visão sistêmica** e por referências como a teoria geral dos sistemas, trabalhamos com a ideia de que computação, ciência de dados, automação, monitoramento e aprendizado de máquina podem apoiar a conservação quando integrados a perguntas ambientais bem formuladas.
+
+  A natureza já é, por si, um sistema complexo. Quando acrescentamos fatores humanos, econômicos, climáticos e territoriais, a complexidade aumenta. Por isso, problemas ambientais exigem **soluções integradas e interdisciplinares** — combinando método, dados e escuta do território.
+</AboutSection>
+
+<AboutDivider />
+
+<AboutSection
+  title="Minha trajetória"
+  image="/images/whoweare/myself4.jpg"
+  imageAlt="Retrato de Juliano Pádua em ambiente externo"
+  imagePosition="right"
+>
+  Sou **Juliano Pádua**. Minha trajetória cruza engenharia da computação, dados e meio ambiente: interesse por infraestrutura e software, curiosidade por modelos e evidências, e a convicção de que tecnologia pode servir à conservação quando bem direcionada.
+
+  Sou **formando em Engenharia da Computação**, com vivências no mercado e no campo de pesquisa. Essa combinação moldou minha forma de pensar problemas: iterar, medir, documentar e conectar teoria a aplicações concretas.
+
+  Entendo a relação entre tecnologia e conservação como uma ponte — da coleta e organização de dados a modelos que ajudem a priorizar ações e reduzir incertezas. Tenho especial interesse por **pesquisa aplicada** e por projetos em que o resultado possa ser verificado no mundo real.
+
+  Na graduação, desenvolvi trabalho sobre **aprendizado de máquina para detecção de focos de incêndio**, aproximando sensoriamento remoto, treinamento de modelos e questões ambientais urgentes. O trabalho completo está disponível no repositório institucional:
+
+  <p className="not-prose mt-4">
+    <a
+      href="https://repositorio.ufscar.br/items/969fd627-d894-40be-89fb-b20127ba3f03"
+      className="text-sm font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4 transition-colors hover:text-[color:var(--accent-hover)]"
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      Ver trabalho de conclusão de curso (repositório UFSCar)
+    </a>
+  </p>
+</AboutSection>
+
+<AboutDivider />
+
+<AboutQuote>
+  A natureza é um sistema complexo. E problemas complexos exigem soluções integradas.
+</AboutQuote>
+
+<AboutDivider />
+
+<AboutImageBlock
+  src="/images/whoweare/myself3.JPG"
+  alt="Registro contemplativo em paisagem aberta"
+  caption="Entre dados e território: tecnologia como instrumento para ler complexidade com responsabilidade."
+/>
+
+<AboutSection title="Inspirações do Instituto">
+  A visão do Instituto Forest foi fortemente influenciada por pessoas que dedicaram suas vidas à ciência, à conservação ambiental, à engenharia e à gestão de áreas protegidas. Abaixo, registramos com gratidão parte dessa herança — em forma de **mini biografias** — e uma dedicatória à memória e ao trabalho delas.
+
+  <AboutPersonInline
+    name="Maria Tereza Jorge Pádua"
+    photoSrc="/images/whoweare/Marc-e-MTereza.jpg"
+    photoAlt="Maria Tereza Jorge Pádua em foto de perfil com Marc Dourojeanni"
+    description={
+      <>
+        <p>
+          Bióloga e uma das vozes centrais na construção do sistema nacional de unidades de conservação no Brasil, Maria Tereza atuou com rigor científico e visão de longo prazo, contribuindo para proteger ecossistemas em escala continental. Seu legado atravessa parques, políticas públicas e uma cultura de conservação mais ambiciosa no país.
+        </p>
+        <p className="not-prose mt-3 text-sm">
+          Leitura sugerida:{" "}
+          <a
+            href="https://oeco.org.br/reportagens/maria-tereza-jorge-padua-a-mulher-que-criou-8-milhoes-de-hectares-em-areas-protegidas-no-brasil/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
+          >
+            reportagem no O Eco
+          </a>
+          {" · "}
+          <a
+            href="https://oeco.org.br/salada-verde/nova-reserva-privada-em-minas-gerais-e-dedicada-a-mae-dos-parques-nacionais/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
+          >
+            RPPN em homenagem a Maria Tereza
+          </a>
+        </p>
+      </>
+    }
+  />
+
+  <AboutPersonInline
+    name="Marc Dourojeanni"
+    photoSrc="/images/whoweare/marc.JPG"
+    photoAlt="Marc Dourojeanni"
+    description={
+      <>
+        <p>
+          Engenheiro e gestor com contribuições marcantes para conservação e manejo de áreas protegidas, Marc representa a ponte entre engenharia, instituições e território. Sua atuação reforça a ideia de que conservação exige desenho técnico, governança e compromisso com resultados duradouros.
+        </p>
+        <p className="not-prose mt-3 text-sm">
+          Perfil e textos:{" "}
+          <a
+            href="https://oeco.org.br/author/marc-dourojeanni/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
+          >
+            O Eco — Marc Dourojeanni
+          </a>
+          {" · "}
+          <a
+            href="https://www.minasgerais.com.br/pt/atracoes/parque-estadual-do-pau-furado"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-[color:var(--accent)] underline decoration-[color:var(--accent)]/35 underline-offset-4"
+          >
+            Parque Estadual do Pau Furado
+          </a>
+        </p>
+      </>
+    }
+  />
+
+  <AboutPersonInline
+    name="Mariceia Barbosa Silva Pádua"
+    photoSrc="/images/whoweare/mom-sister.jpeg"
+    photoAlt="Mariceia Barbosa Silva Pádua"
+    description={
+      <>
+        <p>
+          Mariceia é parte fundamental do meu referencial pessoal: uma presença que une cuidado, responsabilidade e sensibilidade à vida em suas múltiplas dimensões. Sua trajetória lembra que conservação também se faz no cotidiano — nas escolhas, na escuta e no compromisso com as pessoas e com o entorno.
+        </p>
+      </>
+    }
+  />
+
+  <p className="mt-10 text-center text-sm italic text-[color:var(--muted)]">
+    O Instituto Forest dedica seu propósito a quem ensina, pelo exemplo, que ciência, cuidado e território pertencem à mesma equação.
+  </p>
+</AboutSection>
+
+<AboutDivider />
+
+<AboutSection title="Hoje e futuro">
+  Hoje, o Instituto Forest se organiza em torno de dados abertos, automação e narrativas técnicas honestas — sempre com um pé na literatura e outro no terreno dos problemas ambientais. Olhamos para frente reforçando parcerias, projetos aplicados e pesquisa que possa ser verificada e replicada.
+
+  Se você compartilha dessa combinação — **meio ambiente, sistemas, engenharia e evidências** — este espaço foi pensado para ser um ponto de encontro e construção coletiva.
+</AboutSection>

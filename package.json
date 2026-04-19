@@ -12,9 +12,13 @@
     "generate:anp-catalog": "node scripts/generate-anp-catalog.mjs"
   },
   "dependencies": {
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "@next/mdx": "^16.2.4",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.87.3",
     "@tailwindcss/typography": "^0.5.19",
+    "@types/mdx": "^2.0.13",
     "gray-matter": "^4.0.3",
     "next": "^16.2.4",
     "react": "19.2.1",
