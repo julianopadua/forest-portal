@@ -12,6 +12,8 @@ export type AboutSectionProps = {
   image2Alt?: string;
   image2Caption?: string;
   imagePosition?: "left" | "right";
+  /** Blocos só de texto: `wide` deixa a coluna mais larga (ex.: introdução e inspirações) */
+  contentWidth?: "default" | "wide";
 };
 
 export function AboutSection({
@@ -24,13 +26,16 @@ export function AboutSection({
   image2Alt,
   image2Caption,
   imagePosition = "right",
+  contentWidth = "default",
 }: AboutSectionProps) {
   const hasImage = Boolean(image && imageAlt);
   const hasSecondImage = Boolean(image2 && image2Alt);
+  const textOnlyMax =
+    contentWidth === "wide" ? "max-w-5xl lg:max-w-6xl" : "max-w-3xl";
 
   if (!hasImage) {
     return (
-      <section className="mx-auto w-full max-w-3xl px-4 py-14 sm:px-6 md:py-20">
+      <section className={`mx-auto w-full ${textOnlyMax} px-4 py-14 sm:px-6 md:py-20`}>
         {title ? (
           <h2 className="text-center text-2xl font-semibold tracking-tight text-[color:var(--foreground)] sm:text-3xl md:text-[2rem]">
             {title}

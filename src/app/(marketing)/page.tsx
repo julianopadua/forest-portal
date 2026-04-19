@@ -270,7 +270,6 @@ export default function MarketingHome() {
                 <div className="relative grid min-h-[24rem] gap-7 p-8 md:min-h-[28rem] md:p-11 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-end">
                   <div className="max-w-3xl">
                     <h1 className="text-[2rem] md:text-[2.35rem] font-semibold leading-tight text-white">{m.hero.title}</h1>
-                    <p className="mt-4 text-white/85">{m.hero.subtitle}</p>
                   </div>
                   <div />
                 </div>

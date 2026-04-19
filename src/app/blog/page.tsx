@@ -17,12 +17,8 @@ export default async function BlogPage() {
 
         <div className="mt-6 w-full space-y-4 text-base leading-relaxed text-[color:var(--muted)]">
           <p>
-            Este espaço reúne textos de fundação: ideias sobre dados abertos, automação, meio ambiente e o método por
-            trás do Forest Portal — com o mesmo rigor que aplicamos aos pipelines, em linguagem acessível.
-          </p>
-          <p>
-            Os artigos são publicados em formato de leitura contínua (estilo artigo), com imagens e figuras quando
-            ajudam a explicar o conceito. Novos textos aparecem aqui conforme forem sendo escritos.
+            Este espaço reúne textos explicativos, ideias sobre dados abertos, automação, meio ambiente e o método por
+            trás do Forest Portal.
           </p>
         </div>
       </header>
