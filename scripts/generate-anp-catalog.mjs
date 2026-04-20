@@ -24,10 +24,10 @@ function idFromSlug(slug) {
 }
 
 /**
- * Mercado de commodities: segment_title "Energia" + subcategoria curta (sem repetir Energia).
- * Outros: sem segment_title.
+ * Mantém o legado dos primeiros 15 datasets.
+ * Novos datasets usam regras automáticas (keyword/theme) em placementForDataset().
  */
-const PLACEMENT_BY_SLUG = {
+const LEGACY_PLACEMENT_BY_SLUG = {
   "tancagem-do-abastecimento-nacional-de-combustiveis": {
     category_title: "Mercado de commodities",
     segment_title: "Energia",
@@ -102,8 +102,131 @@ const PLACEMENT_BY_SLUG = {
   },
 };
 
-function placementForSlug(slug) {
-  if (PLACEMENT_BY_SLUG[slug]) return PLACEMENT_BY_SLUG[slug];
+function normalize(s) {
+  return String(s || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function hasAny(haystack, needles) {
+  return needles.some((n) => haystack.includes(n));
+}
+
+function placementForDataset(ds) {
+  const legacy = LEGACY_PLACEMENT_BY_SLUG[ds.slug];
+  if (legacy) return legacy;
+
+  const slug = normalize(ds.slug);
+  const title = normalize(ds.title);
+  const text = `${slug} ${title}`;
+  const themes = (ds.themes || []).map((t) => normalize(t.title)).filter(Boolean);
+  const themeText = themes.join(" ");
+
+  // Regulação/estrutura administrativa da ANP
+  if (
+    hasAny(text, [
+      "apoio-administrativo",
+      "prestadores-de-servicos",
+      "multas-aplicadas",
+      "autorizacoes",
+      "fiscalizacao",
+      "conteudo-local",
+      "aditamento-de-conteudo-local",
+    ]) ||
+    hasAny(themeText, ["planejamento e gestao"])
+  ) {
+    return {
+      category_title: "Outros",
+      subcategory_title: "Administração",
+    };
+  }
+
+  // Produtos com recorte dedicado
+  if (hasAny(text, ["lubrificante", "oleos-e-graxas"])) {
+    return {
+      category_title: "Mercado de commodities",
+      segment_title: "Energia",
+      subcategory_title: "Lubrificantes",
+    };
+  }
+  if (hasAny(text, ["bio", "etanol", "biodiesel"])) {
+    return {
+      category_title: "Mercado de commodities",
+      segment_title: "Energia",
+      subcategory_title: "Biocombustíveis e renováveis",
+    };
+  }
+
+  // Upstream / dados técnicos
+  if (
+    hasAny(text, [
+      "petroleo",
+      "gas-natural",
+      "gasodutos",
+      "poco",
+      "exploracao",
+      "producao",
+      "blocos",
+      "bacias",
+      "amostras-de-rochas",
+      "dados-tecnicos",
+      "acervo-de-dados-tecnicos",
+      "investimentos-exploratorios",
+      "contratos-de-exploracao",
+      "incidentes-de-exploracao-e-producao",
+      "rodadas-de-licitacoes",
+      "concessionarios",
+      "participacoes-governamentais",
+      "aquisicao-processamento-e-estudo-de-dados",
+    ]) ||
+    hasAny(themeText, ["energia"])
+  ) {
+    return {
+      category_title: "Mercado de commodities",
+      segment_title: "Energia",
+      subcategory_title: "Petróleo e gás",
+    };
+  }
+
+  // Downstream / comercialização e logística
+  if (
+    hasAny(text, [
+      "abastecimento",
+      "precos-de-combustiveis",
+      "vendas-de-derivados",
+      "movimentacao",
+      "importacoes-e-exportacoes",
+      "distribuidores",
+      "revendedores",
+      "revendas-de-gas",
+      "armazenagem",
+      "tancagem",
+      "terminais",
+      "pmqc",
+      "qualidade-dos-combustiveis",
+      "pontos-de-abastecimento",
+      "comercializacao-de-gas",
+      "painel-de-produtores-de-derivados",
+      "processamento-de-petroleo-e-producao-de-derivados",
+    ]) ||
+    hasAny(themeText, ["abastecimento", "comercio e servicos", "economia e financas"])
+  ) {
+    return {
+      category_title: "Mercado de commodities",
+      segment_title: "Energia",
+      subcategory_title: "Abastecimento e mercado",
+    };
+  }
+
+  // Publicações e compilados estatísticos.
+  if (hasAny(text, ["anuario-estatistico", "anurio-estatstico"])) {
+    return {
+      category_title: "Outros",
+      subcategory_title: "Pesquisa e desenvolvimento",
+    };
+  }
+
   return {
     category_title: "Outros",
     subcategory_title: "Geral",
@@ -122,7 +245,7 @@ for (const ds of data.datasets) {
   const slug = ds.slug;
   if (!slug) continue;
   const id = idFromSlug(slug);
-  const p = placementForSlug(slug);
+  const p = placementForDataset(ds);
   const sourceUrl = `https://dados.gov.br/dados/conjuntos-dados/${slug}`;
 
   lines.push("  {");
