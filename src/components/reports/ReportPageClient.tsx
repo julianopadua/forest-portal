@@ -566,10 +566,41 @@ function buildRenderableSections(
   const endYear = periodToYear(end);
   const rendered: ResolvedReportSection[] = [];
 
+  const reportLatestYear = report.coverage.latest_year ?? new Date().getFullYear();
+  const reportPreviousYear = report.coverage.previous_year ?? reportLatestYear - 1;
+
+  // Build biome options from the report's biome filter for monthly comparison sections
+  const biomeOptions: Array<{ value: string; label: string }> = (
+    report.filters?.biome.options ?? []
+  ).map((opt) => ({
+    value: opt.value,
+    label: resolveLocalizedText(opt.label, locale),
+  }));
+
   for (const section of report.sections) {
     const title = resolveLocalizedText(section.title, locale);
 
-    // Static sections: pass data through without filtering
+    // Monthly year comparison section: static but with inline biome/state filters
+    if (section.kind === "monthly_year_comparison") {
+      const s = section as ReportMonthlyYearComparisonSection;
+      rendered.push({
+        id: s.id,
+        kind: "monthly_year_comparison",
+        title,
+        is_static: true,
+        current_year: s.current_year,
+        previous_year: s.previous_year,
+        avg_window_start: s.avg_window_start,
+        avg_window_end: s.avg_window_end,
+        last_closed_month: s.last_closed_month,
+        available_states: s.available_states ?? [],
+        available_biomes: biomeOptions,
+        data: s.data,
+      });
+      continue;
+    }
+
+    // Static series/table sections: pass through without filtering
     if ((section as ReportSeriesSection).is_static || (section as ReportTableSection).is_static) {
       if (section.kind === "timeseries" || section.kind === "bar") {
         const s = section as ReportSeriesSection;
@@ -657,6 +688,8 @@ function buildRenderableSections(
       tableSection,
       selectedBiome,
       locale,
+      reportLatestYear,
+      reportPreviousYear,
     );
 
     rendered.push({
@@ -921,6 +954,30 @@ export default function ReportPageClient({
   const [selectedStartDate, setSelectedStartDate] = useState<string>(initialStartDate);
   const [selectedEndDate, setSelectedEndDate] = useState<string>(initialEndDate);
 
+  // Mobile filter panel state — pending values are buffered until user confirms
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [pendingBiome, setPendingBiome] = useState<string>(
+    biomeFilter?.default_value ?? ALL_BIOMES_VALUE,
+  );
+  const [pendingStartDate, setPendingStartDate] = useState<string>(initialStartDate);
+  const [pendingEndDate, setPendingEndDate] = useState<string>(initialEndDate);
+
+  const openMobileFilter = () => {
+    setPendingBiome(selectedBiome);
+    setPendingStartDate(selectedStartDate);
+    setPendingEndDate(selectedEndDate);
+    setFilterOpen(true);
+  };
+
+  const confirmMobileFilter = () => {
+    setSelectedBiome(pendingBiome);
+    setSelectedStartDate(pendingStartDate);
+    setSelectedEndDate(pendingEndDate);
+    setFilterOpen(false);
+  };
+
+  const cancelMobileFilter = () => setFilterOpen(false);
+
   useEffect(() => {
     setSelectedStartDate(initialStartDate);
     setSelectedEndDate(initialEndDate);
@@ -1074,7 +1131,8 @@ export default function ReportPageClient({
 
       <ReportAnalysis locale={locale} mode="details" analysis={detailsAnalysis} />
 
-      <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-[var(--shadow-float)]">
+      {/* ── Desktop filter panel (md+): always visible ── */}
+      <section className="hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 shadow-[var(--shadow-float)] md:block">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-xl font-black tracking-tight text-[color:var(--foreground)]">
@@ -1138,6 +1196,100 @@ export default function ReportPageClient({
             {periodLabel(normalizedRange.start, locale)} - {periodLabel(normalizedRange.end, locale)}
           </span>
         </div>
+      </section>
+
+      {/* ── Mobile filter panel (below md): collapsed button → expandable panel ── */}
+      <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)] md:hidden">
+        {/* Toggle row */}
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            type="button"
+            onClick={filterOpen ? cancelMobileFilter : openMobileFilter}
+            className="flex items-center gap-2 text-sm font-semibold text-[color:var(--foreground)]"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 6h18M7 12h10M11 18h2" />
+            </svg>
+            {locale === "en" ? "Filters" : "Filtros"}
+            <svg
+              viewBox="0 0 24 24"
+              className={`h-4 w-4 shrink-0 transition-transform ${filterOpen ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+
+          <span className="text-xs text-[color:var(--muted)]">
+            {periodLabel(normalizedRange.start, locale)} – {periodLabel(normalizedRange.end, locale)}
+          </span>
+        </div>
+
+        {/* Expandable panel */}
+        {filterOpen && (
+          <div className="border-t border-[color:var(--border)] px-4 pb-4 pt-4 space-y-4">
+            <label className="block space-y-2">
+              <span className="text-xs font-black uppercase tracking-wider text-[color:var(--muted)]">
+                {locale === "en" ? "Biome" : "Bioma"}
+              </span>
+              <select
+                value={pendingBiome}
+                onChange={(e) => setPendingBiome(e.target.value)}
+                className="h-11 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--background)] px-3 text-sm text-[color:var(--foreground)] outline-none"
+              >
+                {(biomeFilter?.options ?? []).map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {resolveLocalizedText(option.label, locale)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <DateField
+              locale={locale}
+              label={locale === "en" ? "Start date" : "Data inicial"}
+              value={pendingStartDate}
+              min={minDate}
+              max={maxDate}
+              onChange={setPendingStartDate}
+            />
+
+            <DateField
+              locale={locale}
+              label={locale === "en" ? "End date" : "Data final"}
+              value={pendingEndDate}
+              min={minDate}
+              max={maxDate}
+              onChange={setPendingEndDate}
+            />
+
+            <div className="flex gap-3 pt-1">
+              <button
+                type="button"
+                onClick={confirmMobileFilter}
+                className="flex-1 h-11 rounded-xl bg-[color:var(--primary)] text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                {locale === "en" ? "Apply" : "Confirmar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPendingBiome(biomeFilter?.default_value ?? ALL_BIOMES_VALUE);
+                  setPendingStartDate(initialStartDate);
+                  setPendingEndDate(initialEndDate);
+                }}
+                className="h-11 rounded-xl border border-[color:var(--border)] px-4 text-sm font-semibold text-[color:var(--foreground)] transition-colors hover:bg-[color:var(--surface-2)]"
+              >
+                {locale === "en" ? "Reset" : "Limpar"}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       <div className="space-y-8">
