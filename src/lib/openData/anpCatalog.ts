@@ -167,23 +167,24 @@ export function buildManifestFromAnpDataset(
     };
   });
 
-  let meta: OpenDataMeta | null = null;
+  const meta: OpenDataMeta = { source_agency: "ANP", custom_tags: {} };
   const docPdf = pickDocumentationPdf(dataset.resources);
   if (docPdf?.url) {
-    const fn = filenameFromUrl(docPdf.url);
-    meta = {
-      kind: "metadata",
-      filename: fn,
+    meta.metadata_file = {
+      filename: filenameFromUrl(docPdf.url),
       public_url: docPdf.url,
       source_url: sourceUrl,
     };
   }
 
   return {
+    schema_version: "1.0",
     dataset_id: dataset.package_id,
     title: dataset.title,
     source_dataset_url: sourceUrl,
     generated_at,
+    generation_status: "success",
+    warnings: [],
     bucket_prefix: "anp",
     items,
     meta,

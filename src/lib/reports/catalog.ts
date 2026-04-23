@@ -1,4 +1,11 @@
 // src/lib/reports/catalog.ts
+//
+// Portal does NOT keep a hardcoded reports catalog. The SSOT is the JSON
+// published by `forest-pipelines publish-catalog` to Supabase Storage at
+// `catalog/reports_catalog.json`.
+
+import { fetchJsonFromStorage } from "@/lib/storageFetch";
+
 export type ReportLayout = "default" | "news";
 
 export type ReportCatalogItem = {
@@ -12,44 +19,81 @@ export type ReportCatalogItem = {
   stableReportPath: string;
   sourcePortalHref?: string;
   tags: string[];
-  /** Layout da página de detalhe (ex.: estilo notícia com coluna lateral). */
   layout?: ReportLayout;
-  /** Caminho público da imagem de abertura (ex.: /images/reports/...). */
   heroImageSrc?: string;
-  /** Legenda ou crédito abaixo da imagem (HTML opcional via texto simples). */
   heroImageCreditPt?: string;
   heroImageCreditEn?: string;
-  /** Matéria de referência sobre o contexto (ex.: fogo no Cerrado). */
   relatedArticleUrl?: string;
   relatedArticleLabelPt?: string;
   relatedArticleLabelEn?: string;
 };
 
-export const REPORTS_CATALOG: ReportCatalogItem[] = [
-  {
-    id: "bdqueimadas_overview",
-    slug: "bdqueimadas-overview",
-    title: "BDQueimadas - Panorama Sintético de Focos",
-    description:
-      "Leitura sintética da série histórica de focos de queimadas, com filtros por período e bioma, comparação anual e visão comparativa por UF.",
-    sourceTitle: "INPE - Programa Queimadas",
-    categoryTitle: "Meio ambiente",
-    manifestPath: "reports/bdqueimadas/overview/manifest.json",
-    stableReportPath: "reports/bdqueimadas/overview/report.json",
-    sourcePortalHref: "/open-data/inpe/inpe-bdqueimadas-focos",
-    tags: ["queimadas", "inpe", "focos"],
-    layout: "news",
-    heroImageSrc: "/images/reports/bdqueimadas-cerrado-hero.png",
-    heroImageCreditPt:
-      "Imagem ilustrativa do bioma Cerrado em chamas. Fonte: Conexão UFRJ.",
-    heroImageCreditEn:
-      "Illustrative image of the Cerrado on flames. Source: Conexão UFRJ.",
-    relatedArticleUrl: "https://conexao.ufrj.br/2021/07/como-o-fogo-se-comporta-no-cerrado/",
-    relatedArticleLabelPt: "Como o fogo se comporta no Cerrado? (Conexão UFRJ)",
-    relatedArticleLabelEn: "How does fire behave in the Cerrado? (Conexão UFRJ)",
-  },
-];
+export const REPORTS_CATALOG_PATH = "catalog/reports_catalog.json";
 
-export function getReportBySlug(slug: string) {
-  return REPORTS_CATALOG.find((item) => item.slug === slug);
+/** Raw entry as published by the pipeline (snake_case, matching configs/catalog/reports.yml). */
+type RawReportEntry = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  source_title: string;
+  category_title: string;
+  manifest_path: string;
+  stable_report_path: string;
+  source_portal_href?: string;
+  tags?: string[];
+  layout?: ReportLayout;
+  hero_image_src?: string;
+  hero_image_credit_pt?: string;
+  hero_image_credit_en?: string;
+  related_article_url?: string;
+  related_article_label_pt?: string;
+  related_article_label_en?: string;
+};
+
+export type ReportsCatalogEnvelope = {
+  schema_version: string;
+  catalog_id: "reports_catalog";
+  generated_at: string;
+  generation_status: "success" | "success_partial_fallback" | "failed";
+  warnings: string[];
+  reports: RawReportEntry[];
+};
+
+function toCamelCase(raw: RawReportEntry): ReportCatalogItem {
+  return {
+    id: raw.id,
+    slug: raw.slug,
+    title: raw.title,
+    description: raw.description,
+    sourceTitle: raw.source_title,
+    categoryTitle: raw.category_title,
+    manifestPath: raw.manifest_path,
+    stableReportPath: raw.stable_report_path,
+    tags: raw.tags ?? [],
+    sourcePortalHref: raw.source_portal_href,
+    layout: raw.layout,
+    heroImageSrc: raw.hero_image_src,
+    heroImageCreditPt: raw.hero_image_credit_pt,
+    heroImageCreditEn: raw.hero_image_credit_en,
+    relatedArticleUrl: raw.related_article_url,
+    relatedArticleLabelPt: raw.related_article_label_pt,
+    relatedArticleLabelEn: raw.related_article_label_en,
+  };
+}
+
+/**
+ * Fetch the reports catalog envelope from Storage (with local fallback).
+ * Server-side only.
+ */
+export async function getReportsCatalog(): Promise<ReportCatalogItem[]> {
+  const env = await fetchJsonFromStorage<ReportsCatalogEnvelope>(REPORTS_CATALOG_PATH, {
+    label: "reports_catalog",
+  });
+  return env.reports.map(toCamelCase);
+}
+
+export async function getReportBySlug(slug: string): Promise<ReportCatalogItem | undefined> {
+  const reports = await getReportsCatalog();
+  return reports.find((item) => item.slug === slug);
 }

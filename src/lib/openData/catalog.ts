@@ -1,212 +1,38 @@
 // src/lib/openData/catalog.ts
+//
+// Portal does NOT keep a hardcoded catalog. The SSOT is the consolidated
+// JSON published by `forest-pipelines publish-catalog` to Supabase Storage
+// at `catalog/open_data_catalog.json`. We fetch it server-side and pass the
+// resolved list to Client Components via props.
 
+import { fetchJsonFromStorage } from "@/lib/storageFetch";
 import type { OpenDataDataset } from "./openDataDataset";
-import { ANP_OPEN_DATA_DATASETS } from "./anpDatasets.generated";
 
 export type { OpenDataDataset } from "./openDataDataset";
 
-const BASE_OPEN_DATA_DATASETS: OpenDataDataset[] = [
-  // =========================================
-  // Mercado financeiro -> Fundos -> CVM
-  // =========================================
-  {
-    id: "cvm_fi_inf_diario",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fi-informe-diario",
-    title: "FI - Informe Diário",
-    description: "Informes diários de fundos de investimento (arquivos mensais em ZIP) + dicionário de dados (TXT).",
-    manifest_path: "cvm/fi/inf_diario/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fi-doc-inf_diario",
-  },
-  {
-    id: "cvm_fi_doc_extrato",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fi-doc-extrato",
-    title: "FI - DOC - Extrato",
-    description: "Extrato das informações de Fundos de Investimento: versão Atual + recortes anuais (CSV) + dicionário (TXT).",
-    manifest_path: "cvm/fi/doc/extrato/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fi-doc-extrato",
-  },
-  {
-    id: "cvm_fi_doc_entrega",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fi-doc-entrega",
-    title: "FI - DOC - Entrega",
-    description: "Metadados de entrega de documentos periódicos e eventuais de fundos de investimento.",
-    manifest_path: "cvm/fi/doc/entrega/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fi-doc-entrega",
-  },
-  {
-    id: "cvm_fi_cad_registro_fundo_classe",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fi-cad-registro-fundo-classe",
-    title: "FI - CAD - Registro (Fundo, Classe e Subclasse)",
-    description: "Cadastro de Fundos (registro de fundo/classe/subclasse).",
-    manifest_path: "cvm/fi/cad/registro_fundo_classe/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fi-cad",
-  },
-  {
-    id: "cvm_fi_cad_nao_adaptados_rcvm175",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fi-cad-nao-adaptados-rcvm175",
-    title: "FI - CAD - Não adaptados RCVM175",
-    description: "Fundos não adaptados à RCVM 175.",
-    manifest_path: "cvm/fi/cad/nao_adaptados_rcvm175/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fi-cad",
-  },
-  {
-    id: "cvm_fi_cad_icvm555_hist",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fi-cad-icvm555-hist",
-    title: "FI - CAD - ICVM 555 (Histórico)",
-    description: "Histórico (ICVM 555).",
-    manifest_path: "cvm/fi/cad/icvm555_hist/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fi-cad",
-  },
-  {
-    id: "cvm_fii_doc_inf_trimestral",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fii-informe-trimestral",
-    title: "FII - DOC - Informe Trimestral (Estruturado)",
-    description: "Informes trimestrais estruturados de FII.",
-    manifest_path: "cvm/fii/doc/inf_trimestral/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_trimestral",
-  },
-  {
-    id: "cvm_fii_doc_inf_mensal",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fii-doc-inf-mensal",
-    title: "FII - DOC - Informe Mensal (Estruturado)",
-    description: "Informes mensais estruturados de FII (arquivos anuais).",
-    manifest_path: "cvm/fii/doc/inf_mensal/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_mensal",
-  },
-  {
-    id: "cvm_fii_doc_inf_anual",
-    category_title: "Mercado financeiro",
-    subcategory_title: "Fundos",
-    source_id: "cvm",
-    source_title: "CVM",
-    slug: "fii-doc-inf-anual",
-    title: "FII - DOC - Informe Anual (Estruturado)",
-    description: "Informes anuais estruturados de FII.",
-    manifest_path: "cvm/fii/doc/inf_anual/manifest.json",
-    source_url: "https://dados.cvm.gov.br/dataset/fii-doc-inf_anual",
-  },
+export const OPEN_DATA_CATALOG_PATH = "catalog/open_data_catalog.json";
 
-// =========================================
-  // Mercado de commodities -> Petróleo -> EIA
-  // =========================================
-  {
-    id: "eia_petroleum_weekly",
-    category_title: "Mercado de commodities",
-    segment_title: "Energia",
-    subcategory_title: "Petróleo e gás",
-    source_id: "eia",
-    source_title: "EIA",
-    slug: "petroleum-weekly",
-    title: "Weekly Petroleum Status Report",
-    description: "Relatório semanal de estoques e produção nos EUA. Inclui dados publicados às 10:30 e 13:00.",
-    manifest_path: "eia/petroleum_weekly/manifest.json",
-    source_url: "https://www.eia.gov/petroleum/supply/weekly/",
-  },
-  {
-    id: "eia_petroleum_monthly",
-    category_title: "Mercado de commodities",
-    segment_title: "Energia",
-    subcategory_title: "Petróleo e gás",
-    source_id: "eia",
-    source_title: "EIA",
-    slug: "petroleum-monthly",
-    title: "Petroleum Supply Monthly",
-    description: "Série histórica completa da oferta e disposição de petróleo bruto e derivados em nível nacional e regional.",
-    manifest_path: "eia/petroleum_monthly/manifest.json",
-    source_url: "https://www.eia.gov/petroleum/supply/monthly/",
-  },
-  {
-    id: "eia_heating_oil_propane",
-    category_title: "Mercado de commodities",
-    segment_title: "Energia",
-    subcategory_title: "Petróleo e gás",
-    source_id: "eia",
-    source_title: "EIA",
-    slug: "heating-oil-propane-prices",
-    title: "Weekly Heating Oil and Propane Prices",
-    description: "Preços semanais e mensais de óleo de aquecimento e propano por área (Dollars per Gallon).",
-    manifest_path: "eia/heating_oil_propane/manifest.json",
-    source_url: "https://www.eia.gov/dnav/pet/pet_pri_wfr_a_EPD2F_prs_dpgal_w.htm",
-  },
-  
-  // =========================================
-  // Meio Ambiente -> Queimadas -> INPE
-  // =========================================
-  {
-    id: "inpe_bdqueimadas_focos",
-    category_title: "Meio ambiente",
-    subcategory_title: "Queimadas",
-    source_id: "inpe",
-    source_title: "INPE",
-    slug: "inpe-bdqueimadas-focos",
-    title: "Focos de Queimadas (Brasil - Satélite de Referência)",
-    description: "Dados anuais de focos de calor detectados pelo satélite de referência (Brasil), via BDQueimadas.",
-    manifest_path: "inpe/bdqueimadas/focos_br_ref/manifest.json",
-    source_url: "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/anual/Brasil_sat_ref/",
-  },
-  {
-    id: "inpe_area_queimada_focos1km",
-    category_title: "Meio ambiente",
-    subcategory_title: "Queimadas",
-    source_id: "inpe",
-    source_title: "INPE",
-    slug: "area-queimada-focos-1km",
-    title: "Área Queimada - FOCOS 1km (TIF)",
-    description: "Arquivos mensais em formato GeoTIFF contendo o mapeamento de áreas queimadas detectadas com resolução de 1km.",
-    manifest_path: "inpe/area_queimada/focos1km/manifest.json",
-    source_url: "https://dataserver-coids.inpe.br/queimadas/queimadas/area_queimada/FOCOS1km/tif/",
-  },
+export type OpenDataCatalogEnvelope = {
+  schema_version: string;
+  catalog_id: "open_data_catalog";
+  generated_at: string;
+  generation_status: "success" | "success_partial_fallback" | "failed";
+  warnings: string[];
+  datasets: OpenDataDataset[];
+};
 
-  // Variáveis climáticas -> Clima -> INMET
-  // =========================================
-  {
-    id: "inmet_dados_historicos",
-    category_title: "Variáveis climáticas",
-    subcategory_title: "Clima",
-    source_id: "inmet",
-    source_title: "INMET",
-    slug: "inmet-dados-historicos",
-    title: "Dados Históricos Anuais (Estações Automáticas)",
-    description: "Conjunto de dados históricos anuais provenientes de estações meteorológicas automáticas, abrangendo todo o território brasileiro com registros de temperatura, umidade e precipitação.",
-    // Baseado no bucket_prefix: inmet/dados_historicos
-    manifest_path: "inmet/dados_historicos/manifest.json",
-    source_url: "https://portal.inmet.gov.br/dadoshistoricos",
-  },
-];
+/**
+ * Fetch the open-data catalog from Supabase Storage (with local public/
+ * fallback for offline development). Server-side only.
+ */
+export async function getOpenDataCatalog(): Promise<OpenDataCatalogEnvelope> {
+  return fetchJsonFromStorage<OpenDataCatalogEnvelope>(OPEN_DATA_CATALOG_PATH, {
+    label: "open_data_catalog",
+  });
+}
 
-export const OPEN_DATA_DATASETS: OpenDataDataset[] = [
-  ...BASE_OPEN_DATA_DATASETS,
-  ...ANP_OPEN_DATA_DATASETS,
-];
+/** Convenience: only the datasets array. Keeps call-sites tidy. */
+export async function getOpenDataDatasets(): Promise<OpenDataDataset[]> {
+  const env = await getOpenDataCatalog();
+  return env.datasets;
+}

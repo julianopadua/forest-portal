@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import OpenDataCatalog from "@/components/open-data/OpenDataCatalog";
+import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
 
 function SearchIcon({ className }: { className?: string }) {
   return (
@@ -22,7 +23,7 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
-export default function OpenDataPageClient() {
+export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDataset[] }) {
   const [query, setQuery] = useState("");
 
   return (
@@ -64,7 +65,7 @@ export default function OpenDataPageClient() {
         </p>
       </header>
 
-      <OpenDataCatalog query={query} />
+      <OpenDataCatalog query={query} datasets={datasets} />
     </main>
   );
 }

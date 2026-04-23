@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { OPEN_DATA_DATASETS, type OpenDataDataset } from "@/lib/openData/catalog";
+import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
 import {
   ANP_CATALOG_COMPACT_PATH,
   getGeneratedAtIsoForAnpSlug,
@@ -158,12 +158,18 @@ function countCategoryDatasets(cat: CategoryNode): number {
   return n;
 }
 
-export default function OpenDataCatalog({ query }: { query: string }) {
+export default function OpenDataCatalog({
+  query,
+  datasets,
+}: {
+  query: string;
+  datasets: OpenDataDataset[];
+}) {
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [openSources, setOpenSources] = useState<Record<string, boolean>>({});
   const [states, setStates] = useState<Record<string, DatasetMetaState>>(() => {
     const init: Record<string, DatasetMetaState> = {};
-    for (const ds of OPEN_DATA_DATASETS) init[ds.id] = { status: "idle" };
+    for (const ds of datasets) init[ds.id] = { status: "idle" };
     return init;
   });
 
@@ -171,8 +177,8 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     let cancelled = false;
 
     async function loadAll() {
-      const anpList = OPEN_DATA_DATASETS.filter((d) => d.source_id === "anp");
-      const rest = OPEN_DATA_DATASETS.filter((d) => d.source_id !== "anp");
+      const anpList = datasets.filter((d) => d.source_id === "anp");
+      const rest = datasets.filter((d) => d.source_id !== "anp");
 
       async function loadAnp() {
         if (anpList.length === 0) return;
@@ -247,13 +253,13 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [datasets]);
 
   const tree = useMemo<CategoryNode[]>(() => {
     const q = normalize(query);
 
     const filtered = q
-      ? OPEN_DATA_DATASETS.filter((ds) => {
+      ? datasets.filter((ds) => {
           const hay = normalize(
             [
               ds.title,
@@ -268,7 +274,7 @@ export default function OpenDataCatalog({ query }: { query: string }) {
           );
           return hay.includes(q);
         })
-      : OPEN_DATA_DATASETS;
+      : datasets;
 
     type Bucket = {
       segments: Map<string, Map<string, Map<string, OpenDataDataset[]>>>;
@@ -368,7 +374,7 @@ export default function OpenDataCatalog({ query }: { query: string }) {
     }
 
     return categories;
-  }, [query]);
+  }, [query, datasets]);
 
   useEffect(() => {
     const q = normalize(query);

@@ -1,7 +1,7 @@
 // src/app/reports/page.tsx
 
 import ReportsIndexTile from "@/components/reports/ReportsIndexTile";
-import { REPORTS_CATALOG } from "@/lib/reports/catalog";
+import { getReportsCatalog } from "@/lib/reports/catalog";
 import { fetchStableReport } from "@/lib/reports/fetch";
 import { resolveLocalizedText, resolveNullableLocalizedText } from "@/lib/reports/localize";
 import type { ReportDocument } from "@/lib/reports/types";
@@ -42,8 +42,9 @@ type ReportCardData = {
 };
 
 async function loadCards(): Promise<ReportCardData[]> {
+  const catalog = await getReportsCatalog();
   const cards = await Promise.all(
-    REPORTS_CATALOG.map(async (item) => {
+    catalog.map(async (item) => {
       try {
         const doc = await fetchStableReport(item.stableReportPath);
         return {

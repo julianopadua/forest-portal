@@ -197,11 +197,33 @@ export type ReportDocument = {
   generated_from?: ReportGeneratedFrom;
 };
 
+/** Status de geração (mesmo enum dos manifests de open-data). */
+export type ReportGenerationStatus = "success" | "success_partial_fallback" | "failed";
+
+/** Envelope estrito do meta de relatórios (schema 1.0). Campos fora deste conjunto vão para custom_tags. */
+export type ReportManifestMeta = {
+  source_label?: LocalizedText | string;
+  dataset_id?: string;
+  first_year?: number | null;
+  latest_year?: number | null;
+  year_range?: string | null;
+  latest_period?: string | null;
+  llm_enabled?: boolean;
+  publish_generated_as_live?: boolean;
+  available_locales?: Locale[];
+  default_locale?: Locale;
+  available_biomes?: string[];
+  custom_tags?: Record<string, unknown>;
+};
+
 export type ReportManifest = {
+  schema_version: string;              // "1.0"
   report_id: string;
   title: string | LocalizedText;
   generated_at: string;
   live_generated_at?: string;
+  generation_status: ReportGenerationStatus;
+  warnings: string[];
   bucket_prefix: string;
   paths: {
     generated_report: string;
@@ -215,7 +237,7 @@ export type ReportManifest = {
     stable_live_report: string;
     manifest: string;
   };
-  meta?: Record<string, unknown>;
+  meta: ReportManifestMeta;
 };
 
 export type ResolvedReportHighlight = {

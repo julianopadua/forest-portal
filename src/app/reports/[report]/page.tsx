@@ -27,7 +27,7 @@ export default async function ReportDetailPage({
   params: Promise<{ report: string }>;
 }) {
   const { report } = await params;
-  const catalogItem = getReportBySlug(report);
+  const catalogItem = await getReportBySlug(report);
 
   if (!catalogItem) notFound();
 

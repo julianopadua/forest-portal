@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { OPEN_DATA_DATASETS } from "@/lib/openData/catalog";
+import { getOpenDataDatasets } from "@/lib/openData/catalog";
 import {
   ANP_CATALOG_COMPACT_PATH,
   buildManifestFromAnpDataset,
@@ -63,7 +63,8 @@ export default async function OpenDataDatasetPage({
   params: Promise<{ source: string; dataset: string }>;
 }) {
   const { source, dataset } = await params;
-  const ds = OPEN_DATA_DATASETS.find((d) => d.source_id === source && d.slug === dataset);
+  const datasets = await getOpenDataDatasets();
+  const ds = datasets.find((d) => d.source_id === source && d.slug === dataset);
 
   if (!ds) notFound();
 
@@ -127,21 +128,21 @@ export default async function OpenDataDatasetPage({
             Fonte Oficial ({ds.source_title})
           </a>
 
-          {/* Dicionário: Renderiza apenas se houver filename E public_url (Corrige o erro TS) */}
-          {manifest.meta?.filename && manifest.meta?.public_url && (
-            <a 
-              href={withDownload(manifest.meta.public_url, manifest.meta.filename)} 
+          {/* Dicionário: usa meta.metadata_file (schema 1.0). */}
+          {manifest.meta?.metadata_file?.filename && manifest.meta?.metadata_file?.public_url && (
+            <a
+              href={withDownload(manifest.meta.metadata_file.public_url, manifest.meta.metadata_file.filename)}
               className="text-[color:var(--primary)] hover:opacity-80"
             >
               Dicionário de Dados
             </a>
           )}
 
-          {/* Release: Renderiza apenas se existir a info no meta */}
-          {manifest.meta?.last_release_iso && (
+          {/* Release: usa meta.release (schema 1.0). */}
+          {manifest.meta?.release?.last_release_iso && (
             <div className="flex items-center gap-2 text-[color:var(--success)]">
               <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
-              Último release: {new Date(manifest.meta.last_release_iso).toLocaleDateString("pt-BR")}
+              Último release: {new Date(manifest.meta.release.last_release_iso).toLocaleDateString("pt-BR")}
             </div>
           )}
         </div>
