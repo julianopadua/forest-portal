@@ -102,7 +102,29 @@ export type ReportTableSection = ReportSectionBase & {
   data: ReportSeriesPoint[];
 };
 
-export type ReportSection = ReportSeriesSection | ReportTableSection;
+export type ReportMonthlyYearComparisonPoint = {
+  month: number;
+  biome: string;
+  state: string;
+  current_year_val: number | null;
+  previous_year_val: number | null;
+  avg_5yr_val: number | null;
+};
+
+export type ReportMonthlyYearComparisonSection = ReportSectionBase & {
+  kind: "monthly_year_comparison";
+  current_year: number;
+  previous_year: number | null;
+  avg_window_start: number;
+  avg_window_end: number;
+  last_closed_month: number;
+  filterable_by: string[];
+  available_states: string[];
+  is_static: true;
+  data: ReportMonthlyYearComparisonPoint[];
+};
+
+export type ReportSection = ReportSeriesSection | ReportTableSection | ReportMonthlyYearComparisonSection;
 
 export type ReportMethodology = {
   source?: LocalizedText;
@@ -246,6 +268,22 @@ export type ResolvedReportTableSection = {
   is_static?: boolean;
 };
 
+export type ResolvedReportMonthlyYearComparisonSection = {
+  id: string;
+  kind: "monthly_year_comparison";
+  title: string;
+  is_static?: boolean;
+  current_year: number;
+  previous_year: number | null;
+  avg_window_start: number;
+  avg_window_end: number;
+  last_closed_month: number;
+  available_states: string[];
+  available_biomes: Array<{ value: string; label: string }>;
+  data: ReportMonthlyYearComparisonPoint[];
+};
+
 export type ResolvedReportSection =
   | ResolvedReportSeriesSection
-  | ResolvedReportTableSection;
+  | ResolvedReportTableSection
+  | ResolvedReportMonthlyYearComparisonSection;

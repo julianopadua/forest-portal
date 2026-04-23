@@ -5,9 +5,11 @@ import type {
   ResolvedReportSection,
   ResolvedReportSeriesSection,
   ResolvedReportTableSection,
+  ResolvedReportMonthlyYearComparisonSection,
 } from "@/lib/reports/types";
 import SimpleBarChart from "@/components/reports/charts/SimpleBarChart";
 import SimpleLineChart from "@/components/reports/charts/SimpleLineChart";
+import MonthlyComparisonChart from "@/components/reports/charts/MonthlyComparisonChart";
 import ReportTable from "@/components/reports/ReportTable";
 
 function isSeriesSection(
@@ -20,6 +22,12 @@ function isTableSection(
   section: ResolvedReportSection,
 ): section is ResolvedReportTableSection {
   return section.kind === "table";
+}
+
+function isMonthlyComparisonSection(
+  section: ResolvedReportSection,
+): section is ResolvedReportMonthlyYearComparisonSection {
+  return section.kind === "monthly_year_comparison";
 }
 
 function seriesAxisLabels(
@@ -69,54 +77,59 @@ export default function ReportSectionRenderer({
 
   const chartVariant = variant === "news" ? "news" : "default";
 
-  // On mobile the filter renders in normal flow above the chart.
-  // On sm+ it's absolutely positioned at the top-right corner.
-  const hasFilter = !!filterSlot;
-  const figureChrome = hasFilter ? "relative sm:pt-12" : "relative";
-  const filterWrapper = "sm:absolute sm:right-2 sm:top-1 z-10 mb-3 sm:mb-0";
-
   return (
     <section className="space-y-3">
-      <h2 className={titleClass}>{section.title}</h2>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <h2 className={titleClass}>{section.title}</h2>
+        {filterSlot ? (
+          <div className="shrink-0">{filterSlot}</div>
+        ) : null}
+      </div>
+
+      {isMonthlyComparisonSection(section) ? (
+        <MonthlyComparisonChart
+          locale={locale}
+          variant={chartVariant}
+          currentYear={section.current_year}
+          previousYear={section.previous_year}
+          avgWindowStart={section.avg_window_start}
+          avgWindowEnd={section.avg_window_end}
+          lastClosedMonth={section.last_closed_month}
+          availableBiomes={section.available_biomes}
+          availableStates={section.available_states}
+          data={section.data}
+        />
+      ) : null}
 
       {isSeriesSection(section) && section.kind === "timeseries" ? (
-        <div className={figureChrome}>
-          {filterSlot ? <div className={filterWrapper}>{filterSlot}</div> : null}
-          <SimpleLineChart
-            locale={locale}
-            variant={chartVariant}
-            xAxisLabel={seriesAxisLabels(section, locale).x}
-            yAxisLabel={seriesAxisLabels(section, locale).y}
-            highlightYear={section.highlight_year}
-            data={section.data.map((item) => ({
-              x: String(item[section.x_key]),
-              y: Number(item[section.y_key] ?? 0),
-            }))}
-          />
-        </div>
+        <SimpleLineChart
+          locale={locale}
+          variant={chartVariant}
+          xAxisLabel={seriesAxisLabels(section, locale).x}
+          yAxisLabel={seriesAxisLabels(section, locale).y}
+          highlightYear={section.highlight_year}
+          data={section.data.map((item) => ({
+            x: String(item[section.x_key]),
+            y: Number(item[section.y_key] ?? 0),
+          }))}
+        />
       ) : null}
 
       {isSeriesSection(section) && section.kind === "bar" ? (
-        <div className={figureChrome}>
-          {filterSlot ? <div className={filterWrapper}>{filterSlot}</div> : null}
-          <SimpleBarChart
-            locale={locale}
-            variant={chartVariant}
-            xAxisLabel={seriesAxisLabels(section, locale).x}
-            yAxisLabel={seriesAxisLabels(section, locale).y}
-            data={section.data.map((item) => ({
-              x: String(item[section.x_key]),
-              y: Number(item[section.y_key] ?? 0),
-            }))}
-          />
-        </div>
+        <SimpleBarChart
+          locale={locale}
+          variant={chartVariant}
+          xAxisLabel={seriesAxisLabels(section, locale).x}
+          yAxisLabel={seriesAxisLabels(section, locale).y}
+          data={section.data.map((item) => ({
+            x: String(item[section.x_key]),
+            y: Number(item[section.y_key] ?? 0),
+          }))}
+        />
       ) : null}
 
       {isTableSection(section) ? (
-        <div className={figureChrome}>
-          {filterSlot ? <div className={filterWrapper}>{filterSlot}</div> : null}
-          <ReportTable locale={locale} section={section} variant={variant} />
-        </div>
+        <ReportTable locale={locale} section={section} variant={variant} />
       ) : null}
     </section>
   );

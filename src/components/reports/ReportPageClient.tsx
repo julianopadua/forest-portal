@@ -19,6 +19,7 @@ import {
 import type {
   Locale,
   ReportDocument,
+  ReportMonthlyYearComparisonSection,
   ReportSeriesSection,
   ReportSeriesPoint,
   ReportTableRow,
@@ -31,9 +32,8 @@ import type {
   ResolvedReportTableColumn,
 } from "@/lib/reports/types";
 
+
 const ALL_BIOMES_VALUE = "__all__";
-const FIXED_COMPARISON_CURRENT_YEAR = 2025;
-const FIXED_COMPARISON_PREVIOUS_YEAR = 2024;
 
 function useDocumentLocale(defaultLocale: Locale = "pt"): Locale {
   const [locale, setLocale] = useState<Locale>(defaultLocale);
@@ -336,6 +336,8 @@ function buildFixedUfComparisonRows(
   section: ReportTableSection,
   selectedBiome: string,
   locale: Locale,
+  currentYear: number,
+  previousYear: number,
 ): {
   title: string;
   columns: ResolvedReportTableColumn[];
@@ -360,29 +362,15 @@ function buildFixedUfComparisonRows(
     if (!matchesBiome(row[biomeKey], selectedBiome)) continue;
 
     const normalizedYear = Math.trunc(year);
-    if (
-      normalizedYear !== FIXED_COMPARISON_CURRENT_YEAR &&
-      normalizedYear !== FIXED_COMPARISON_PREVIOUS_YEAR
-    ) {
-      continue;
-    }
+    if (normalizedYear !== currentYear && normalizedYear !== previousYear) continue;
 
     if (!grouped.has(state)) {
-      grouped.set(state, {
-        current_year_total: 0,
-        previous_year_total: 0,
-      });
+      grouped.set(state, { current_year_total: 0, previous_year_total: 0 });
     }
 
     const target = grouped.get(state)!;
-
-    if (normalizedYear === FIXED_COMPARISON_CURRENT_YEAR) {
-      target.current_year_total += value;
-    }
-
-    if (normalizedYear === FIXED_COMPARISON_PREVIOUS_YEAR) {
-      target.previous_year_total += value;
-    }
+    if (normalizedYear === currentYear) target.current_year_total += value;
+    if (normalizedYear === previousYear) target.previous_year_total += value;
   }
 
   const rows = Array.from(grouped.entries())
@@ -408,14 +396,8 @@ function buildFixedUfComparisonRows(
       };
     })
     .sort((a, b) => {
-      if (b.current_year_total !== a.current_year_total) {
-        return b.current_year_total - a.current_year_total;
-      }
-
-      if (b.previous_year_total !== a.previous_year_total) {
-        return b.previous_year_total - a.previous_year_total;
-      }
-
+      if (b.current_year_total !== a.current_year_total) return b.current_year_total - a.current_year_total;
+      if (b.previous_year_total !== a.previous_year_total) return b.previous_year_total - a.previous_year_total;
       return a.state.localeCompare(b.state, locale === "en" ? "en-US" : "pt-BR");
     })
     .slice(0, 10);
@@ -423,35 +405,20 @@ function buildFixedUfComparisonRows(
   return {
     title:
       locale === "en"
-        ? `Fixed annual comparison by state: ${FIXED_COMPARISON_CURRENT_YEAR} vs ${FIXED_COMPARISON_PREVIOUS_YEAR}`
-        : `Comparação anual fixa por UF: ${FIXED_COMPARISON_CURRENT_YEAR} vs ${FIXED_COMPARISON_PREVIOUS_YEAR}`,
+        ? `Annual comparison by state: ${currentYear} vs ${previousYear}`
+        : `Comparação anual por UF: ${currentYear} vs ${previousYear}`,
     columns: [
-      {
-        key: "state",
-        label: locale === "en" ? "State" : "UF",
-      },
+      { key: "state", label: locale === "en" ? "State" : "UF" },
       {
         key: "current_year_total",
-        label:
-          locale === "en"
-            ? `Hotspots in ${FIXED_COMPARISON_CURRENT_YEAR}`
-            : `Focos em ${FIXED_COMPARISON_CURRENT_YEAR}`,
+        label: locale === "en" ? `Hotspots in ${currentYear}` : `Focos em ${currentYear}`,
       },
       {
         key: "previous_year_total",
-        label:
-          locale === "en"
-            ? `Hotspots in ${FIXED_COMPARISON_PREVIOUS_YEAR}`
-            : `Focos em ${FIXED_COMPARISON_PREVIOUS_YEAR}`,
+        label: locale === "en" ? `Hotspots in ${previousYear}` : `Focos em ${previousYear}`,
       },
-      {
-        key: "absolute_change",
-        label: locale === "en" ? "Absolute change" : "Variação absoluta",
-      },
-      {
-        key: "pct_change",
-        label: locale === "en" ? "% change" : "Variação %",
-      },
+      { key: "absolute_change", label: locale === "en" ? "Absolute change" : "Variação absoluta" },
+      { key: "pct_change", label: locale === "en" ? "% change" : "Variação %" },
     ],
     rows,
   };
