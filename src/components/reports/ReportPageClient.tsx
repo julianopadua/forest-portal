@@ -19,6 +19,7 @@ import {
 import type {
   Locale,
   ReportDocument,
+  ReportSeriesSection,
   ReportSeriesPoint,
   ReportTableRow,
   ReportTableSection,
@@ -601,6 +602,37 @@ function buildRenderableSections(
   for (const section of report.sections) {
     const title = resolveLocalizedText(section.title, locale);
 
+    // Static sections: pass data through without filtering
+    if ((section as ReportSeriesSection).is_static || (section as ReportTableSection).is_static) {
+      if (section.kind === "timeseries" || section.kind === "bar") {
+        const s = section as ReportSeriesSection;
+        rendered.push({
+          id: s.id,
+          kind: s.kind,
+          title,
+          x_key: s.x_key,
+          y_key: s.y_key,
+          is_static: true,
+          highlight_year: s.highlight_year,
+          data: s.data,
+        });
+      } else {
+        const s = section as ReportTableSection;
+        rendered.push({
+          id: s.id,
+          kind: "table",
+          title,
+          is_static: true,
+          columns: (s.columns ?? []).map((col) => ({
+            key: col.key,
+            label: resolveLocalizedText(col.label, locale),
+          })),
+          rows: s.data as ReportTableRow[],
+        });
+      }
+      continue;
+    }
+
     if (section.kind === "timeseries") {
       rendered.push({
         id: section.id,
@@ -1029,7 +1061,7 @@ export default function ReportPageClient({
                   locale={locale}
                   section={section}
                   variant="news"
-                  filterSlot={filterSlot}
+                  filterSlot={section.is_static ? undefined : filterSlot}
                 />
               ))}
             </div>

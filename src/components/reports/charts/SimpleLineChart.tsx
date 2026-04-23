@@ -65,6 +65,7 @@ export default function SimpleLineChart({
   xAxisLabel,
   yAxisLabel,
   variant = "default",
+  highlightYear,
 }: {
   locale: Locale;
   data: Point[];
@@ -74,6 +75,8 @@ export default function SimpleLineChart({
   /** Rótulo do eixo vertical (medida). */
   yAxisLabel?: string;
   variant?: "default" | "news";
+  /** When set, renders this year's segment in the primary color; all others in muted gray. */
+  highlightYear?: number;
 }) {
   if (!data.length) {
     return (
@@ -129,6 +132,16 @@ export default function SimpleLineChart({
   const labelStep = pickStep(data.length, hasMultipleYears ? 10 : 8);
   const pointStep = pickStep(data.length, 18);
   const pointRadius = data.length <= 18 ? 3.5 : data.length <= 36 ? 2.75 : data.length <= 60 ? 2.25 : 1.75;
+
+  // When highlightYear is set, split rendering into muted history + accent current year
+  const highlightSplitIndex =
+    highlightYear !== undefined && isMonthlySeries
+      ? (() => {
+          const idx = parsedMonths.findIndex((p) => p !== null && p.year === highlightYear);
+          return idx > 0 ? idx - 1 : idx; // include last prev-year point for visual continuity
+        })()
+      : -1;
+  const hasHighlightSplit = highlightSplitIndex >= 0 && highlightYear !== undefined;
 
   const yearSegments = hasMultipleYears
     ? (() => {
@@ -187,30 +200,69 @@ export default function SimpleLineChart({
             );
           })}
 
-          <path
-            d={path}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            className="text-[color:var(--primary)]"
-          />
-
-          {data.map((d, i) => {
-            if (i % pointStep !== 0 && i !== data.length - 1) return null;
-
-            return (
-              <g key={`${d.x}-${i}`}>
+          {hasHighlightSplit ? (
+            <>
+              {/* Muted history path */}
+              <path
+                d={data
+                  .slice(0, highlightSplitIndex + 1)
+                  .map((d, i) => `${i === 0 ? "M" : "L"} ${xAt(i)} ${yAt(d.y)}`)
+                  .join(" ")}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                opacity="0.28"
+                className="text-[color:var(--foreground)]"
+              />
+              {/* Highlighted year path (starts from last history point) */}
+              <path
+                d={data
+                  .slice(highlightSplitIndex)
+                  .map((d, i) => `${i === 0 ? "M" : "L"} ${xAt(highlightSplitIndex + i)} ${yAt(d.y)}`)
+                  .join(" ")}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                className="text-[color:var(--primary)]"
+              />
+              {/* Last data point marker with label */}
+              <g key="last-point">
                 <circle
-                  cx={xAt(i)}
-                  cy={yAt(d.y)}
-                  r={pointRadius}
+                  cx={xAt(data.length - 1)}
+                  cy={yAt(data[data.length - 1].y)}
+                  r={5}
                   fill="currentColor"
                   className="text-[color:var(--primary)]"
                 />
-                <title>{`${d.x}: ${formatNumber(d.y, locale)}`}</title>
+                <title>{`${data[data.length - 1].x}: ${formatNumber(data[data.length - 1].y, locale)}`}</title>
               </g>
-            );
-          })}
+            </>
+          ) : (
+            <>
+              <path
+                d={path}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                className="text-[color:var(--primary)]"
+              />
+              {data.map((d, i) => {
+                if (i % pointStep !== 0 && i !== data.length - 1) return null;
+                return (
+                  <g key={`${d.x}-${i}`}>
+                    <circle
+                      cx={xAt(i)}
+                      cy={yAt(d.y)}
+                      r={pointRadius}
+                      fill="currentColor"
+                      className="text-[color:var(--primary)]"
+                    />
+                    <title>{`${d.x}: ${formatNumber(d.y, locale)}`}</title>
+                  </g>
+                );
+              })}
+            </>
+          )}
 
           {hasMultipleYears && (
             <>

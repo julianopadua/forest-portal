@@ -70,6 +70,8 @@ export type ReportSeriesSection = ReportSectionBase & {
   filterable_by?: string[];
   period_filter_granularity?: "month" | "year" | string;
   default_view?: Record<string, unknown>;
+  is_static?: boolean;
+  highlight_year?: number;
   data: ReportSeriesPoint[];
 };
 
@@ -88,6 +90,7 @@ export type ReportTableSection = ReportSectionBase & {
   kind: "table";
   columns: ReportTableColumn[];
   filterable_by?: string[];
+  is_static?: boolean;
   period_filter_granularity?: "month" | "year" | string;
   comparison_strategy?: string;
   group_key?: string;
@@ -224,6 +227,8 @@ export type ResolvedReportSeriesSection = {
   title: string;
   x_key: string;
   y_key: string;
+  is_static?: boolean;
+  highlight_year?: number;
   data: ReportSeriesPoint[];
 };
 
@@ -238,6 +243,7 @@ export type ResolvedReportTableSection = {
   title: string;
   columns: ResolvedReportTableColumn[];
   rows: ReportTableRow[];
+  is_static?: boolean;
 };
 
 export type ResolvedReportSection =

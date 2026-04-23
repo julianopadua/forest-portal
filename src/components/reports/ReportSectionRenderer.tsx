@@ -59,7 +59,7 @@ export default function ReportSectionRenderer({
   locale: Locale;
   section: ResolvedReportSection;
   variant?: "default" | "news";
-  /** Controles de filtro posicionados no canto superior direito da figura. */
+  /** Controles de filtro posicionados no canto superior direito da figura (apenas em seções dinâmicas). */
   filterSlot?: ReactNode;
 }) {
   const titleClass =
@@ -68,7 +68,12 @@ export default function ReportSectionRenderer({
       : "text-xl font-black tracking-tight text-[color:var(--foreground)] md:text-2xl";
 
   const chartVariant = variant === "news" ? "news" : "default";
-  const figureChrome = filterSlot ? "relative pt-[3.25rem] sm:pt-12" : "relative";
+
+  // On mobile the filter renders in normal flow above the chart.
+  // On sm+ it's absolutely positioned at the top-right corner.
+  const hasFilter = !!filterSlot;
+  const figureChrome = hasFilter ? "relative sm:pt-12" : "relative";
+  const filterWrapper = "sm:absolute sm:right-2 sm:top-1 z-10 mb-3 sm:mb-0";
 
   return (
     <section className="space-y-3">
@@ -76,16 +81,13 @@ export default function ReportSectionRenderer({
 
       {isSeriesSection(section) && section.kind === "timeseries" ? (
         <div className={figureChrome}>
-          {filterSlot ? (
-            <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
-              {filterSlot}
-            </div>
-          ) : null}
+          {filterSlot ? <div className={filterWrapper}>{filterSlot}</div> : null}
           <SimpleLineChart
             locale={locale}
             variant={chartVariant}
             xAxisLabel={seriesAxisLabels(section, locale).x}
             yAxisLabel={seriesAxisLabels(section, locale).y}
+            highlightYear={section.highlight_year}
             data={section.data.map((item) => ({
               x: String(item[section.x_key]),
               y: Number(item[section.y_key] ?? 0),
@@ -96,11 +98,7 @@ export default function ReportSectionRenderer({
 
       {isSeriesSection(section) && section.kind === "bar" ? (
         <div className={figureChrome}>
-          {filterSlot ? (
-            <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
-              {filterSlot}
-            </div>
-          ) : null}
+          {filterSlot ? <div className={filterWrapper}>{filterSlot}</div> : null}
           <SimpleBarChart
             locale={locale}
             variant={chartVariant}
@@ -116,11 +114,7 @@ export default function ReportSectionRenderer({
 
       {isTableSection(section) ? (
         <div className={figureChrome}>
-          {filterSlot ? (
-            <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
-              {filterSlot}
-            </div>
-          ) : null}
+          {filterSlot ? <div className={filterWrapper}>{filterSlot}</div> : null}
           <ReportTable locale={locale} section={section} variant={variant} />
         </div>
       ) : null}
