@@ -18,6 +18,7 @@ export type ReportCatalogItem = {
   manifestPath: string;
   stableReportPath: string;
   sourcePortalHref?: string;
+  sourceDatasetUrl?: string;
   tags: string[];
   layout?: ReportLayout;
   heroImageSrc?: string;
@@ -41,6 +42,7 @@ type RawReportEntry = {
   manifest_path: string;
   stable_report_path: string;
   source_portal_href?: string;
+  source_dataset_url?: string;
   tags?: string[];
   layout?: ReportLayout;
   hero_image_src?: string;
@@ -72,6 +74,7 @@ function toCamelCase(raw: RawReportEntry): ReportCatalogItem {
     stableReportPath: raw.stable_report_path,
     tags: raw.tags ?? [],
     sourcePortalHref: raw.source_portal_href,
+    sourceDatasetUrl: raw.source_dataset_url,
     layout: raw.layout,
     heroImageSrc: raw.hero_image_src,
     heroImageCreditPt: raw.hero_image_credit_pt,

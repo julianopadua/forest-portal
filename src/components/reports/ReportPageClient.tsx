@@ -604,6 +604,7 @@ function buildRenderableSections(
     if ((section as ReportSeriesSection).is_static || (section as ReportTableSection).is_static) {
       if (section.kind === "timeseries" || section.kind === "bar") {
         const s = section as ReportSeriesSection;
+        if (s.id === "monthly_series_static") continue;
         rendered.push({
           id: s.id,
           kind: s.kind,
@@ -1080,13 +1081,39 @@ export default function ReportPageClient({
 
             <div className="space-y-12 border-t border-[color:var(--border)] pt-10">
               {renderableSections.map((section) => (
-                <ReportSectionRenderer
-                  key={section.id}
-                  locale={locale}
-                  section={section}
-                  variant="news"
-                  filterSlot={section.is_static ? undefined : filterSlot}
-                />
+                <div key={section.id}>
+                  <ReportSectionRenderer
+                    locale={locale}
+                    section={section}
+                    variant="news"
+                    filterSlot={section.is_static ? undefined : filterSlot}
+                  />
+                  {section.kind === "monthly_year_comparison" && (
+                    <p className="mt-3 space-y-0.5 text-right text-xs text-[color:var(--muted)]">
+                      <span className="block">
+                        {locale === "en"
+                          ? `Comparison: ${section.current_year} vs ${section.previous_year ?? "—"} vs historical average`
+                          : `Comparativo: ${section.current_year} vs ${section.previous_year ?? "—"} vs média histórica`}
+                      </span>
+                      <span className="block">
+                        {locale === "en" ? "Source: " : "Fonte: "}
+                        {catalogItem.sourceDatasetUrl ? (
+                          <a
+                            href={catalogItem.sourceDatasetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-semibold text-[color:var(--foreground)] underline-offset-2 hover:underline"
+                          >
+                            BD Queimadas
+                          </a>
+                        ) : (
+                          <strong>BD Queimadas</strong>
+                        )}
+                        {" — INPE"}
+                      </span>
+                    </p>
+                  )}
+                </div>
               ))}
             </div>
 
