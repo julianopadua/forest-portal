@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BlogArticleLayout from "@/components/blog/BlogArticleLayout";
+import TableOfContents from "@/components/blog/TableOfContents";
 import { BLOG_POST_SLUGS } from "@/lib/blog/catalog";
 import { getPostBySlug } from "@/lib/blog/loadPost";
+import { extractHeadings } from "@/lib/blog/extractHeadings";
 
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
@@ -83,6 +85,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   if (!post) notFound();
 
+  const headings = extractHeadings(post.content);
+
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
       <div className="mb-6">
@@ -95,7 +99,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </Link>
       </div>
 
-      <BlogArticleLayout post={post} />
+      <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12 xl:grid-cols-[1fr_260px] xl:gap-16">
+        <div className="min-w-0">
+          <BlogArticleLayout post={post} />
+        </div>
+        {headings.length > 0 && (
+          <aside className="hidden lg:block">
+            <div className="sticky top-28 pt-2">
+              <TableOfContents headings={headings} />
+            </div>
+          </aside>
+        )}
+      </div>
     </main>
   );
 }

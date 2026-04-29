@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { slugify } from "@/lib/blog/extractHeadings";
 
 /**
  * Markdown wraps block images in <p>. We replace <img> with <figure> (block content),
@@ -44,6 +45,21 @@ function MarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   );
 }
 
+function extractText(node: ReactNode): string {
+  if (typeof node === "string") return node;
+  if (typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (isValidElement(node)) return extractText((node.props as { children?: ReactNode }).children);
+  return "";
+}
+
+function makeHeading(Tag: "h2" | "h3") {
+  return function MarkdownHeading({ children }: { children?: ReactNode }) {
+    const id = slugify(extractText(children));
+    return <Tag id={id}>{children}</Tag>;
+  };
+}
+
 function MarkdownLink({
   href,
   children,
@@ -82,6 +98,8 @@ export default function BlogMarkdown({ content }: { content: string }) {
         remarkPlugins={[remarkGfm]}
         components={{
           p: MarkdownParagraph,
+          h2: makeHeading("h2"),
+          h3: makeHeading("h3"),
           img: ({ src, alt }) => <MarkdownImage src={typeof src === "string" ? src : undefined} alt={alt} />,
           a: ({ href, children }) => (
             <MarkdownLink href={typeof href === "string" ? href : undefined}>{children}</MarkdownLink>
