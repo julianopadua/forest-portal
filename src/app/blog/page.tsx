@@ -32,7 +32,7 @@ export default async function BlogPage() {
             authorLine={post.frontmatter.author}
             title={post.frontmatter.title}
             excerpt={post.frontmatter.excerpt}
-            heroImageSrc={post.frontmatter.cardImage}
+            heroImageSrc={post.frontmatter.cardImage ?? post.frontmatter.mainImage}
             publishedAt={post.frontmatter.publishedAt}
             tags={post.frontmatter.tags}
             priorityImage={index === 0}
