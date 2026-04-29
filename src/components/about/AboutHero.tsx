@@ -26,7 +26,7 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
         aria-hidden
       />
       <div
-        className="absolute inset-0 bg-gradient-to-t from-[color:var(--background)] via-[color:var(--background)]/55 to-[color:var(--background)]/25"
+        className="absolute inset-0 bg-gradient-to-t from-[color:var(--background)]/70 via-[color:var(--background)]/10 to-[color:var(--background)]/10 dark:from-[color:var(--background)] dark:via-[color:var(--background)]/55 dark:to-[color:var(--background)]/25"
         aria-hidden
       />
       <div className="absolute inset-0 bg-[color:var(--primary)]/15 mix-blend-multiply dark:mix-blend-soft-light" aria-hidden />

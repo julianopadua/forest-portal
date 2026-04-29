@@ -199,7 +199,7 @@ export const dictionaries: Record<Locale, Dict> = {
 
     marketing: {
       hero: {
-        title: "Dados abertos para queimadas, clima e decisões no mundo real.",
+        title: "Dados abertos para análises climáticas, financeiras, econômicas e sociais no mundo real.",
         subtitle:
           "Somos uma organização sem fins lucrativos que centraliza dados públicos, publica o esquema completo para reproduzir localmente e automatiza a extração de múltiplas fontes com pipelines abertos. Aqui você encontra dados abertos de órgãos públicos voltados a monitoramento climático, mercados financeiros, mercados de commodities e investimentos bancários.",
         ctaPrimary: "",
