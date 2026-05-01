@@ -2,9 +2,18 @@
 
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useSyncExternalStore,
+  useState,
+} from "react";
 import type { Dict, Locale } from "./dictionaries";
 import { dictionaries } from "./dictionaries";
+import { LOCALE_COOKIE_NAME, LOCALE_STORAGE_KEY } from "./constants";
 
 type FontLevel = -2 | -1 | 0 | 1 | 2;
 
@@ -14,8 +23,8 @@ type I18nContextValue = {
   setLocale: (next: Locale) => void;
 
   // Fonte global (2 abaixo, 2 acima)
-  fontLevel: FontLevel;      // -2..2
-  fontScale: number;         // 0.8..1.2
+  fontLevel: FontLevel; // -2..2
+  fontScale: number; // 0.8..1.2
   setFontLevel: (next: FontLevel) => void;
   increaseFont: () => void;
   decreaseFont: () => void;
@@ -24,8 +33,9 @@ type I18nContextValue = {
 
 const I18nContext = createContext<I18nContextValue | null>(null);
 
-const LOCALE_STORAGE_KEY = "fp_locale";
 const FONT_STORAGE_KEY = "fp_font_level";
+
+const LOCALE_CHANGE_EVENT = "fp_locale_change";
 
 // 2 pra baixo e 2 pra cima (base = 1.0)
 const FONT_LEVEL_TO_SCALE: Record<FontLevel, number> = {
@@ -44,16 +54,57 @@ function clampFontLevel(n: number): FontLevel {
   return 2;
 }
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("pt");
+function readLocaleFromStorage(): Locale | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const v = localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (v === "en" || v === "pt") return v;
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+function subscribeLocale(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(LOCALE_CHANGE_EVENT, onStoreChange);
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(LOCALE_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+type I18nProviderProps = {
+  children: React.ReactNode;
+  /** Locale inferido no servidor (cookie); precisa bater com o primeiro paint para evitar hydration mismatch */
+  initialLocale?: Locale;
+};
+
+export function I18nProvider({ children, initialLocale = "pt" }: I18nProviderProps) {
+  const getSnapshot = useCallback((): Locale => {
+    return readLocaleFromStorage() ?? initialLocale;
+  }, [initialLocale]);
+
+  const getServerSnapshot = useCallback((): Locale => initialLocale, [initialLocale]);
+
+  const locale = useSyncExternalStore(subscribeLocale, getSnapshot, getServerSnapshot);
+
   const [fontLevel, setFontLevelState] = useState<FontLevel>(0);
 
-  // Carrega locale + fontLevel
+  const setLocale = useCallback((next: Locale) => {
+    try {
+      localStorage.setItem(LOCALE_STORAGE_KEY, next);
+      document.cookie = `${LOCALE_COOKIE_NAME}=${next}; path=/; max-age=31536000; SameSite=Lax`;
+      window.dispatchEvent(new Event(LOCALE_CHANGE_EVENT));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Carrega fontLevel (sem impacto nas strings i18n)
   useEffect(() => {
     try {
-      const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY) as Locale | null;
-      if (storedLocale === "pt" || storedLocale === "en") setLocaleState(storedLocale);
-
       const storedFont = localStorage.getItem(FONT_STORAGE_KEY);
       if (storedFont !== null) {
         const n = Number(storedFont);
@@ -64,16 +115,18 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Aplica locale no <html> + persiste
+  // Mantém cookie alinhado ao locale efetivo (ex.: depois que localStorage diverge do SSR)
   useEffect(() => {
     try {
-      localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+      document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; SameSite=Lax`;
     } catch {
       // ignore
     }
+  }, [locale]);
 
-    const html = document.documentElement;
-    html.lang = locale === "pt" ? "pt-BR" : "en";
+  // Aplica locale no <html>
+  useEffect(() => {
+    document.documentElement.lang = locale === "pt" ? "pt-BR" : "en";
   }, [locale]);
 
   // Aplica font scale no <html> + persiste
@@ -81,7 +134,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     const scale = FONT_LEVEL_TO_SCALE[fontLevel];
     const html = document.documentElement;
 
-    // token global (usado no CSS)
     html.style.setProperty("--fp-font-scale", String(scale));
 
     try {
@@ -97,7 +149,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     return {
       locale,
       dict: dictionaries[locale],
-      setLocale: (next) => setLocaleState(next),
+      setLocale,
 
       fontLevel,
       fontScale,
@@ -108,7 +160,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       decreaseFont: () => setFontLevelState((prev) => clampFontLevel(prev - 1)),
       resetFont: () => setFontLevelState(0),
     };
-  }, [locale, fontLevel]);
+  }, [locale, fontLevel, setLocale]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

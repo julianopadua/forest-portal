@@ -1,10 +1,13 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { cookies } from "next/headers";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
+import type { Locale } from "@/i18n/dictionaries";
 import { I18nProvider } from "@/i18n/I18nProvider";
 
 const montserrat = Montserrat({
@@ -22,11 +25,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
+  const initialLocale: Locale = rawLocale === "en" ? "en" : "pt";
+
   return (
-    <html lang="pt-BR">
+    <html lang={initialLocale === "pt" ? "pt-BR" : "en"}>
       <body className={`min-h-dvh flex flex-col antialiased ${montserrat.variable}`}>
-        <I18nProvider>
+        <I18nProvider initialLocale={initialLocale}>
           <Suspense
             fallback={
               <header
