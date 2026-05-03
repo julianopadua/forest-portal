@@ -1,8 +1,9 @@
 // src/components/open-data/OpenDataPageClient.tsx
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import OpenDataCatalog from "@/components/open-data/OpenDataCatalog";
+import SuggestDatasetForm from "@/components/open-data/SuggestDatasetForm";
 import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
 
 function SearchIcon({ className }: { className?: string }) {
@@ -23,8 +24,36 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
+function normalize(s: string) {
+  return (s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .trim();
+}
+
 export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDataset[] }) {
   const [query, setQuery] = useState("");
+
+  const hasResults = useMemo(() => {
+    const q = normalize(query);
+    if (!q) return true;
+    return datasets.some((ds) => {
+      const hay = normalize(
+        [
+          ds.title,
+          ds.description,
+          ds.category_title,
+          ds.segment_title ?? "",
+          ds.subcategory_title,
+          ds.source_title,
+          ds.source_id,
+          ds.slug,
+        ].join(" ")
+      );
+      return hay.includes(q);
+    });
+  }, [query, datasets]);
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
@@ -65,7 +94,14 @@ export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDat
         </p>
       </header>
 
-      <OpenDataCatalog query={query} datasets={datasets} />
+      {hasResults ? (
+        <>
+          <OpenDataCatalog query={query} datasets={datasets} />
+          <SuggestDatasetForm query={query} />
+        </>
+      ) : (
+        <SuggestDatasetForm query={query} variant="empty" />
+      )}
     </main>
   );
 }
