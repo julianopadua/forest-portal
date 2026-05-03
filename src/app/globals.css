@@ -213,3 +213,22 @@ body {
     animation: none;
   }
 }
+
+@keyframes forest-spinning-logo-caret-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.forest-spinning-logo-caret {
+  animation: forest-spinning-logo-caret-blink 1s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forest-spinning-logo-caret {
+    animation: none;
+  }
+}
