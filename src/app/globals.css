@@ -195,17 +195,44 @@ body {
   }
 }
 
+/*
+ * Color cycle for the marketing logo.
+ * Base is blue (logo native ~210° hue). Cycle: blue → red → green → light grey/white → black → blue.
+ * Hue rotations are computed from the base blue:
+ *   +150deg  → red
+ *   +270deg  → green
+ *   saturate(0) brightness(>1) → light grey/white
+ *   saturate(0) brightness(<1) → near-black
+ */
 @keyframes forest-marketing-logo-hue {
-  from {
-    filter: hue-rotate(0deg) saturate(1.06);
+  0% {
+    filter: hue-rotate(0deg) saturate(1) brightness(1);
   }
-  to {
-    filter: hue-rotate(360deg) saturate(1.12);
+  14% {
+    filter: hue-rotate(150deg) saturate(1.15) brightness(1);
+  }
+  28% {
+    filter: hue-rotate(150deg) saturate(1.15) brightness(1);
+  }
+  42% {
+    filter: hue-rotate(270deg) saturate(1.15) brightness(1);
+  }
+  56% {
+    filter: hue-rotate(270deg) saturate(1.15) brightness(1);
+  }
+  68% {
+    filter: hue-rotate(0deg) saturate(0) brightness(1.6);
+  }
+  80% {
+    filter: hue-rotate(0deg) saturate(0) brightness(0.5);
+  }
+  92%, 100% {
+    filter: hue-rotate(0deg) saturate(1) brightness(1);
   }
 }
 
 .forest-marketing-logo {
-  animation: forest-marketing-logo-spin 14s linear infinite, forest-marketing-logo-hue 88s linear infinite;
+  animation: forest-marketing-logo-spin 14s linear infinite, forest-marketing-logo-hue 36s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

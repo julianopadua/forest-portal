@@ -2,6 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import {
+  SPINNING_LOGO_CYCLING_WORDS,
+  SPINNING_LOGO_STATIC_WORD,
+} from "./aboutSpinningLogoConfig";
 
 export type AboutSpinningLogoProps = {
   src?: string;
@@ -22,8 +26,8 @@ export function AboutSpinningLogo({
   src = "/images/logos/001-wlogo.png",
   alt = "Instituto Forest",
   size = 160,
-  staticWord = "INSTITUTO",
-  cyclingWords = ["FOREST", "FINANCE", "FIRE"],
+  staticWord = SPINNING_LOGO_STATIC_WORD,
+  cyclingWords = SPINNING_LOGO_CYCLING_WORDS,
 }: AboutSpinningLogoProps) {
   const [wordIndex, setWordIndex] = useState(0);
   const [text, setText] = useState("");
@@ -71,11 +75,11 @@ export function AboutSpinningLogo({
         />
 
         <div className="flex flex-col leading-none">
-          <span className="text-2xl font-light tracking-[0.18em] text-[color:var(--foreground)] sm:text-3xl md:text-4xl">
+          <span className="text-2xl font-light tracking-[0.065em] text-[color:var(--foreground)] sm:text-3xl md:text-4xl">
             {staticWord}
           </span>
 
-          <span className="relative mt-2 inline-block text-3xl font-semibold tracking-[0.06em] text-[color:var(--primary)] sm:text-4xl md:text-5xl">
+          <span className="relative mt-2 inline-block text-3xl font-semibold tracking-[0.04em] text-[color:var(--primary)] sm:text-4xl md:text-5xl">
             <span aria-hidden className="invisible">
               {longest}
             </span>

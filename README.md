@@ -10,6 +10,7 @@ Repositório oficial do portal web do Instituto Forest. O sistema consolida pres
 - [Arquitetura e fluxos principais](#arquitetura-e-fluxos-principais)
 - [Rotas e módulos](#rotas-e-módulos)
 - [Internacionalização](#internacionalização)
+- [Landing page e página institucional](#landing-page-e-página-institucional)
 - [Temas e tokens de interface](#temas-e-tokens-de-interface)
 - [Dados abertos e pipeline externo](#dados-abertos-e-pipeline-externo)
 - [Relatórios analíticos](#relatórios-analíticos)
@@ -64,7 +65,7 @@ Cada rota principal possui nota técnica em `doc/` quando indexada em [doc/INDEX
 
 | Rota | Descrição | Documentação |
 |------|-----------|--------------|
-| `/` | Landing institucional, seções e CTAs | [page.md (marketing)](doc/src/src/app/(marketing)/page/page.md) |
+| `/` | Landing institucional baseada em MDX (`content/home/{en-US,pt-BR}.mdx`) com hero do Cerrado e logo animado | [page.md (marketing)](doc/src/src/app/(marketing)/page/page.md) |
 | `/explore` | Exploração de conteúdo | [explore/page.md](doc/src/src/app/explore/page/page.md) |
 | `/join` | Entrada para cadastro e autenticação | [join/page.md](doc/src/src/app/join/page/page.md) |
 | `/education` | Educação | [education/page.md](doc/src/src/app/education/page/page.md) |
@@ -80,6 +81,68 @@ A navegação da landing utiliza âncoras (por exemplo `#missao`, `#programas`).
 ## Internacionalização
 
 Textos são organizados via [I18nProvider](doc/src/src/i18n/I18nProvider/I18nProvider.md) e [dicionários](doc/src/src/i18n/dictionaries/dictionaries.md). O componente [LanguageSwitcher](doc/src/src/components/ui/LanguageSwitcher/LanguageSwitcher.md) altera o idioma da interface conforme a estratégia definida no provedor.
+
+## Landing page e página institucional
+
+A rota raiz (`/`) e a rota `/quem-somos` compartilham o mesmo padrão visual e de autoria de conteúdo: ambas carregam um arquivo MDX por idioma e renderizam-no usando os componentes em `src/components/about/`. Isso permite que o conteúdo seja revisado como texto, sem reabrir páginas React.
+
+**Arquivos de conteúdo**:
+
+```txt
+content/home/en-US.mdx          Landing em inglês
+content/home/pt-BR.mdx          Landing em português
+content/about/en-US.mdx         "Quem somos" em inglês
+content/about/pt-BR.mdx         "Quem somos" em português
+```
+
+A escolha do idioma é feita pelo `useI18n()` em `src/app/(marketing)/page.tsx` e `src/app/quem-somos/page.tsx`.
+
+**Componentes reutilizáveis** (em `src/components/about/`):
+
+| Componente | Uso |
+|------------|-----|
+| `AboutHero` | Hero de tela cheia com imagem de fundo, gradiente para o `--background`, título e subtítulo. A landing usa `public/images/landingpage/cerrado.png`. |
+| `AboutSection` | Bloco de texto com título opcional, com variantes `contentWidth="default"` e `wide`; suporta uma ou duas imagens laterais. |
+| `AboutDivider` | Divisor horizontal sutil em gradiente. |
+| `AboutQuote` | Citação destacada. |
+| `AboutPersonInline` | Foto + biografia para a seção de inspirações. |
+| `AboutSpinningLogo` | Logo girando com tipografia "INSTITUTO" + palavra cíclica em efeito máquina de escrever (ver abaixo). |
+
+### Logo animado da landing (`AboutSpinningLogo`)
+
+O componente combina três animações:
+
+1. **Rotação contínua** do logo (`forest-marketing-logo-spin`, 14s linear).
+2. **Ciclo de cores** via `filter` (`forest-marketing-logo-hue`, 24s, `ease-in-out`): azul (padrão) → vermelho → verde → cinza-claro/branco → preto → azul.
+3. **Tipografia cíclica** (typewriter): a palavra "INSTITUTO" permanece estática e a palavra abaixo dela é digitada, mantida, apagada e substituída pela próxima da lista.
+
+**Lista de palavras cíclicas** — definida em [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). Para adicionar, remover ou reordenar palavras, edite apenas esse arquivo:
+
+```ts
+export const SPINNING_LOGO_CYCLING_WORDS: string[] = [
+  "FOREST",
+  "FINANCE",
+  "FIRE",
+  "FUTURE",
+  "FIELD",
+  "FAUNA",
+  "FLORA",
+  "FORECAST",
+  "OPEN SOURCE",
+  "OPEN DATA",
+  "CLIMATE",
+];
+
+export const SPINNING_LOGO_STATIC_WORD = "INSTITUTO";
+```
+
+Recomendações:
+
+- Mantenha entradas curtas (≈ 3 a 12 caracteres) — a maior palavra reserva a largura da linha para evitar saltos durante o ciclo.
+- A ordem é preservada em runtime; o ciclo é simples (incremento módulo `length`).
+- Sobrescritas ad hoc são possíveis via props (`<AboutSpinningLogo cyclingWords={[...]} staticWord="..." />`), úteis para variações por página.
+
+**Reduced motion**: tanto a rotação quanto o cursor piscante respeitam `prefers-reduced-motion: reduce` (`src/app/globals.css`).
 
 ## Temas e tokens de interface
 
