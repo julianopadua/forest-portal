@@ -31,7 +31,7 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
       />
       <div className="absolute inset-0 bg-[color:var(--primary)]/15 mix-blend-multiply dark:mix-blend-soft-light" aria-hidden />
 
-      <div className="relative z-10 mx-auto w-full max-w-5xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 md:pb-28">
+      <div className="forest-about-hero-text relative z-10 mx-auto w-full max-w-5xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 md:pb-28">
         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--muted)]">
           Instituto Forest
         </p>
