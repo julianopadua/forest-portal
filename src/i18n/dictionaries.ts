@@ -21,6 +21,7 @@ export type Dict = {
     textSoon: string;
 
     signIn: string;
+    signInSoon: string;
 
     email: string;
     password: string;
@@ -49,6 +50,7 @@ export type Dict = {
     socialLinks: {
       instagram: string;
       linkedin: string;
+      comingSoon: string;
     };
   };
 
@@ -166,6 +168,7 @@ export const dictionaries: Record<Locale, Dict> = {
       textSoon: "Em breve",
 
       signIn: "Entrar",
+      signInSoon: "Em breve",
 
       email: "Email",
       password: "Senha",
@@ -178,11 +181,11 @@ export const dictionaries: Record<Locale, Dict> = {
 
     footer: {
       brand: "Instituto Forest",
-      tagline: "Dados abertos e relatórios com método reprodutível.",
+      tagline: "Dados abertos por meio de código aberto.",
       quickLinks: "Links rápidos",
       contact: "Contato",
       social: "Redes sociais",
-      email: "contato@forest.institute",
+      email: "contato@institutoforest.org",
       links: {
         home: "Home",
         blog: "Blog",
@@ -194,6 +197,7 @@ export const dictionaries: Record<Locale, Dict> = {
       socialLinks: {
         instagram: "Instagram",
         linkedin: "LinkedIn",
+        comingSoon: "Em breve",
       },
     },
 
@@ -396,6 +400,7 @@ export const dictionaries: Record<Locale, Dict> = {
       textSoon: "Soon",
 
       signIn: "Sign in",
+      signInSoon: "Coming soon",
 
       email: "Email",
       password: "Password",
@@ -408,11 +413,11 @@ export const dictionaries: Record<Locale, Dict> = {
 
     footer: {
       brand: "Instituto Forest",
-      tagline: "Open data and reports with a reproducible method.",
+      tagline: "Open data through open source.",
       quickLinks: "Quick links",
       contact: "Contact",
       social: "Social",
-      email: "contact@forest.institute",
+      email: "contato@institutoforest.org",
       links: {
         home: "Home",
         blog: "Blog",
@@ -424,6 +429,7 @@ export const dictionaries: Record<Locale, Dict> = {
       socialLinks: {
         instagram: "Instagram",
         linkedin: "LinkedIn",
+        comingSoon: "Coming soon",
       },
     },
 

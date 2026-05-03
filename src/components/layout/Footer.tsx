@@ -46,33 +46,27 @@ export default function Footer() {
 
           <div className="space-y-2 text-xs">
             <div className="font-semibold text-[color:var(--text)]">{dict.footer.social}</div>
-            <div className="flex items-center gap-4">
-              <a
-                href="#"
-                aria-label={dict.footer.socialLinks.instagram}
-                className="inline-flex items-center gap-1 hover:text-[color:var(--text)]"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <div className="flex flex-col gap-2">
+              <div className="inline-flex items-center gap-1.5 opacity-50">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <rect x="2" y="2" width="20" height="20" rx="5" />
                   <circle cx="12" cy="12" r="4.5" />
                   <circle cx="17.5" cy="6.5" r="1" />
                 </svg>
-                {dict.footer.socialLinks.instagram}
-              </a>
-              <a
-                href="#"
-                aria-label={dict.footer.socialLinks.linkedin}
-                className="inline-flex items-center gap-1 hover:text-[color:var(--text)]"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <span>{dict.footer.socialLinks.instagram}</span>
+                <span className="text-[10px] italic">({dict.footer.socialLinks.comingSoon})</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 opacity-50">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <path d="M8 10v7" />
                   <path d="M8 7h.01" />
                   <path d="M12 17v-4a2 2 0 1 1 4 0v4" />
                   <path d="M12 10v7" />
                 </svg>
-                {dict.footer.socialLinks.linkedin}
-              </a>
+                <span>{dict.footer.socialLinks.linkedin}</span>
+                <span className="text-[10px] italic">({dict.footer.socialLinks.comingSoon})</span>
+              </div>
             </div>
           </div>
         </div>

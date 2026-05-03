@@ -17,6 +17,8 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
         alt={imageAlt}
         fill
         priority
+        fetchPriority="high"
+        quality={85}
         sizes="100vw"
         className="object-cover"
       />
@@ -35,15 +37,15 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
         <p className="forest-about-hero-eyebrow inline-block rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/90 backdrop-blur-[3px]">
           Instituto Forest
         </p>
-        <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight text-[color:var(--foreground)] sm:text-5xl md:text-6xl">
+        <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl md:text-6xl">
           {title}
         </h1>
-        <p className="mt-6 max-w-2xl text-justify text-lg leading-relaxed text-[color:var(--muted)] sm:text-xl md:text-[1.35rem] md:leading-[1.55]">
+        <p className="mt-6 max-w-2xl text-justify text-lg leading-relaxed text-white/80 sm:text-xl md:text-[1.35rem] md:leading-[1.55]">
           {subtitle}
         </p>
         {imageCaption ? (
           <p
-            className="mt-8 max-w-2xl text-justify text-[10px] leading-snug tracking-wide text-[color:var(--foreground)]/75 sm:text-[11px]"
+            className="mt-8 max-w-2xl text-justify text-[10px] leading-snug tracking-wide text-white/60 sm:text-[11px]"
             role="note"
           >
             {imageCaption}

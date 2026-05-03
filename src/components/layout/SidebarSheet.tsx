@@ -149,8 +149,8 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
                 </button>
               </Link>
             ) : (
-              <button className={`flex-1 ${actionButtonClass}`} onClick={() => setOpenAuth(true)}>
-                {dict.common.signIn}
+              <button className={`flex-1 ${actionButtonClass} cursor-not-allowed opacity-50`} disabled title={dict.common.signInSoon}>
+                {dict.common.signInSoon}
               </button>
             )}
 
