@@ -1,10 +1,9 @@
-import fs from "fs/promises";
-import path from "path";
 import matter from "gray-matter";
 import { BLOG_POST_SLUGS, isBlogSlug, type BlogSlug } from "./catalog";
 import type { BlogPost, BlogPostFrontmatter } from "./types";
+import rawPosts from "./posts.generated.json";
 
-const CONTENT_DIR = path.join(process.cwd(), "content/blog");
+const POSTS_RAW = rawPosts as Record<BlogSlug, string>;
 
 function toStringArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.map(String);
@@ -46,8 +45,10 @@ function parseFrontmatter(data: Record<string, unknown>): BlogPostFrontmatter {
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   if (!isBlogSlug(slug)) return null;
 
-  const filePath = path.join(CONTENT_DIR, `${slug}.md`);
-  const raw = await fs.readFile(filePath, "utf8");
+  const raw = POSTS_RAW[slug];
+  if (!raw) {
+    throw new Error(`Post ausente no bundle gerado: ${slug}. Rode npm run build ou node scripts/build-blog-bundle.mjs`);
+  }
   const { data, content } = matter(raw);
   const frontmatter = parseFrontmatter(data as Record<string, unknown>);
 

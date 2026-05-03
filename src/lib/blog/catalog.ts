@@ -1,6 +1,7 @@
 /**
  * Slugs publicados, em ordem de exibição no índice (mais recente primeiro).
- * Ao adicionar um post: criar `content/blog/{slug}.md`, depois incluir o slug aqui.
+ * Ao adicionar um post: criar `content/blog/{slug}.md`, incluir o slug aqui e
+ * regenerar `posts.generated.json` via `npm run build` ou `node scripts/build-blog-bundle.mjs`.
  */
 export const BLOG_POST_SLUGS = [
   "comunidade-open-source",
