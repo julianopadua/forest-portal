@@ -138,22 +138,29 @@ export default function ReportSectionRenderer({
       ) : null}
 
       {isSeriesSection(section) && section.kind === "timeseries" && canInlineSeries ? (
-        <ReportInlineBiomeStateSeries
-          locale={locale}
-          variant={chartVariant}
-          kind="timeseries"
-          xKey={section.x_key}
-          yKey={section.y_key}
-          biomeKey={section.biome_key ?? "biome"}
-          stateKey={section.state_key ?? "state"}
-          availableBiomes={inlineSeriesBiomes}
-          availableStates={section.available_states ?? []}
-          data={section.data}
-          periodStart={periodRange.start}
-          periodEnd={periodRange.end}
-          startYear={yearRange.start}
-          endYear={yearRange.end}
-        />
+        <div className={figureChrome}>
+          {filterSlot ? (
+            <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
+              {filterSlot}
+            </div>
+          ) : null}
+          <ReportInlineBiomeStateSeries
+            locale={locale}
+            variant={chartVariant}
+            kind="timeseries"
+            xKey={section.x_key}
+            yKey={section.y_key}
+            biomeKey={section.biome_key ?? "biome"}
+            stateKey={section.state_key ?? "state"}
+            availableBiomes={inlineSeriesBiomes}
+            availableStates={section.available_states ?? []}
+            data={section.data}
+            periodStart={periodRange.start}
+            periodEnd={periodRange.end}
+            startYear={yearRange.start}
+            endYear={yearRange.end}
+          />
+        </div>
       ) : null}
 
       {isSeriesSection(section) && section.kind === "timeseries" && !canInlineSeries ? (
@@ -178,22 +185,29 @@ export default function ReportSectionRenderer({
       ) : null}
 
       {isSeriesSection(section) && section.kind === "bar" && canInlineSeries ? (
-        <ReportInlineBiomeStateSeries
-          locale={locale}
-          variant={chartVariant}
-          kind="bar"
-          xKey={section.x_key}
-          yKey={section.y_key}
-          biomeKey={section.biome_key ?? "biome"}
-          stateKey={section.state_key ?? "state"}
-          availableBiomes={inlineSeriesBiomes}
-          availableStates={section.available_states ?? []}
-          data={section.data}
-          periodStart={periodRange.start}
-          periodEnd={periodRange.end}
-          startYear={yearRange.start}
-          endYear={yearRange.end}
-        />
+        <div className={figureChrome}>
+          {filterSlot ? (
+            <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
+              {filterSlot}
+            </div>
+          ) : null}
+          <ReportInlineBiomeStateSeries
+            locale={locale}
+            variant={chartVariant}
+            kind="bar"
+            xKey={section.x_key}
+            yKey={section.y_key}
+            biomeKey={section.biome_key ?? "biome"}
+            stateKey={section.state_key ?? "state"}
+            availableBiomes={inlineSeriesBiomes}
+            availableStates={section.available_states ?? []}
+            data={section.data}
+            periodStart={periodRange.start}
+            periodEnd={periodRange.end}
+            startYear={yearRange.start}
+            endYear={yearRange.end}
+          />
+        </div>
       ) : null}
 
       {isSeriesSection(section) && section.kind === "bar" && !canInlineSeries ? (

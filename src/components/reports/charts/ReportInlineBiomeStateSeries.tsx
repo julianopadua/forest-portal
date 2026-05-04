@@ -48,6 +48,16 @@ function filterByPeriodAnnual(
   });
 }
 
+function normalizeTextRange(start: string, end: string) {
+  return start <= end ? { start, end } : { start: end, end: start };
+}
+
+function normalizeYearRange(startYear: number, endYear: number) {
+  return startYear <= endYear
+    ? { startYear, endYear }
+    : { startYear: endYear, endYear: startYear };
+}
+
 function seriesAxisLabels(
   kind: "timeseries" | "bar",
   locale: Locale,
@@ -97,21 +107,32 @@ export default function ReportInlineBiomeStateSeries({
 }) {
   const [selectedBiome, setSelectedBiome] = useState<string>(ALL);
   const [selectedState, setSelectedState] = useState<string>(ALL);
+  const [selectedPeriodStart, setSelectedPeriodStart] = useState(periodStart);
+  const [selectedPeriodEnd, setSelectedPeriodEnd] = useState(periodEnd);
+  const [selectedStartYear, setSelectedStartYear] = useState(startYear);
+  const [selectedEndYear, setSelectedEndYear] = useState(endYear);
 
   const hasBiomeFilter = availableBiomes.length > 1;
   const hasStateFilter = availableStates.length > 0;
-  const hasFilters = hasBiomeFilter || hasStateFilter;
+  const hasFilters = true;
+  const monthlyRange = normalizeTextRange(selectedPeriodStart, selectedPeriodEnd);
+  const annualRange = normalizeYearRange(selectedStartYear, selectedEndYear);
+  const periodChanged =
+    selectedPeriodStart !== periodStart ||
+    selectedPeriodEnd !== periodEnd ||
+    selectedStartYear !== startYear ||
+    selectedEndYear !== endYear;
 
   const filtered = useMemo(() => {
     const scoped = data.filter((row) =>
       rowMatches(row, selectedBiome, selectedState, biomeKey, stateKey),
     );
     if (kind === "timeseries") {
-      return filterByPeriodMonthly(scoped, xKey, periodStart, periodEnd).sort((a, b) =>
+      return filterByPeriodMonthly(scoped, xKey, monthlyRange.start, monthlyRange.end).sort((a, b) =>
         String(a[xKey]).localeCompare(String(b[xKey])),
       );
     }
-    return filterByPeriodAnnual(scoped, xKey, startYear, endYear).sort(
+    return filterByPeriodAnnual(scoped, xKey, annualRange.startYear, annualRange.endYear).sort(
       (a, b) => Number(a[xKey]) - Number(b[xKey]),
     );
   }, [
@@ -122,10 +143,10 @@ export default function ReportInlineBiomeStateSeries({
     stateKey,
     kind,
     xKey,
-    periodStart,
-    periodEnd,
-    startYear,
-    endYear,
+    monthlyRange.start,
+    monthlyRange.end,
+    annualRange.startYear,
+    annualRange.endYear,
   ]);
 
   const chartPoints = filtered.map((item) => ({
@@ -137,6 +158,8 @@ export default function ReportInlineBiomeStateSeries({
   const labelState = locale === "en" ? "State" : "UF";
   const labelAll = locale === "en" ? "All" : "Todos";
   const labelAllStates = locale === "en" ? "All states" : "Todos os estados";
+  const labelStart = locale === "en" ? "Start" : "Início";
+  const labelEnd = locale === "en" ? "End" : "Fim";
 
   const chartVariant = variant === "news" ? "news" : "default";
   const axes = seriesAxisLabels(kind, locale);
@@ -181,12 +204,67 @@ export default function ReportInlineBiomeStateSeries({
               </select>
             </label>
           ) : null}
-          {(selectedBiome !== ALL || selectedState !== ALL) && (
+          {kind === "timeseries" ? (
+            <>
+              <label className="flex items-center gap-1.5">
+                <span className="font-semibold uppercase tracking-wide">{labelStart}</span>
+                <input
+                  type="month"
+                  value={selectedPeriodStart}
+                  min={periodStart}
+                  max={periodEnd}
+                  onChange={(e) => setSelectedPeriodStart(e.target.value)}
+                  className="h-7 rounded border border-[color:var(--border)] bg-[color:var(--background)] px-2 text-xs text-[color:var(--foreground)] outline-none"
+                />
+              </label>
+              <label className="flex items-center gap-1.5">
+                <span className="font-semibold uppercase tracking-wide">{labelEnd}</span>
+                <input
+                  type="month"
+                  value={selectedPeriodEnd}
+                  min={periodStart}
+                  max={periodEnd}
+                  onChange={(e) => setSelectedPeriodEnd(e.target.value)}
+                  className="h-7 rounded border border-[color:var(--border)] bg-[color:var(--background)] px-2 text-xs text-[color:var(--foreground)] outline-none"
+                />
+              </label>
+            </>
+          ) : (
+            <>
+              <label className="flex items-center gap-1.5">
+                <span className="font-semibold uppercase tracking-wide">{labelStart}</span>
+                <input
+                  type="number"
+                  value={selectedStartYear}
+                  min={startYear}
+                  max={endYear}
+                  onChange={(e) => setSelectedStartYear(Number(e.target.value))}
+                  className="h-7 w-20 rounded border border-[color:var(--border)] bg-[color:var(--background)] px-2 text-xs text-[color:var(--foreground)] outline-none"
+                />
+              </label>
+              <label className="flex items-center gap-1.5">
+                <span className="font-semibold uppercase tracking-wide">{labelEnd}</span>
+                <input
+                  type="number"
+                  value={selectedEndYear}
+                  min={startYear}
+                  max={endYear}
+                  onChange={(e) => setSelectedEndYear(Number(e.target.value))}
+                  className="h-7 w-20 rounded border border-[color:var(--border)] bg-[color:var(--background)] px-2 text-xs text-[color:var(--foreground)] outline-none"
+                />
+              </label>
+            </>
+          )}
+          {(selectedBiome !== ALL || selectedState !== ALL || periodChanged) && (
             <button
               type="button"
               onClick={() => {
                 setSelectedBiome(ALL);
                 setSelectedState(ALL);
+                setSelectedPeriodStart(periodStart);
+                setSelectedPeriodEnd(periodEnd);
+                setSelectedStartYear(startYear);
+                setSelectedEndYear(endYear);
               }}
               className="rounded px-1.5 py-0.5 font-medium text-[color:var(--primary)] underline-offset-2 hover:underline"
             >

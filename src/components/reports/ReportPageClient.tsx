@@ -441,7 +441,15 @@ function buildRenderableSections(
         title,
         x_key: section.x_key,
         y_key: section.y_key,
-        data: filterMonthlySeries(section.data, selectedBiome, start, end),
+        biome_key: section.biome_key,
+        state_key: section.state_key,
+        inline_biome_state_filter: section.inline_biome_state_filter,
+        available_states: section.available_states,
+        is_static: false,
+        highlight_year: section.highlight_year,
+        data: section.inline_biome_state_filter
+          ? section.data
+          : filterMonthlySeries(section.data, selectedBiome, start, end),
       });
       continue;
     }
@@ -453,7 +461,15 @@ function buildRenderableSections(
         title,
         x_key: section.x_key,
         y_key: section.y_key,
-        data: filterAnnualSeries(section.data, selectedBiome, startYear, endYear),
+        biome_key: section.biome_key,
+        state_key: section.state_key,
+        inline_biome_state_filter: section.inline_biome_state_filter,
+        available_states: section.available_states,
+        is_static: false,
+        highlight_year: section.highlight_year,
+        data: section.inline_biome_state_filter
+          ? section.data
+          : filterAnnualSeries(section.data, selectedBiome, startYear, endYear),
       });
       continue;
     }
@@ -586,10 +602,6 @@ function DateField({
   const nativeInputRef = useRef<HTMLInputElement | null>(null);
   const [textValue, setTextValue] = useState(() => formatLocalizedDateInput(value, locale));
 
-  useEffect(() => {
-    setTextValue(formatLocalizedDateInput(value, locale));
-  }, [value, locale]);
-
   const placeholder = locale === "en" ? "MM-DD-YYYY" : "DD-MM-YYYY";
 
   const commitTextValue = () => {
@@ -693,7 +705,7 @@ export default function ReportPageClient({
   const periodBounds = report.filters?.period.bounds;
   const biomeFilter = report.filters?.biome;
   const analysisScope = report.analysis_scope;
-  const availablePeriods = report.filters?.period.available_periods ?? [];
+  const availablePeriods = report.filters?.period.available_periods;
 
   const initialStartPeriod =
     analysisScope?.window_start_period ??
@@ -711,7 +723,7 @@ export default function ReportPageClient({
   const initialEndDate = lastDayOfPeriod(initialEndPeriod);
 
   const { minDate, maxDate } = useMemo(
-    () => getAvailableDateBounds(availablePeriods),
+    () => getAvailableDateBounds(availablePeriods ?? []),
     [availablePeriods],
   );
 
@@ -744,11 +756,6 @@ export default function ReportPageClient({
   };
 
   const cancelMobileFilter = () => setFilterOpen(false);
-
-  useEffect(() => {
-    setSelectedStartDate(initialStartDate);
-    setSelectedEndDate(initialEndDate);
-  }, [initialStartDate, initialEndDate]);
 
   const selectedStartPeriod = isoDateToPeriod(selectedStartDate);
   const selectedEndPeriod = isoDateToPeriod(selectedEndDate);
@@ -844,6 +851,11 @@ export default function ReportPageClient({
       }}
     />
   );
+  const sectionFilterSlot = (section: ResolvedReportSection) => {
+    const hasInlineFilters =
+      "inline_biome_state_filter" in section && section.inline_biome_state_filter;
+    return section.is_static || hasInlineFilters ? undefined : filterSlot;
+  };
 
   if (catalogItem.layout === "news") {
     return (
@@ -881,7 +893,7 @@ export default function ReportPageClient({
                     locale={locale}
                     section={section}
                     variant="news"
-                    filterSlot={section.is_static ? undefined : filterSlot}
+                    filterSlot={sectionFilterSlot(section)}
                     attribution={figureAttribution}
                     periodRange={{ start: normalizedRange.start, end: normalizedRange.end }}
                     yearRange={activeYearBounds}
@@ -973,6 +985,7 @@ export default function ReportPageClient({
           </label>
 
           <DateField
+            key={`desktop-start-${locale}-${selectedStartDate}`}
             locale={locale}
             label={locale === "en" ? "Start date" : "Data inicial"}
             value={selectedStartDate}
@@ -982,6 +995,7 @@ export default function ReportPageClient({
           />
 
           <DateField
+            key={`desktop-end-${locale}-${selectedEndDate}`}
             locale={locale}
             label={locale === "en" ? "End date" : "Data final"}
             value={selectedEndDate}
@@ -1052,6 +1066,7 @@ export default function ReportPageClient({
             </label>
 
             <DateField
+              key={`mobile-start-${locale}-${pendingStartDate}`}
               locale={locale}
               label={locale === "en" ? "Start date" : "Data inicial"}
               value={pendingStartDate}
@@ -1061,6 +1076,7 @@ export default function ReportPageClient({
             />
 
             <DateField
+              key={`mobile-end-${locale}-${pendingEndDate}`}
               locale={locale}
               label={locale === "en" ? "End date" : "Data final"}
               value={pendingEndDate}
@@ -1099,6 +1115,7 @@ export default function ReportPageClient({
             key={section.id}
             locale={locale}
             section={section}
+            filterSlot={sectionFilterSlot(section)}
             attribution={figureAttribution}
             periodRange={{ start: normalizedRange.start, end: normalizedRange.end }}
             yearRange={activeYearBounds}

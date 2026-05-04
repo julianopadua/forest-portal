@@ -16,15 +16,15 @@ export default function ReportFigureSource({
 }) {
   const textClass =
     variant === "news"
-      ? "mt-3 space-y-1 text-right text-xs text-[color:var(--muted)]"
-      : "mt-3 space-y-1 text-right text-xs text-[color:var(--muted)]";
+      ? "mt-3 flex flex-col gap-1 text-xs text-[color:var(--muted)] sm:flex-row sm:items-center sm:justify-between"
+      : "mt-3 flex flex-col gap-1 text-xs text-[color:var(--muted)] sm:flex-row sm:items-center sm:justify-between";
 
   return (
     <div className={textClass}>
       {legend.trim() ? (
-        <span className="block text-left leading-relaxed text-[color:var(--muted)]">{legend}</span>
+        <span className="leading-relaxed text-[color:var(--muted)]">{legend}</span>
       ) : null}
-      <span className="block">
+      <span className="shrink-0 sm:text-right">
         {locale === "en" ? "Source: " : "Fonte: "}
         <a
           href={sourceUrl}

@@ -46,6 +46,10 @@ export type ReportDatasetInfo = {
   years_loaded?: number;
   available_biomes?: string[];
   cache?: Record<string, unknown>;
+  artifacts?: {
+    historical?: string;
+    current_year?: string;
+  };
 };
 
 export type ReportSeriesPoint = {
@@ -243,12 +247,14 @@ export type ReportManifest = {
     live_report: string;
     stable_live_report: string;
     manifest: string;
+    [path: string]: string;
   };
   public_urls: {
     generated_report: string;
     live_report: string;
     stable_live_report: string;
     manifest: string;
+    [path: string]: string;
   };
   meta: ReportManifestMeta;
 };

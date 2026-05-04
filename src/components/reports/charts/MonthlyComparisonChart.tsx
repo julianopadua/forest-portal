@@ -141,11 +141,11 @@ export default function MonthlyComparisonChart({
   const labelAll = locale === "en" ? "All" : "Todos";
   const labelAllStates = locale === "en" ? "All states" : "Todos os estados";
   const avgLabel =
-    avgWindowEnd - avgWindowStart >= 5
-      ? locale === "en" ? "historical" : "histórica"
+    avgWindowStart && avgWindowEnd && avgWindowEnd > avgWindowStart
+      ? `${avgWindowStart}-${avgWindowEnd}`
       : avgWindowStart === avgWindowEnd
         ? String(avgWindowStart)
-        : `${avgWindowStart}–${avgWindowEnd}`;
+        : locale === "en" ? "historical" : "histórica";
 
   const containerClass =
     variant === "news"
