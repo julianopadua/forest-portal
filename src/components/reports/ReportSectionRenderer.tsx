@@ -2,6 +2,7 @@
 import type { ReactNode } from "react";
 import type {
   Locale,
+  ResolvedReportFigureAttribution,
   ResolvedReportSection,
   ResolvedReportSeriesSection,
   ResolvedReportTableSection,
@@ -10,6 +11,8 @@ import type {
 import SimpleBarChart from "@/components/reports/charts/SimpleBarChart";
 import SimpleLineChart from "@/components/reports/charts/SimpleLineChart";
 import MonthlyComparisonChart from "@/components/reports/charts/MonthlyComparisonChart";
+import ReportInlineBiomeStateSeries from "@/components/reports/charts/ReportInlineBiomeStateSeries";
+import ReportFigureSource from "@/components/reports/ReportFigureSource";
 import ReportTable from "@/components/reports/ReportTable";
 
 function isSeriesSection(
@@ -63,12 +66,20 @@ export default function ReportSectionRenderer({
   section,
   variant = "default",
   filterSlot,
+  attribution,
+  periodRange,
+  yearRange,
+  inlineSeriesBiomes,
 }: {
   locale: Locale;
   section: ResolvedReportSection;
   variant?: "default" | "news";
   /** Controles de filtro posicionados no canto superior direito da figura (apenas em seções dinâmicas). */
   filterSlot?: ReactNode;
+  attribution?: ResolvedReportFigureAttribution | null;
+  periodRange?: { start: string; end: string };
+  yearRange?: { start: number; end: number };
+  inlineSeriesBiomes?: Array<{ value: string; label: string }>;
 }) {
   const titleClass =
     variant === "news"
@@ -77,6 +88,19 @@ export default function ReportSectionRenderer({
 
   const chartVariant = variant === "news" ? "news" : "default";
   const figureChrome = filterSlot ? "relative pt-[3.25rem] sm:pt-12" : "relative";
+
+  const canInlineSeries =
+    isSeriesSection(section) &&
+    section.inline_biome_state_filter &&
+    inlineSeriesBiomes &&
+    periodRange &&
+    yearRange;
+
+  const legendText = attribution
+    ? isTableSection(section)
+      ? attribution.tablesLegend
+      : attribution.chartsLegend
+    : "";
 
   return (
     <section className="space-y-3">
@@ -101,10 +125,38 @@ export default function ReportSectionRenderer({
             availableStates={section.available_states}
             data={section.data}
           />
+          {attribution ? (
+            <p className="mt-2 text-left text-xs text-[color:var(--muted)]">
+              {locale === "en" ? "Comparison: " : "Comparativo: "}
+              {section.current_year}
+              {" vs "}
+              {section.previous_year ?? "-"}
+              {locale === "en" ? " vs historical average" : " vs média histórica"}
+            </p>
+          ) : null}
         </div>
       ) : null}
 
-      {isSeriesSection(section) && section.kind === "timeseries" ? (
+      {isSeriesSection(section) && section.kind === "timeseries" && canInlineSeries ? (
+        <ReportInlineBiomeStateSeries
+          locale={locale}
+          variant={chartVariant}
+          kind="timeseries"
+          xKey={section.x_key}
+          yKey={section.y_key}
+          biomeKey={section.biome_key ?? "biome"}
+          stateKey={section.state_key ?? "state"}
+          availableBiomes={inlineSeriesBiomes}
+          availableStates={section.available_states ?? []}
+          data={section.data}
+          periodStart={periodRange.start}
+          periodEnd={periodRange.end}
+          startYear={yearRange.start}
+          endYear={yearRange.end}
+        />
+      ) : null}
+
+      {isSeriesSection(section) && section.kind === "timeseries" && !canInlineSeries ? (
         <div className={figureChrome}>
           {filterSlot ? (
             <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
@@ -125,7 +177,26 @@ export default function ReportSectionRenderer({
         </div>
       ) : null}
 
-      {isSeriesSection(section) && section.kind === "bar" ? (
+      {isSeriesSection(section) && section.kind === "bar" && canInlineSeries ? (
+        <ReportInlineBiomeStateSeries
+          locale={locale}
+          variant={chartVariant}
+          kind="bar"
+          xKey={section.x_key}
+          yKey={section.y_key}
+          biomeKey={section.biome_key ?? "biome"}
+          stateKey={section.state_key ?? "state"}
+          availableBiomes={inlineSeriesBiomes}
+          availableStates={section.available_states ?? []}
+          data={section.data}
+          periodStart={periodRange.start}
+          periodEnd={periodRange.end}
+          startYear={yearRange.start}
+          endYear={yearRange.end}
+        />
+      ) : null}
+
+      {isSeriesSection(section) && section.kind === "bar" && !canInlineSeries ? (
         <div className={figureChrome}>
           {filterSlot ? (
             <div className="absolute right-1 top-0 z-10 max-w-[calc(100%-0.5rem)] sm:right-2 sm:top-1">
@@ -154,6 +225,16 @@ export default function ReportSectionRenderer({
           ) : null}
           <ReportTable locale={locale} section={section} variant={variant} />
         </div>
+      ) : null}
+
+      {attribution ? (
+        <ReportFigureSource
+          locale={locale}
+          legend={legendText}
+          sourceUrl={attribution.sourceUrl}
+          sourceLabel={attribution.sourceLabel}
+          variant={variant}
+        />
       ) : null}
     </section>
   );

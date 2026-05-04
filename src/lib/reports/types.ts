@@ -62,11 +62,22 @@ export type ReportSectionBase = {
   title: LocalizedText;
 };
 
+export type ReportDataAttribution = {
+  source_url: string;
+  source_label?: LocalizedText;
+  charts_legend?: LocalizedText;
+  tables_legend?: LocalizedText;
+};
+
 export type ReportSeriesSection = ReportSectionBase & {
   kind: "timeseries" | "bar";
   x_key: string;
   y_key: string;
   biome_key?: string;
+  state_key?: string;
+  /** Filtros bioma + UF no próprio gráfico (dados flat com biome/state). */
+  inline_biome_state_filter?: boolean;
+  available_states?: string[];
   filterable_by?: string[];
   period_filter_granularity?: "month" | "year" | string;
   default_view?: Record<string, unknown>;
@@ -193,6 +204,8 @@ export type ReportDocument = {
   highlights: ReportHighlight[];
   analysis: ReportAnalysis;
   sections: ReportSection[];
+  /** Legenda e URL de fonte para figuras (ex.: INPE COIDS). */
+  data_attribution?: ReportDataAttribution;
   methodology?: ReportMethodology;
   generated_from?: ReportGeneratedFrom;
 };
@@ -265,12 +278,23 @@ export type ResolvedReportAnalysisDetails = {
   limitations: string;
 };
 
+export type ResolvedReportFigureAttribution = {
+  sourceUrl: string;
+  sourceLabel: string;
+  chartsLegend: string;
+  tablesLegend: string;
+};
+
 export type ResolvedReportSeriesSection = {
   id: string;
   kind: "timeseries" | "bar";
   title: string;
   x_key: string;
   y_key: string;
+  biome_key?: string;
+  state_key?: string;
+  inline_biome_state_filter?: boolean;
+  available_states?: string[];
   is_static?: boolean;
   highlight_year?: number;
   data: ReportSeriesPoint[];

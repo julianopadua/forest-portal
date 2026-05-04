@@ -97,16 +97,16 @@ export default async function ReportsPage() {
 
         <div className="mt-6 w-full space-y-4 text-base leading-relaxed text-[color:var(--muted)]">
           <p>
-            Esta seção mostra o que dados públicos e automação conseguem fazer quando o método é aberto: páginas
-            analíticas que se atualizam a partir de pipelines reproduzíveis, com apoio de inteligência artificial na
-            redação e na organização do conteúdo — sempre sobre as mesmas bases que você pode auditar no catálogo de
+            Esta seção mostra o que conseguimos atingir com dados públicos e automação. Aqui, temos relatórios
+            analíticas em formato de notícia que se atualizam a partir de pipelines reproduzíveis, com apoio de inteligência artificial na
+            redação, tornando meras estatísticas em leituras contextuais, sempre sobre as mesmas bases que você pode auditar no catálogo de
             dados abertos.
           </p>
           <p>
             O objetivo é informar e, ao mesmo tempo, dar visibilidade ao poder da automação e ao ecossistema
             open-source que torna isso possível. Cada relatório traz notícias e leituras de apoio escolhidas para
-            contextualizar o tema: elas têm peso próprio — use-as para ir além do que está publicado aqui e não se
-            baseie só neste resumo automatizado.
+            contextualizar o tema, portanto, use-as para ir além do que está publicado aqui e não se
+            baseie só nos nossos resumos automatizados.
           </p>
         </div>
       </header>

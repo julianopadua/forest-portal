@@ -9,13 +9,10 @@ export const SPINNING_LOGO_CYCLING_WORDS: string[] = [
   "FOREST",
   "FINANCE",
   "FIRE",
+  "FLORA",
   "FUTURE",
   "FAUNA",
-  "FLORA",
   "FORECAST",
-  "OPEN SOURCE",
-  "OPEN DATA",
-  "CLIMATE",
 ];
 
 export const SPINNING_LOGO_STATIC_WORD = "INSTITUTO";

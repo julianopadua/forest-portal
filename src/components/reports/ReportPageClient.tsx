@@ -26,6 +26,7 @@ import type {
   ReportTableSection,
   ResolvedReportAnalysisDetails,
   ResolvedReportAnalysisIntro,
+  ResolvedReportFigureAttribution,
   ResolvedReportHighlight,
   ResolvedReportMethodology,
   ResolvedReportSection,
@@ -224,206 +225,6 @@ function resolveBiomeKey(section: ReportTableSection) {
   return "biome";
 }
 
-function resolveMonthlyPeriod(row: ReportSeriesPoint, yearKey: string): string | null {
-  const directPeriod = getRowString(row, "period");
-  if (directPeriod && /^\d{4}-\d{2}$/.test(directPeriod)) {
-    return directPeriod;
-  }
-
-  const year = getRowNumber(row, yearKey);
-  const month = getRowNumber(row, "month") ?? getRowNumber(row, "mes");
-
-  if (year === null || month === null) return null;
-  if (month < 1 || month > 12) return null;
-
-  return `${Math.trunc(year)}-${String(Math.trunc(month)).padStart(2, "0")}`;
-}
-
-function rowMatchesSelectedRange(
-  row: ReportSeriesPoint,
-  yearKey: string,
-  startPeriod: string,
-  endPeriod: string,
-) {
-  const monthlyPeriod = resolveMonthlyPeriod(row, yearKey);
-  if (monthlyPeriod) {
-    return monthlyPeriod >= startPeriod && monthlyPeriod <= endPeriod;
-  }
-
-  const year = getRowNumber(row, yearKey);
-  if (year === null) return false;
-
-  const startYear = periodToYear(startPeriod);
-  const endYear = periodToYear(endPeriod);
-  const normalizedYear = Math.trunc(year);
-
-  return normalizedYear >= startYear && normalizedYear <= endYear;
-}
-
-function supportsUfAggregation(section: ReportTableSection) {
-  const groupKey = resolveGroupKey(section);
-  const yearKey = resolveYearKey(section);
-  const valueKey = resolveValueKey(section);
-
-  return section.data.some((row) => {
-    const group = getRowString(row, groupKey);
-    const year = getRowNumber(row, yearKey);
-    const value = getRowNumber(row, valueKey);
-    return !!group && year !== null && value !== null;
-  });
-}
-
-function buildSelectedRangeUfRows(
-  section: ReportTableSection,
-  selectedBiome: string,
-  startPeriod: string,
-  endPeriod: string,
-  locale: Locale,
-): {
-  title: string;
-  columns: ResolvedReportTableColumn[];
-  rows: ReportTableRow[];
-} {
-  const groupKey = resolveGroupKey(section);
-  const yearKey = resolveYearKey(section);
-  const valueKey = resolveValueKey(section);
-  const biomeKey = resolveBiomeKey(section);
-
-  const grouped = new Map<string, number>();
-
-  for (const row of section.data) {
-    const state = getRowString(row, groupKey);
-    const value = getRowNumber(row, valueKey);
-
-    if (!state || value === null) continue;
-    if (!matchesBiome(row[biomeKey], selectedBiome)) continue;
-    if (!rowMatchesSelectedRange(row, yearKey, startPeriod, endPeriod)) continue;
-
-    grouped.set(state, (grouped.get(state) ?? 0) + value);
-  }
-
-  const rows = Array.from(grouped.entries())
-    .map(([state, selected_total]) => ({ state, selected_total }))
-    .sort((a, b) => {
-      if (b.selected_total !== a.selected_total) {
-        return b.selected_total - a.selected_total;
-      }
-
-      return a.state.localeCompare(b.state, locale === "en" ? "en-US" : "pt-BR");
-    })
-    .slice(0, 10);
-
-  return {
-    title:
-      locale === "en"
-        ? `State counts in selected range: ${periodLabel(startPeriod, locale)} - ${periodLabel(endPeriod, locale)}`
-        : `Contagem por UF no período selecionado: ${periodLabel(startPeriod, locale)} - ${periodLabel(endPeriod, locale)}`,
-    columns: [
-      {
-        key: "state",
-        label: locale === "en" ? "State" : "UF",
-      },
-      {
-        key: "selected_total",
-        label: locale === "en" ? "Hotspots" : "Focos",
-      },
-    ],
-    rows,
-  };
-}
-
-function buildFixedUfComparisonRows(
-  section: ReportTableSection,
-  selectedBiome: string,
-  locale: Locale,
-  currentYear: number,
-  previousYear: number,
-): {
-  title: string;
-  columns: ResolvedReportTableColumn[];
-  rows: ReportTableRow[];
-} {
-  const groupKey = resolveGroupKey(section);
-  const yearKey = resolveYearKey(section);
-  const valueKey = resolveValueKey(section);
-  const biomeKey = resolveBiomeKey(section);
-
-  const grouped = new Map<
-    string,
-    { current_year_total: number; previous_year_total: number }
-  >();
-
-  for (const row of section.data) {
-    const state = getRowString(row, groupKey);
-    const year = getRowNumber(row, yearKey);
-    const value = getRowNumber(row, valueKey);
-
-    if (!state || year === null || value === null) continue;
-    if (!matchesBiome(row[biomeKey], selectedBiome)) continue;
-
-    const normalizedYear = Math.trunc(year);
-    if (normalizedYear !== currentYear && normalizedYear !== previousYear) continue;
-
-    if (!grouped.has(state)) {
-      grouped.set(state, { current_year_total: 0, previous_year_total: 0 });
-    }
-
-    const target = grouped.get(state)!;
-    if (normalizedYear === currentYear) target.current_year_total += value;
-    if (normalizedYear === previousYear) target.previous_year_total += value;
-  }
-
-  const rows = Array.from(grouped.entries())
-    .map(([state, totals]) => {
-      const absoluteChange = totals.current_year_total - totals.previous_year_total;
-      const pctChange =
-        totals.previous_year_total === 0
-          ? null
-          : Number(
-              (
-                ((totals.current_year_total - totals.previous_year_total) /
-                  totals.previous_year_total) *
-                100
-              ).toFixed(2),
-            );
-
-      return {
-        state,
-        current_year_total: totals.current_year_total,
-        previous_year_total: totals.previous_year_total,
-        absolute_change: absoluteChange,
-        pct_change: pctChange,
-      };
-    })
-    .sort((a, b) => {
-      if (b.current_year_total !== a.current_year_total) return b.current_year_total - a.current_year_total;
-      if (b.previous_year_total !== a.previous_year_total) return b.previous_year_total - a.previous_year_total;
-      return a.state.localeCompare(b.state, locale === "en" ? "en-US" : "pt-BR");
-    })
-    .slice(0, 10);
-
-  return {
-    title:
-      locale === "en"
-        ? `Annual comparison by state: ${currentYear} vs ${previousYear}`
-        : `Comparação anual por UF: ${currentYear} vs ${previousYear}`,
-    columns: [
-      { key: "state", label: locale === "en" ? "State" : "UF" },
-      {
-        key: "current_year_total",
-        label: locale === "en" ? `Hotspots in ${currentYear}` : `Focos em ${currentYear}`,
-      },
-      {
-        key: "previous_year_total",
-        label: locale === "en" ? `Hotspots in ${previousYear}` : `Focos em ${previousYear}`,
-      },
-      { key: "absolute_change", label: locale === "en" ? "Absolute change" : "Variação absoluta" },
-      { key: "pct_change", label: locale === "en" ? "% change" : "Variação %" },
-    ],
-    rows,
-  };
-}
-
 function buildFallbackComparisonRows(
   section: ReportTableSection,
   selectedBiome: string,
@@ -566,9 +367,6 @@ function buildRenderableSections(
   const endYear = periodToYear(end);
   const rendered: ResolvedReportSection[] = [];
 
-  const reportLatestYear = report.coverage.latest_year ?? new Date().getFullYear();
-  const reportPreviousYear = report.coverage.previous_year ?? reportLatestYear - 1;
-
   // Build biome options from the report's biome filter for monthly comparison sections
   const biomeOptions: Array<{ value: string; label: string }> = (
     report.filters?.biome.options ?? []
@@ -613,6 +411,10 @@ function buildRenderableSections(
           y_key: s.y_key,
           is_static: true,
           highlight_year: s.highlight_year,
+          biome_key: s.biome_key,
+          state_key: s.state_key,
+          inline_biome_state_filter: s.inline_biome_state_filter,
+          available_states: s.available_states,
           data: s.data,
         });
       } else {
@@ -657,56 +459,20 @@ function buildRenderableSections(
     }
 
     const tableSection = section as ReportTableSection;
-
-    if (!supportsUfAggregation(tableSection)) {
-      const fallback = buildFallbackComparisonRows(
-        tableSection,
-        selectedBiome,
-        startYear,
-        endYear,
-        locale,
-      );
-
-      rendered.push({
-        id: tableSection.id,
-        kind: "table",
-        title,
-        columns: fallback.columns,
-        rows: fallback.rows,
-      });
-      continue;
-    }
-
-    const selectedRangeTable = buildSelectedRangeUfRows(
+    const fallback = buildFallbackComparisonRows(
       tableSection,
       selectedBiome,
-      start,
-      end,
+      startYear,
+      endYear,
       locale,
     );
 
-    const fixedComparisonTable = buildFixedUfComparisonRows(
-      tableSection,
-      selectedBiome,
-      locale,
-      reportLatestYear,
-      reportPreviousYear,
-    );
-
     rendered.push({
-      id: `${tableSection.id}__selected_range`,
+      id: tableSection.id,
       kind: "table",
-      title: selectedRangeTable.title,
-      columns: selectedRangeTable.columns,
-      rows: selectedRangeTable.rows,
-    });
-
-    rendered.push({
-      id: `${tableSection.id}__fixed_compare`,
-      kind: "table",
-      title: fixedComparisonTable.title,
-      columns: fixedComparisonTable.columns,
-      rows: fixedComparisonTable.rows,
+      title,
+      columns: fallback.columns,
+      rows: fallback.rows,
     });
   }
 
@@ -1024,6 +790,35 @@ export default function ReportPageClient({
 
   const normalizedRange = normalizePeriodRange(selectedStartPeriod, selectedEndPeriod);
 
+  const figureAttribution = useMemo((): ResolvedReportFigureAttribution | null => {
+    const da = report.data_attribution;
+    if (!da?.source_url) return null;
+    return {
+      sourceUrl: String(da.source_url),
+      sourceLabel: resolveLocalizedText(
+        da.source_label ?? { pt: "INPE COIDS", en: "INPE COIDS" },
+        locale,
+      ),
+      chartsLegend: resolveLocalizedText(da.charts_legend ?? { pt: "", en: "" }, locale),
+      tablesLegend: resolveLocalizedText(da.tables_legend ?? { pt: "", en: "" }, locale),
+    };
+  }, [report.data_attribution, locale]);
+
+  const inlineBiomeOptions = useMemo(
+    () =>
+      (report.filters?.biome.options ?? []).map((opt) => ({
+        value: opt.value,
+        label: resolveLocalizedText(opt.label, locale),
+      })),
+    [report.filters?.biome.options, locale],
+  );
+
+  const activeYearBounds = useMemo(() => {
+    const sy = periodToYear(normalizedRange.start);
+    const ey = periodToYear(normalizedRange.end);
+    return { start: Math.min(sy, ey), end: Math.max(sy, ey) };
+  }, [normalizedRange.start, normalizedRange.end]);
+
   const heroCredit =
     locale === "en"
       ? catalogItem.heroImageCreditEn ?? catalogItem.heroImageCreditPt
@@ -1087,32 +882,11 @@ export default function ReportPageClient({
                     section={section}
                     variant="news"
                     filterSlot={section.is_static ? undefined : filterSlot}
+                    attribution={figureAttribution}
+                    periodRange={{ start: normalizedRange.start, end: normalizedRange.end }}
+                    yearRange={activeYearBounds}
+                    inlineSeriesBiomes={inlineBiomeOptions}
                   />
-                  {section.kind === "monthly_year_comparison" && (
-                    <p className="mt-3 space-y-0.5 text-right text-xs text-[color:var(--muted)]">
-                      <span className="block">
-                        {locale === "en"
-                          ? `Comparison: ${section.current_year} vs ${section.previous_year ?? "—"} vs historical average`
-                          : `Comparativo: ${section.current_year} vs ${section.previous_year ?? "—"} vs média histórica`}
-                      </span>
-                      <span className="block">
-                        {locale === "en" ? "Source: " : "Fonte: "}
-                        {catalogItem.sourceDatasetUrl ? (
-                          <a
-                            href={catalogItem.sourceDatasetUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-semibold text-[color:var(--foreground)] underline-offset-2 hover:underline"
-                          >
-                            BD Queimadas
-                          </a>
-                        ) : (
-                          <strong>BD Queimadas</strong>
-                        )}
-                        {" — INPE"}
-                      </span>
-                    </p>
-                  )}
                 </div>
               ))}
             </div>
@@ -1321,7 +1095,15 @@ export default function ReportPageClient({
 
       <div className="space-y-8">
         {renderableSections.map((section) => (
-          <ReportSectionRenderer key={section.id} locale={locale} section={section} />
+          <ReportSectionRenderer
+            key={section.id}
+            locale={locale}
+            section={section}
+            attribution={figureAttribution}
+            periodRange={{ start: normalizedRange.start, end: normalizedRange.end }}
+            yearRange={activeYearBounds}
+            inlineSeriesBiomes={inlineBiomeOptions}
+          />
         ))}
       </div>
 
