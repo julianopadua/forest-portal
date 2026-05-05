@@ -8,7 +8,8 @@ function isEmailLike(v: string) {
 }
 
 export async function POST(request: NextRequest) {
-  let response = NextResponse.json({ ok: true });
+  // cookieResponse acumula os Set-Cookie emitidos pelo supabase client
+  let cookieResponse = NextResponse.json({ ok: true });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,9 +20,9 @@ export async function POST(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          response = NextResponse.json({ ok: true });
+          cookieResponse = NextResponse.json({ ok: true });
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
+            cookieResponse.cookies.set(name, value, options);
           });
         },
       },
@@ -38,7 +39,6 @@ export async function POST(request: NextRequest) {
 
   let email = identifier;
 
-  // se for username, resolve id -> email real no auth.users via service role
   if (!isEmailLike(identifier)) {
     const { data: profile, error: pErr } = await supabase
       .from("profiles")
@@ -60,11 +60,20 @@ export async function POST(request: NextRequest) {
     email = uRes.user.email;
   }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error) {
+  if (error || !data.session) {
     return NextResponse.json({ ok: false, error: "Invalid credentials" }, { status: 401 });
   }
 
-  return response;
+  // Copia os cookies de sessão para a resposta final com o token no body
+  const final = NextResponse.json({
+    ok: true,
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token,
+  });
+  cookieResponse.cookies.getAll().forEach(({ name, value, ...opts }) =>
+    final.cookies.set(name, value, opts)
+  );
+  return final;
 }

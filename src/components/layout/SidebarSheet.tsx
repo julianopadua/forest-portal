@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
+import { createClient } from "@/lib/supabase/client";
 import AuthModal from "@/components/auth/AuthModal";
+import type { AuthMode } from "@/components/auth/AuthForm";
 
 type ThemeMode = "light" | "dark";
 
@@ -30,9 +32,6 @@ function IconMenu({ className }: { className?: string }) {
   );
 }
 
-/**
- * Componente de ícone solar para representação de tema claro.
- */
 function SunIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -42,9 +41,6 @@ function SunIcon({ className }: { className?: string }) {
   );
 }
 
-/**
- * Componente de ícone lunar para representação de tema escuro.
- */
 function MoonIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -72,12 +68,17 @@ function ChevronRight({ className }: { className?: string }) {
 export default function SidebarSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { locale, setLocale, dict } = useI18n();
   const router = useRouter();
-  const { user } = useSupabaseUser();
+  const { user, profile } = useSupabaseUser();
 
   const [openSettings, setOpenSettings] = useState(false);
   const [theme, setTheme] = useState<ThemeMode>("light");
-  const [openAuth, setOpenAuth] = useState(false);
+  const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({
+    open: false,
+    mode: "signin",
+  });
 
+  const isAdmin = profile?.role === "admin";
+  const greeting = profile?.full_name || profile?.username || null;
   const openDataId = dict.marketing.sections.mission.id;
   const reportsId = dict.marketing.sections.contents.id;
 
@@ -141,17 +142,40 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
             </button>
           </div>
 
+          {/* Auth row */}
+          {user && greeting && (
+            <p className={`mb-3 px-1 text-sm ${mutedTextClass}`}>
+              {locale === "pt" ? `Olá, ${greeting}, bem-vindo!` : `Hello, ${greeting}!`}
+            </p>
+          )}
+
           <div className="mb-4 flex items-center gap-2">
             {user ? (
-              <Link href="/settings" className="flex-1" onClick={onClose}>
-                <button className={`w-full ${actionButtonClass}`}>
-                  {dict.common.settings}
-                </button>
-              </Link>
-            ) : (
-              <button className={`flex-1 ${actionButtonClass} cursor-not-allowed opacity-50`} disabled title={dict.common.signInSoon}>
-                {dict.common.signInSoon}
+              <button
+                className={`flex-1 ${actionButtonClass}`}
+                onClick={async () => {
+                  await createClient().auth.signOut();
+                  router.refresh();
+                  onClose();
+                }}
+              >
+                {locale === "pt" ? "Sair" : "Sign out"}
               </button>
+            ) : (
+              <>
+                <button
+                  className={`flex-1 ${actionButtonClass}`}
+                  onClick={() => setAuthModal({ open: true, mode: "signin" })}
+                >
+                  {dict.common.signIn}
+                </button>
+                <button
+                  className={`flex-1 ${actionButtonClass}`}
+                  onClick={() => setAuthModal({ open: true, mode: "signup" })}
+                >
+                  {dict.common.signUp}
+                </button>
+              </>
             )}
 
             <button
@@ -165,45 +189,31 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
           </div>
 
           <nav className="space-y-1" aria-label="Navegação">
-            <Link
-              className={navItemClass}
-              href="/"
-              onClick={onClose}
-            >
+            <Link className={navItemClass} href="/" onClick={onClose}>
               {dict.common.home}
             </Link>
 
-            <Link
-              className={navItemClass}
-              href={`/${openDataId}`}
-              onClick={onClose}
-            >
+            <Link className={navItemClass} href={`/${openDataId}`} onClick={onClose}>
               {dict.marketing.sections.mission.title}
             </Link>
 
-            <Link
-              className={navItemClass}
-              href={`/${reportsId}`}
-              onClick={onClose}
-            >
+            <Link className={navItemClass} href={`/${reportsId}`} onClick={onClose}>
               {dict.marketing.sections.contents.title}
             </Link>
 
-            <Link
-              className={navItemClass}
-              href="/blog"
-              onClick={onClose}
-            >
+            <Link className={navItemClass} href="/blog" onClick={onClose}>
               {dict.common.blog}
             </Link>
 
-            <Link
-              className={navItemClass}
-              href="/quem-somos"
-              onClick={onClose}
-            >
+            <Link className={navItemClass} href="/quem-somos" onClick={onClose}>
               {dict.common.aboutUs}
             </Link>
+
+            {isAdmin && (
+              <Link className={navItemClass} href="/admin" onClick={onClose}>
+                {dict.common.adminPanel}
+              </Link>
+            )}
           </nav>
 
           <div className="mt-5">
@@ -235,11 +245,11 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
       </div>
 
       <AuthModal
-        open={openAuth}
-        onClose={() => setOpenAuth(false)}
-        initialMode="signin"
+        open={authModal.open}
+        onClose={() => setAuthModal((s) => ({ ...s, open: false }))}
+        initialMode={authModal.mode}
         onSuccess={() => {
-          setOpenAuth(false);
+          setAuthModal((s) => ({ ...s, open: false }));
           onClose();
           router.refresh();
         }}

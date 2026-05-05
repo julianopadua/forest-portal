@@ -21,7 +21,8 @@ export type Dict = {
     textSoon: string;
 
     signIn: string;
-    signInSoon: string;
+    signUp: string;
+    adminPanel: string;
 
     email: string;
     password: string;
@@ -168,12 +169,13 @@ export const dictionaries: Record<Locale, Dict> = {
       textSoon: "Em breve",
 
       signIn: "Entrar",
-      signInSoon: "Em breve",
+      signUp: "Criar conta",
+      adminPanel: "Painel admin",
 
       email: "Email",
       password: "Senha",
       submit: "Entrar",
-      createAccount: "Não tenho conta - criar agora",
+      createAccount: "Criar conta",
 
       themeToLight: "Trocar para light",
       themeToDark: "Trocar para dark",
@@ -400,12 +402,13 @@ export const dictionaries: Record<Locale, Dict> = {
       textSoon: "Soon",
 
       signIn: "Sign in",
-      signInSoon: "Coming soon",
+      signUp: "Create account",
+      adminPanel: "Admin panel",
 
       email: "Email",
       password: "Password",
       submit: "Sign in",
-      createAccount: "I do not have an account - create now",
+      createAccount: "Create account",
 
       themeToLight: "Switch to light",
       themeToDark: "Switch to dark",
