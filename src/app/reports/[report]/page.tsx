@@ -41,14 +41,22 @@ export default async function ReportDetailPage({
   params: Promise<{ report: string }>;
 }) {
   const { report } = await params;
-  const catalogItem = await getReportBySlug(report);
+
+  // noticias usa caminho constante e eh cached (revalidate 1h); kick off
+  // junto com o catalogo para nao esperar duas viagens sequenciais quando
+  // o relatorio for bdqueimadas. tryFetch... nao rejeita, entao a promise
+  // pode flutuar sem await em outros relatorios.
+  const catalogPromise = getReportBySlug(report);
+  const noticiasPromise = fetchNoticiasAgricolas();
+
+  const catalogItem = await catalogPromise;
 
   if (!catalogItem) notFound();
 
   const [document, relatedAgricolasNews] = await Promise.all([
     fetchStableReport(catalogItem.stableReportPath),
     catalogItem.id === "bdqueimadas_overview"
-      ? fetchNoticiasAgricolas()
+      ? noticiasPromise
       : Promise.resolve(undefined),
   ]);
 

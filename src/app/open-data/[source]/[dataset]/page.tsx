@@ -64,17 +64,24 @@ export default async function OpenDataDatasetPage({
   params: Promise<{ source: string; dataset: string }>;
 }) {
   const { source, dataset } = await params;
-  const datasets = await getOpenDataDatasets();
+  // anp eh detectavel pela URL, entao kick off do compact em paralelo com o catalogo
+  const isAnp = isAnpDatasetSource(source);
+  const datasetsPromise = getOpenDataDatasets();
+  const anpCompactPromise = isAnp
+    ? fetchJsonFromStorage<AnpCatalogCompact>(ANP_CATALOG_COMPACT_PATH, {
+        label: "anp_catalog_compact",
+      })
+    : null;
+
+  const datasets = await datasetsPromise;
   const ds = datasets.find((d) => d.source_id === source && d.slug === dataset);
 
   if (!ds) notFound();
 
   let manifest: OpenDataManifest;
 
-  if (isAnpDatasetSource(ds.source_id)) {
-    const compact = await fetchJsonFromStorage<AnpCatalogCompact>(ANP_CATALOG_COMPACT_PATH, {
-      label: "anp_catalog_compact",
-    });
+  if (isAnp) {
+    const compact = await anpCompactPromise!;
     const built = buildManifestFromAnpDataset(compact, ds.slug, ds.source_url);
     if (!built) notFound();
     manifest = built;
