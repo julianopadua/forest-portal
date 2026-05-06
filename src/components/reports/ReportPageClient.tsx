@@ -9,6 +9,7 @@ import ReportMethodology from "@/components/reports/ReportMethodology";
 import ReportMinimalFilters from "@/components/reports/ReportMinimalFilters";
 import ReportNewsHeader from "@/components/reports/ReportNewsHeader";
 import ReportNewsSidebar from "@/components/reports/ReportNewsSidebar";
+import type { NoticiasAgricolasRelatedData } from "@/components/reports/NoticiasAgricolasRelatedBlock";
 import ReportSectionRenderer from "@/components/reports/ReportSectionRenderer";
 import type { ReportCatalogItem } from "@/lib/reports/catalog";
 import {
@@ -696,9 +697,12 @@ function DateField({
 export default function ReportPageClient({
   catalogItem,
   report,
+  relatedAgricolasNews,
 }: {
   catalogItem: ReportCatalogItem;
   report: ReportDocument;
+  /** Pre-fetched feed (server-side); undefined when the report doesn't surface news. */
+  relatedAgricolasNews?: NoticiasAgricolasRelatedData;
 }) {
   const locale = useDocumentLocale(report.default_locale ?? "pt");
 
@@ -918,7 +922,9 @@ export default function ReportPageClient({
             yearRange={report.coverage.year_range}
             latestPeriod={report.coverage.latest_period}
             highlights={highlights}
-            relatedAgricolasNews={catalogItem.id === "bdqueimadas_overview"}
+            relatedAgricolasNews={
+              catalogItem.id === "bdqueimadas_overview" ? relatedAgricolasNews : undefined
+            }
           />
         </div>
       </div>

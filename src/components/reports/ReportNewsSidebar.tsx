@@ -1,6 +1,8 @@
 // src/components/reports/ReportNewsSidebar.tsx
 import Link from "next/link";
-import NoticiasAgricolasRelatedBlock from "@/components/reports/NoticiasAgricolasRelatedBlock";
+import NoticiasAgricolasRelatedBlock, {
+  type NoticiasAgricolasRelatedData,
+} from "@/components/reports/NoticiasAgricolasRelatedBlock";
 import ReportHighlights from "@/components/reports/ReportHighlights";
 import type { ReportCatalogItem } from "@/lib/reports/catalog";
 import type { Locale, ResolvedReportHighlight } from "@/lib/reports/types";
@@ -21,7 +23,7 @@ export default function ReportNewsSidebar({
   yearRange,
   latestPeriod,
   highlights,
-  relatedAgricolasNews = false,
+  relatedAgricolasNews,
 }: {
   locale: Locale;
   catalogItem: ReportCatalogItem;
@@ -29,8 +31,11 @@ export default function ReportNewsSidebar({
   yearRange?: string | null;
   latestPeriod?: string | null;
   highlights: ResolvedReportHighlight[];
-  /** Feed JSON em Storage (Notícias Agrícolas), ex.: relatório BDQueimadas. */
-  relatedAgricolasNews?: boolean;
+  /**
+   * Pre-fetched feed (Notícias Agrícolas), assembled server-side and passed in.
+   * undefined disables the block (e.g., for reports that don't surface news).
+   */
+  relatedAgricolasNews?: NoticiasAgricolasRelatedData;
 }) {
   const relatedUrl = catalogItem.relatedArticleUrl;
   const relatedLabel =
@@ -42,7 +47,9 @@ export default function ReportNewsSidebar({
     <aside className="space-y-5 border-t border-[color:var(--border)] pt-6 lg:border-t-0 lg:pt-0">
       <ReportHighlights locale={locale} highlights={highlights} variant="sidebar" />
 
-      {relatedAgricolasNews ? <NoticiasAgricolasRelatedBlock locale={locale} /> : null}
+      {relatedAgricolasNews ? (
+        <NoticiasAgricolasRelatedBlock locale={locale} data={relatedAgricolasNews} />
+      ) : null}
 
       <div className="border border-[color:var(--border)] bg-[color:var(--surface-2)]/50 p-4 text-xs leading-relaxed text-[color:var(--foreground)]">
         <h2 className="border-b border-[color:var(--border)] pb-2 text-[11px] font-bold uppercase tracking-wider text-[color:var(--muted)]">

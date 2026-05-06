@@ -3,47 +3,20 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
-import {
-  ANP_CATALOG_COMPACT_PATH,
-  getGeneratedAtIsoForAnpSlug,
-  type AnpCatalogCompact,
-} from "@/lib/openData/anpCatalog";
-import type { OpenDataManifest } from "@/lib/openData/types";
-import { getPublicObjectUrl } from "@/lib/openData/publicUrls";
-
-type DatasetMetaState =
-  | { status: "idle" | "loading" }
-  | { status: "error"; error: string }
-  | { status: "ready"; generated_at: string };
 
 function normalize(s: string) {
   return (s || "")
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .trim();
 }
 
-function formatDateOnly(iso: string) {
+function formatDateOnly(iso: string | undefined) {
+  if (!iso) return "-";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
   return d.toLocaleDateString("pt-BR");
-}
-
-async function runWithConcurrency<T>(
-  items: T[],
-  limit: number,
-  fn: (item: T) => Promise<void>
-) {
-  const queue = items.slice();
-  const workers = Array.from({ length: Math.max(1, limit) }, async () => {
-    while (queue.length) {
-      const item = queue.shift();
-      if (!item) return;
-      await fn(item);
-    }
-  });
-  await Promise.all(workers);
 }
 
 type SourceNode = {
@@ -167,93 +140,6 @@ export default function OpenDataCatalog({
 }) {
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [openSources, setOpenSources] = useState<Record<string, boolean>>({});
-  const [states, setStates] = useState<Record<string, DatasetMetaState>>(() => {
-    const init: Record<string, DatasetMetaState> = {};
-    for (const ds of datasets) init[ds.id] = { status: "idle" };
-    return init;
-  });
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadAll() {
-      const anpList = datasets.filter((d) => d.source_id === "anp");
-      const rest = datasets.filter((d) => d.source_id !== "anp");
-
-      async function loadAnp() {
-        if (anpList.length === 0) return;
-        for (const ds of anpList) {
-          if (cancelled) return;
-          setStates((s) => ({ ...s, [ds.id]: { status: "loading" } }));
-        }
-        try {
-          const url = getPublicObjectUrl(ANP_CATALOG_COMPACT_PATH);
-          const res = await fetch(url, { cache: "no-store" });
-          if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar catálogo ANP`);
-          const compact = (await res.json()) as AnpCatalogCompact;
-          if (cancelled) return;
-          for (const ds of anpList) {
-            const iso = getGeneratedAtIsoForAnpSlug(compact, ds.slug);
-            if (iso) {
-              setStates((s) => ({
-                ...s,
-                [ds.id]: { status: "ready", generated_at: iso },
-              }));
-            } else {
-              setStates((s) => ({
-                ...s,
-                [ds.id]: { status: "error", error: "Conjunto não encontrado no catálogo ANP" },
-              }));
-            }
-          }
-        } catch (e: unknown) {
-          if (cancelled) return;
-          const msg = e instanceof Error ? e.message : "Erro ao carregar";
-          for (const ds of anpList) {
-            setStates((s) => ({
-              ...s,
-              [ds.id]: { status: "error", error: msg },
-            }));
-          }
-        }
-      }
-
-      await Promise.all([
-        loadAnp(),
-        runWithConcurrency(rest, 6, async (ds) => {
-          if (cancelled) return;
-          setStates((s) => ({ ...s, [ds.id]: { status: "loading" } }));
-
-          try {
-            const url = getPublicObjectUrl(ds.manifest_path);
-            const res = await fetch(url, { cache: "no-store" });
-            if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar manifest`);
-            const manifest = (await res.json()) as OpenDataManifest;
-
-            if (!cancelled) {
-              setStates((s) => ({
-                ...s,
-                [ds.id]: { status: "ready", generated_at: manifest.generated_at },
-              }));
-            }
-          } catch (e: unknown) {
-            if (!cancelled) {
-              const msg = e instanceof Error ? e.message : "Erro ao carregar";
-              setStates((s) => ({
-                ...s,
-                [ds.id]: { status: "error", error: msg },
-              }));
-            }
-          }
-        }),
-      ]);
-    }
-
-    loadAll();
-    return () => {
-      cancelled = true;
-    };
-  }, [datasets]);
 
   const tree = useMemo<CategoryNode[]>(() => {
     const q = normalize(query);
@@ -417,13 +303,7 @@ export default function OpenDataCatalog({
 
   function renderDatasetRows(dsList: OpenDataDataset[]) {
     return dsList.map((ds) => {
-      const st = states[ds.id];
-      const updatedLabel =
-        st?.status === "ready"
-          ? formatDateOnly(st.generated_at)
-          : st?.status === "error"
-            ? "Erro"
-            : "Carregando…";
+      const updatedLabel = formatDateOnly(ds.generated_at);
 
       return (
         <li key={ds.id} className="px-4 py-3">

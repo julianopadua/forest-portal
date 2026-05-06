@@ -10,7 +10,8 @@ import {
   type AnpCatalogCompact,
 } from "@/lib/openData/anpCatalog";
 import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
-import { getPublicObjectUrl, withDownload } from "@/lib/openData/publicUrls";
+import { withDownload } from "@/lib/openData/publicUrls";
+import { fetchJsonFromStorage } from "@/lib/storageFetch";
 import { DownloadAllButton } from "@/components/open-data/DownloadAllButton";
 
 function formatBytes(n: number) {
@@ -71,18 +72,16 @@ export default async function OpenDataDatasetPage({
   let manifest: OpenDataManifest;
 
   if (isAnpDatasetSource(ds.source_id)) {
-    const compactUrl = getPublicObjectUrl(ANP_CATALOG_COMPACT_PATH);
-    const res = await fetch(compactUrl, { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar catálogo ANP (${ds.id})`);
-    const compact = (await res.json()) as AnpCatalogCompact;
+    const compact = await fetchJsonFromStorage<AnpCatalogCompact>(ANP_CATALOG_COMPACT_PATH, {
+      label: "anp_catalog_compact",
+    });
     const built = buildManifestFromAnpDataset(compact, ds.slug, ds.source_url);
     if (!built) notFound();
     manifest = built;
   } else {
-    const url = getPublicObjectUrl(ds.manifest_path);
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status} ao buscar manifest (${ds.id})`);
-    manifest = (await res.json()) as OpenDataManifest;
+    manifest = await fetchJsonFromStorage<OpenDataManifest>(ds.manifest_path, {
+      label: `manifest:${ds.id}`,
+    });
   }
 
   return (

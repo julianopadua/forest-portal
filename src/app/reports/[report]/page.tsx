@@ -2,8 +2,22 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReportPageClient from "@/components/reports/ReportPageClient";
+import type { NoticiasAgricolasRelatedData } from "@/components/reports/NoticiasAgricolasRelatedBlock";
 import { getReportBySlug } from "@/lib/reports/catalog";
 import { fetchStableReport } from "@/lib/reports/fetch";
+import {
+  NOTICIAS_AGRICOLAS_MANIFEST_PATH,
+  parseNoticiasAgricolasManifest,
+} from "@/lib/news/noticiasAgricolasManifest";
+import { tryFetchJsonFromStorage } from "@/lib/storageFetch";
+
+async function fetchNoticiasAgricolas(): Promise<NoticiasAgricolasRelatedData> {
+  const json = await tryFetchJsonFromStorage<unknown>(NOTICIAS_AGRICOLAS_MANIFEST_PATH, {
+    label: "noticias_agricolas",
+  });
+  if (json === null) return { status: "unavailable", items: [] };
+  return { status: "ready", items: parseNoticiasAgricolasManifest(json, 5) };
+}
 
 function ChevronLeftIcon({ className }: { className?: string }) {
   return (
@@ -31,7 +45,12 @@ export default async function ReportDetailPage({
 
   if (!catalogItem) notFound();
 
-  const document = await fetchStableReport(catalogItem.stableReportPath);
+  const [document, relatedAgricolasNews] = await Promise.all([
+    fetchStableReport(catalogItem.stableReportPath),
+    catalogItem.id === "bdqueimadas_overview"
+      ? fetchNoticiasAgricolas()
+      : Promise.resolve(undefined),
+  ]);
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
@@ -45,7 +64,11 @@ export default async function ReportDetailPage({
         </Link>
       </div>
 
-      <ReportPageClient catalogItem={catalogItem} report={document} />
+      <ReportPageClient
+        catalogItem={catalogItem}
+        report={document}
+        relatedAgricolasNews={relatedAgricolasNews}
+      />
     </main>
   );
 }
