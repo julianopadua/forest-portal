@@ -40,19 +40,42 @@ function MarkdownParagraph({
   return <p>{children}</p>;
 }
 
+function splitSrcAndLayout(src: string): { path: string; intrinsicFit: boolean } {
+  const intrinsicFit = /#fit\b/.test(src);
+  const path = src.replace(/#fit\b/, "").trim();
+  return { path, intrinsicFit };
+}
+
 function MarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   if (!src) return null;
-  if (src.startsWith("http")) {
+  const { path, intrinsicFit } = splitSrcAndLayout(src);
+  if (path.startsWith("http")) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- URLs externas sem dimensões conhecidas
-      <img src={src} alt={alt ?? ""} className="my-8 h-auto w-full rounded-xl" loading="lazy" />
+      <img src={path} alt={alt ?? ""} className="my-8 h-auto w-full rounded-xl" loading="lazy" />
+    );
+  }
+  if (intrinsicFit) {
+    return (
+      <figure className="not-prose my-8 w-fit max-w-full border-0 p-0">
+        {/* eslint-disable-next-line @next/next/no-img-element -- dimensões intrínsecas; #fit no URL do markdown */}
+        <img
+          src={path}
+          alt={alt ?? ""}
+          className="m-0 block h-auto max-h-[min(85vh,900px)] w-auto max-w-full border-0 p-0 object-contain"
+          loading="lazy"
+        />
+        {alt ? (
+          <figcaption className="mt-2 text-center text-sm text-[color:var(--muted)]">{alt}</figcaption>
+        ) : null}
+      </figure>
     );
   }
   return (
     <figure className="my-10">
       <div className="relative h-[min(70vh,520px)] w-full overflow-hidden rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)]">
         <Image
-          src={src}
+          src={path}
           alt={alt ?? ""}
           fill
           className="object-contain"

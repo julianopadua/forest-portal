@@ -2,8 +2,8 @@
 
 import BlogIndexTile from "@/components/blog/BlogIndexTile";
 import { useI18n } from "@/i18n/I18nProvider";
-import type { BlogIndexItem } from "@/lib/blog/loadPost";
-import { pickPostForLocale } from "@/lib/blog/loadPost";
+import type { BlogIndexItem } from "@/lib/blog/types";
+import { pickPostForLocale } from "@/lib/blog/types";
 
 export default function BlogPageClient({ items }: { items: BlogIndexItem[] }) {
   const { locale, dict } = useI18n();

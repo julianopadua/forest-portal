@@ -1,0 +1,161 @@
+---
+title: "Systems thinking: a short on-ramp"
+subtitle: "An introduction to Donella Meadows's lens, with simple examples, a detour through elite football, and a bridge to public data work at Forest."
+excerpt: "A short entry point into systems thinking, grounded directly in Donella Meadows. The piece moves through elements, interconnections, purpose, stocks and flows, and shows why that matters when we work with public data."
+publishedAt: "2026-05-11"
+author: "Juliano Pádua · Forest Portal"
+tags:
+  - systems thinking
+  - systems
+  - open data
+  - Meadows
+mainImage: "/images/blog/intro-pensamento-sistemico/front-image.png"
+mainImageCaption: "Tactical analysis with data and video (Metrica Sports). Source: Robert Kidd, Forbes, Nov 15, 2020."
+---
+
+When people talk about a **system**, they almost always mean quantity. Many parts, many agents, many variables. In *Thinking in Systems*, Donella Meadows proposes a more interesting approach. A system is not merely a heap of components. It is a set of **interconnected** elements that, over time, produces **purposeful behavior**.
+
+That difference looks small, but it changes the starting point a lot. When the behavior of an organization, a market, or an infrastructure bothers us, the question stops being "who caused this?" and becomes "what structure makes this result keep coming back?" In many cases the problem is not an isolated piece, but the rules, delays, information flows, or even the interconnections between pieces.
+
+This blog is an entry point. I aim to introduce Meadows's terminology, bring those terms closer to concrete examples, and close with a bridge to the Forest Portal.
+
+## Three simple questions
+
+Meadows suggests that there are three things to look for when we want to know whether we are really facing a system. Before drawing any diagram, it is worth pausing on these three questions:
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <div class="grid gap-4 md:grid-cols-3 md:gap-6">
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Elements</p>
+      <p class="mt-2 text-sm leading-relaxed text-[color:var(--muted)]">The parts we can name or measure, such as people, machines, accounts, sensors, and files.</p>
+    </div>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Interconnections</p>
+      <p class="mt-2 text-sm leading-relaxed text-[color:var(--muted)]">The relations between the parts, such as flows, rules, signals, protocols, contracts, and routines.</p>
+    </div>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Purpose</p>
+      <p class="mt-2 text-sm leading-relaxed text-[color:var(--muted)]">What the system tends to produce or maintain over time, even when nobody says so explicitly.</p>
+    </div>
+  </div>
+</div>
+
+Now, what would be an example of something that is not a system? Well... sand scattered on a highway does not, by itself, form a system. You can remove or add sand and you will still only have sand on a highway. A human body, a tree, a university, or a football team are something else. In them, the parts only make sense because they are interconnected. It is that web of relations that produces purposeful behavior.
+
+## Stock, flow, and a bathtub intuition
+
+Some elements of a system accumulate over time. Meadows calls that **stocks**. The movements that raise or lower those stocks are **flows**.
+
+Donella loves examples. I do too. The bathtub example is simple and intuitive. The water level is the stock. The tap and the drain are the flows. It seems trivial, but triviality teaches a lot. When inflow is greater than outflow, the level rises. When outflow is greater than inflow, the level falls. When the two balance, the level holds.
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <svg class="h-auto w-full text-[color:var(--primary)]" viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg" aria-label="Simple stock diagram with connected inflow and outflow">
+    <defs>
+      <marker id="arrow-bath-en" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+        <path d="M0 0 L10 5 L0 10 Z" fill="currentColor" />
+      </marker>
+    </defs>
+    <text x="120" y="48" textAnchor="middle" fill="currentColor" class="text-[12px] font-black uppercase tracking-[0.18em]">Inflow</text>
+    <text x="700" y="48" textAnchor="middle" fill="currentColor" class="text-[12px] font-black uppercase tracking-[0.18em]">Outflow</text>
+    <line x1="80" y1="120" x2="280" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" markerEnd="url(#arrow-bath-en)" />
+    <line x1="540" y1="120" x2="740" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" markerEnd="url(#arrow-bath-en)" />
+    <rect x="280" y="44" width="260" height="152" rx="22" fill="none" stroke="currentColor" strokeWidth="6" opacity="0.55" />
+    <rect x="305" y="110" width="210" height="61" rx="14" fill="currentColor" opacity="0.18" />
+    <line x1="280" y1="120" x2="305" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <line x1="515" y1="120" x2="540" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <text x="180" y="102" textAnchor="middle" fill="currentColor" class="text-[12px] font-medium">inflow</text>
+    <text x="635" y="102" textAnchor="middle" fill="currentColor" class="text-[12px] font-medium">outflow</text>
+    <text x="410" y="145" textAnchor="middle" fill="currentColor" class="text-[14px] font-semibold">stock</text>
+  </svg>
+</div>
+
+The important point is that stocks change slowly. Flows can change fast. That is why so many systems seem to resist our will. We can open or close the tap at once, but we cannot make the water level obey at the same pace. The delay between action and effect helps explain why rushed interventions often make worse what they meant to fix.
+
+We can picture two scenarios to understand that dynamic better. Imagine a first situation where we only have the bathtub drain open. We get a linear decline until the tub empties completely. Now suppose that, upon reaching half of its capacity, we open the tap at the same intensity as the outflow. We get the same linear decline until half capacity and, from then on, stabilization. When inflow matches outflow in intensity, the stock stops falling. It is a visual way to see a dynamic equilibrium, in which the water itself flows into and out of the tub, but the stock level stays constant!
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <p class="mb-4 text-center text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Two simple bathtub readings</p>
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
+      <p class="mb-3 text-center text-sm font-semibold text-[color:var(--foreground)]">Only the outflow open</p>
+      <svg class="h-auto w-full text-[color:var(--primary)]" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" aria-label="Chart with linear decline in water level to zero">
+        <line x1="44" y1="20" x2="44" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="184" x2="292" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="36" x2="268" y2="184" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <text x="24" y="28" textAnchor="middle" fill="currentColor" class="text-[10px] font-medium">level</text>
+        <text x="280" y="206" textAnchor="end" fill="currentColor" class="text-[10px] font-medium">time</text>
+        <text x="56" y="32" fill="currentColor" class="text-[10px]">full</text>
+        <text x="270" y="176" fill="currentColor" class="text-[10px]">empty</text>
+      </svg>
+    </div>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
+      <p class="mb-3 text-center text-sm font-semibold text-[color:var(--foreground)]">Outflow open, then inflow equal to outflow</p>
+      <svg class="h-auto w-full text-[color:var(--primary)]" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" aria-label="Chart with linear decline to half and then stabilization">
+        <line x1="44" y1="20" x2="44" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="184" x2="292" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="36" x2="168" y2="110" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <line x1="168" y1="110" x2="286" y2="110" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <line x1="168" y1="20" x2="168" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.28" />
+        <text x="24" y="28" textAnchor="middle" fill="currentColor" class="text-[10px] font-medium">level</text>
+        <text x="280" y="206" textAnchor="end" fill="currentColor" class="text-[10px] font-medium">time</text>
+        <text x="176" y="98" fill="currentColor" class="text-[10px]">turn inflow on</text>
+        <text x="54" y="32" fill="currentColor" class="text-[10px]">full</text>
+        <text x="250" y="102" fill="currentColor" class="text-[10px]">half</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+That reasoning goes far beyond the bathtub. It applies to physical stock, cash, capital, pollution, trust, learning, and so many other cases where the current state carries the system's recent history.
+
+The **purpose** of a system sits close to a tradition of reflection on ends. That is where **teleology** comes in. In simple terms, teleology is the study of ends or purposes. In Meadows's context, the idea of purpose does not require imagining that every system consciously "wants" something, but that systems have functions or purposes. Systems are, by definition, teleological. Certain institutional, technical, or biological arrangements organize themselves in ways that tend to produce stable results. Naming that end helps read the behavior of the whole.
+
+## Elite football as a lab for interdependence
+
+At first glance, football seems far from that vocabulary. It is not. A team on the pitch is a strong case of interdependence. There are elements, such as players, ball, coach, and pitch. There are interconnections, such as rules, positioning, mutual reading, scoreline, and match tempo. And there is a very clear purpose (win the match).
+
+That is why the article by Fernandes et al. (2020), published in the *Journal of Human Kinetics*, is a good reference here. The study analyzes ball-recovery patterns in elite teams at the 2014 World Cup, crossing tactical modelling with context variables such as opponent quality, scoreline, and phase of play. The central point is to view the match as a complex system and make its relations a bit more legible.
+
+![Image from Fernandes et al. (2020)](/images/blog/intro-pensamento-sistemico/fernandes-2020.png#fit)
+
+Reference: Fernandes, T., Camerino, O., Garganta, J., Hileno, R., & Barreira, D. (2020). How do elite soccer teams perform to ball recovery? Effects of tactical modelling and contextual variables on the defensive patterns of play. *Journal of Human Kinetics*, 73, 165-179. [https://doi.org/10.2478/hukin-2019-0141](https://doi.org/10.2478/hukin-2019-0141).
+
+## Instituto Forest and public data
+
+At Instituto Forest, this way of thinking helps explain how the platform is organized. Useful public data depends on stable relations among publishing, storage, reading, and interpretation.
+
+In very concrete terms, there are elements such as files, pages, manifests, and catalogs. There are interconnections such as pipelines, storage, publication rules, and HTTP requests. And there is a quite clear purpose: to make public data usable, traceable, and reproducible.
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <p class="mb-4 text-center text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">High-level scheme (public contract)</p>
+  <div class="flex flex-col items-stretch justify-center gap-4 md:flex-row md:items-center md:gap-6">
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Public sources</div>
+    <svg class="mx-auto h-8 w-12 shrink-0 text-[color:var(--primary)] md:mx-0 md:h-6 md:w-10 md:rotate-0" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 16 H44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 10 L44 16 L36 22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Pipelines (ingestion)</div>
+    <svg class="mx-auto h-8 w-12 shrink-0 text-[color:var(--primary)] md:mx-0" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 16 H44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 10 L44 16 L36 22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <div class="rounded-xl border border-[color:var(--primary)]/40 bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Supabase Storage<br /><span class="text-xs font-normal text-[color:var(--muted)]">manifests + files</span></div>
+    <svg class="mx-auto h-8 w-12 shrink-0 text-[color:var(--primary)] md:mx-0" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 16 H44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 10 L44 16 L36 22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Forest Portal<br /><span class="text-xs font-normal text-[color:var(--muted)]">public reading</span></div>
+  </div>
+</div>
+
+If that chain works well, the portal becomes the readable surface (the front end) of a larger system. And when something breaks, the path to fixing it lies in understanding the structure and the interconnections among the points in the data flow.
+
+Perhaps that is the most lasting gain from an introduction to systems thinking. It does not offer a magic fix for complex problems. It offers something more useful: a better way to start looking.
+
+## References and further reading
+
+- Donella Meadows, *Pensando em sistemas*: [Amazon Brazil book page](https://www.amazon.com.br/Pensando-sistemas-pensamento-sist%C3%AAmico-problemas/dp/6555644524/ref=asc_df_6555644524?mcid=1a9d61a7cc6338d9b91e813c04a32172&tag=googleshopp00-20&linkCode=df0&hvadid=709884549979&hvpos=&hvnetw=g&hvrand=3548037169505685974&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9100507&hvtargid=pla-1731229625504&psc=1&hvocijid=3548037169505685974-6555644524-&hvexpln=0&language=pt_BR)
+- *Thinking in Systems*: [Penguin Random House book page](https://www.penguinrandomhouse.com/books/801035/thinking-in-systems-by-donella-meadows/)
+- Teleology: [Portuguese Wikipedia entry](https://pt.wikipedia.org/wiki/Teleologia)
+- Fernandes et al. (2020): [article DOI](https://doi.org/10.2478/hukin-2019-0141)

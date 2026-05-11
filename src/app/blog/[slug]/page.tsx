@@ -4,8 +4,7 @@ import { notFound } from "next/navigation";
 import BlogPostPageClient from "@/components/blog/BlogPostPageClient";
 import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
 import type { Locale } from "@/i18n/dictionaries";
-import { BLOG_POST_SLUGS } from "@/lib/blog/catalog";
-import { getBilingualPostsIfAny, getPostBySlug } from "@/lib/blog/loadPost";
+import { getBilingualPostsIfAny, getBlogSlugs, getPostBySlug } from "@/lib/blog/loadPost";
 
 function readLocaleFromCookies(jar: Awaited<ReturnType<typeof cookies>>): Locale {
   const v = jar.get(LOCALE_COOKIE_NAME)?.value;
@@ -13,7 +12,8 @@ function readLocaleFromCookies(jar: Awaited<ReturnType<typeof cookies>>): Locale
 }
 
 export async function generateStaticParams() {
-  return BLOG_POST_SLUGS.map((slug) => ({ slug }));
+  const slugs = await getBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

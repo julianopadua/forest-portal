@@ -1,0 +1,161 @@
+---
+title: "Pensamento sistêmico: uma porta de entrada"
+subtitle: "Uma introdução ao olhar de Donella Meadows, com exemplos simples, um desvio pelo futebol de elite e uma ponte para o trabalho com dados públicos no Forest."
+excerpt: "Uma leitura de entrada para pensamento sistêmico, inspirada diretamente em Donella Meadows. O texto passa por elementos, interconexões, propósito, estoques e fluxos, e mostra por que isso importa quando lidamos com dados públicos."
+publishedAt: "2026-05-11"
+author: "Juliano Pádua · Forest Portal"
+tags:
+  - pensamento sistêmico
+  - sistemas
+  - dados abertos
+  - Meadows
+mainImage: "/images/blog/intro-pensamento-sistemico/front-image.png"
+mainImageCaption: "Análise tática com dados e vídeo (Metrica Sports). Fonte: Robert Kidd, Forbes, 15 nov. 2020."
+---
+
+Quando alguém fala em **sistema**, quase sempre está pensando em quantidade. Muitas partes, muitos agentes, muitas variáveis. Em *Pensando em sistemas*, Donella Meadows propõe uma abordagem mais interessante. Um sistema não é apenas um amontoado de componentes. É um conjunto de elementos **interconectados** que ao longo do tempo produz um **comportamento** proposital.
+
+Essa diferença parece pequena, mas muda bastante o ponto de partida. Quando o comportamento de uma organização, de um mercado ou de uma infraestrutura nos incomoda, a pergunta deixa de ser "quem causou isso?" e passa a ser "que estrutura faz esse resultado reaparecer?". Em muitos casos, o problema não está em uma peça isolada, e sim nas regras, ou nos atrasos, ou nos fluxos de informação ou até nas interconexões entre peças.
+
+Este blog é uma porta de entrada. Eu viso introduzir a terminologia de Meadows, aproximar tais termos a exemplos concretos e finalizar com uma ponte para o Forest Portal.
+
+## Três perguntas simples
+
+Meadows sugere que há três coisas para procurar quando queremos saber se estamos de fato diante de um sistema. Antes de desenhar qualquer diagrama, vale parar nessas três perguntas:
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <div class="grid gap-4 md:grid-cols-3 md:gap-6">
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Elementos</p>
+      <p class="mt-2 text-sm leading-relaxed text-[color:var(--muted)]">As partes que conseguimos nomear ou medir, como pessoas, máquinas, contas, sensores e arquivos.</p>
+    </div>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Interligações</p>
+      <p class="mt-2 text-sm leading-relaxed text-[color:var(--muted)]">As relações entre as partes, como fluxos, regras, sinais, protocolos, contratos e rotinas.</p>
+    </div>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-center">
+      <p class="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Propósito</p>
+      <p class="mt-2 text-sm leading-relaxed text-[color:var(--muted)]">O que o sistema tende a produzir ou manter ao longo do tempo, mesmo quando ninguém diz isso explicitamente.</p>
+    </div>
+  </div>
+</div>
+
+Agora, o que seria um exemplo de algo que não é um sistema? Bom... a areia espalhada numa rodovia não forma, por si só, um sistema. Você pode tirar ou acrescentar areia e continuará tendo apenas areia numa rodovia. Já um corpo humano, uma árvore, uma universidade ou um time de futebol são outra coisa. Neles, as partes só fazem sentido porque estão interconectadas. É essa trama de relações que produz comportamento propositado.
+
+## Estoque, fluxo e um banho de intuição
+
+Alguns elementos de um sistema se acumulam no tempo. Meadows chama isso de **estoques**. Os movimentos que aumentam ou reduzem esses estoques são os **fluxos**.
+
+Donella ama exemplos. Eu também. O exemplo da banheira é simples e intuitivo. O nível de água é o estoque. A torneira e o ralo são os fluxos. Parece banal, mas a banalidade ensina bastante. Quando a entrada é maior que a saída, o nível sobe. Quando a saída é maior que a entrada, o nível desce. Quando as duas se equilibram, o nível se mantém.
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <svg class="h-auto w-full text-[color:var(--primary)]" viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg" aria-label="Diagrama simples de estoque com fluxo de entrada e fluxo de saída conectados">
+    <defs>
+      <marker id="arrow-bath-pt" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+        <path d="M0 0 L10 5 L0 10 Z" fill="currentColor" />
+      </marker>
+    </defs>
+    <text x="120" y="48" textAnchor="middle" fill="currentColor" class="text-[12px] font-black uppercase tracking-[0.18em]">Entrada</text>
+    <text x="700" y="48" textAnchor="middle" fill="currentColor" class="text-[12px] font-black uppercase tracking-[0.18em]">Saída</text>
+    <line x1="80" y1="120" x2="280" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" markerEnd="url(#arrow-bath-pt)" />
+    <line x1="540" y1="120" x2="740" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" markerEnd="url(#arrow-bath-pt)" />
+    <rect x="280" y="44" width="260" height="152" rx="22" fill="none" stroke="currentColor" strokeWidth="6" opacity="0.55" />
+    <rect x="305" y="110" width="210" height="61" rx="14" fill="currentColor" opacity="0.18" />
+    <line x1="280" y1="120" x2="305" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <line x1="515" y1="120" x2="540" y2="120" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+    <text x="180" y="102" textAnchor="middle" fill="currentColor" class="text-[12px] font-medium">fluxo de entrada</text>
+    <text x="635" y="102" textAnchor="middle" fill="currentColor" class="text-[12px] font-medium">fluxo de saída</text>
+    <text x="410" y="145" textAnchor="middle" fill="currentColor" class="text-[14px] font-semibold">estoque</text>
+  </svg>
+</div>
+
+O ponto importante é que estoques mudam devagar. Fluxos podem mudar depressa. É por isso que tantos sistemas parecem resistir à nossa vontade. Podemos abrir ou fechar a torneira de uma vez, mas não conseguimos fazer o nível da água obedecer no mesmo ritmo. O atraso entre ação e efeito ajuda a explicar por que intervenções apressadas frequentemente pioram o que pretendiam corrigir.
+
+Podemos imaginar dois cenários para entender melhor essa dinâmica. Imagine uma primeira situação em que temos apenas o ralo da banheira aberto. Teremos uma queda linear, até a banheira esvaziar por completo. Agora pense que, ao atingir a metade de sua capacidade, abrimos a torneira na mesma intensidade que a saída. Teremos a mesma queda linear até metade da capacidade e, a partir daí, uma estabilização. Quando a entrada passa a ter a mesma intensidade da saída, o estoque para de cair. É um jeito visual de ver um equilíbrio dinâmico, em que a água em si flui para dentro e fora da banheira, mas o nível de estoque da mesma se mantém constante!
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <p class="mb-4 text-center text-sm font-black uppercase tracking-[0.18em] text-[color:var(--primary)]">Duas leituras simples da banheira</p>
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
+      <p class="mb-3 text-center text-sm font-semibold text-[color:var(--foreground)]">Só a saída aberta</p>
+      <svg class="h-auto w-full text-[color:var(--primary)]" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" aria-label="Gráfico com queda linear do nível de água até zero">
+        <line x1="44" y1="20" x2="44" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="184" x2="292" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="36" x2="268" y2="184" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <text x="24" y="28" textAnchor="middle" fill="currentColor" class="text-[10px] font-medium">nível</text>
+        <text x="280" y="206" textAnchor="end" fill="currentColor" class="text-[10px] font-medium">tempo</text>
+        <text x="56" y="32" fill="currentColor" class="text-[10px]">cheia</text>
+        <text x="270" y="176" fill="currentColor" class="text-[10px]">vazia</text>
+      </svg>
+    </div>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
+      <p class="mb-3 text-center text-sm font-semibold text-[color:var(--foreground)]">Saída aberta, depois entrada igual à saída</p>
+      <svg class="h-auto w-full text-[color:var(--primary)]" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" aria-label="Gráfico com queda linear até a metade e depois estabilização">
+        <line x1="44" y1="20" x2="44" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="184" x2="292" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.45" />
+        <line x1="44" y1="36" x2="168" y2="110" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <line x1="168" y1="110" x2="286" y2="110" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <line x1="168" y1="20" x2="168" y2="184" stroke="currentColor" strokeWidth="2.5" opacity="0.28" />
+        <text x="24" y="28" textAnchor="middle" fill="currentColor" class="text-[10px] font-medium">nível</text>
+        <text x="280" y="206" textAnchor="end" fill="currentColor" class="text-[10px] font-medium">tempo</text>
+        <text x="176" y="98" fill="currentColor" class="text-[10px]">liga a entrada</text>
+        <text x="54" y="32" fill="currentColor" class="text-[10px]">cheia</text>
+        <text x="250" y="102" fill="currentColor" class="text-[10px]">metade</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+
+Esse raciocínio vai muito além da banheira. Vale para estoque físico, caixa, capital, poluição, confiança, aprendizado e tantos outros casos em que o estado atual carrega a história recente do sistema.
+
+O **propósito** de um sistema encosta numa tradição de reflexão sobre fins. É aí que a noção de **teleologia** entra. Em termos simples, teleologia é o estudo dos fins ou finalidades. No contexto de Meadows, a ideia de propósito não exige imaginar que todo sistema "quer" alguma coisa de forma consciente, mas que sistemas possuem funções ou propósitos. Sistemas são, por definição, teleológicos. Certos arranjos institucionais, técnicos ou biológicos se organizam de maneira que tendem a produzir resultados estáveis. Nomear esse fim ajuda a ler o comportamento do conjunto.
+
+## Futebol de elite como laboratório de interdependência
+
+À primeira vista, futebol parece um terreno distante desse vocabulário. Não é. Um time em campo é um caso forte de interdependência. Há elementos, como jogadores, bola, treinador e o campo. Há interconexões, como regras, posicionamentos, leitura mútua, placar e ritmo da partida. E há um propósito bem claro (ganhar a partida).
+
+Foi por isso que o artigo de Fernandes et al. (2020), publicado no *Journal of Human Kinetics*, é uma boa referência aqui. O estudo analisa padrões de recuperação de bola em equipes de elite na Copa do Mundo de 2014, cruzando modelagem tática com variáveis de contexto, como qualidade do adversário, estado do placar e momento do jogo. O ponto central é observar o jogo como sistema complexo e tornar suas relações um pouco mais legíveis.
+
+![Imagem de Fernandes et al. (2020)](/images/blog/intro-pensamento-sistemico/fernandes-2020.png#fit)
+
+Referência: Fernandes, T., Camerino, O., Garganta, J., Hileno, R., & Barreira, D. (2020). How do elite soccer teams perform to ball recovery? Effects of tactical modelling and contextual variables on the defensive patterns of play. *Journal of Human Kinetics*, 73, 165-179. [https://doi.org/10.2478/hukin-2019-0141](https://doi.org/10.2478/hukin-2019-0141).
+
+## Instituto Forest e dados públicos
+
+No Instituto Forest, esse modo de pensar ajuda a explicar como a plataforma é organizada. Dados públicos úteis dependem de relações estáveis entre publicação, armazenamento, leitura e interpretação.
+
+Em termos bem concretos, há elementos como arquivos, páginas, manifests e catálogos. Há interconexões como pipelines, armazenamento, regras de publicação e requisições HTTP. E há um propósito bastante claro: tornar dados públicos utilizáveis, rastreáveis e reprodutíveis.
+
+<div class="not-prose my-10 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-6 md:p-8">
+  <p class="mb-4 text-center text-xs font-semibold uppercase tracking-wider text-[color:var(--muted)]">Esquema de alto nível (contrato público)</p>
+  <div class="flex flex-col items-stretch justify-center gap-4 md:flex-row md:items-center md:gap-6">
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Fontes públicas</div>
+    <svg class="mx-auto h-8 w-12 shrink-0 text-[color:var(--primary)] md:mx-0 md:h-6 md:w-10 md:rotate-0" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 16 H44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 10 L44 16 L36 22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Pipelines (ingestão)</div>
+    <svg class="mx-auto h-8 w-12 shrink-0 text-[color:var(--primary)] md:mx-0" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 16 H44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 10 L44 16 L36 22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <div class="rounded-xl border border-[color:var(--primary)]/40 bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Supabase Storage<br /><span class="text-xs font-normal text-[color:var(--muted)]">manifests + ficheiros</span></div>
+    <svg class="mx-auto h-8 w-12 shrink-0 text-[color:var(--primary)] md:mx-0" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M4 16 H44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M36 10 L44 16 L36 22" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+    <div class="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-3 text-center text-sm font-medium text-[color:var(--foreground)]">Forest Portal<br /><span class="text-xs font-normal text-[color:var(--muted)]">leitura pública</span></div>
+  </div>
+</div>
+
+Se esse encadeamento funciona bem, o portal se torna a superfície legível (o front-end) de um sistema maior. E quando algo quebra, o caminho para corrigir está em entender melhor a estrutura e as interconexões entre os pontos do fluxo de dados.
+
+Talvez seja esse o ganho mais duradouro de uma introdução ao pensamento sistêmico. Ele não oferece uma solução mágica para problemas complexos. Oferece algo mais útil: uma forma melhor de começar a olhar.
+
+## Referências e leituras
+
+- Donella Meadows, *Pensando em sistemas*: [página do livro na Amazon Brasil](https://www.amazon.com.br/Pensando-sistemas-pensamento-sist%C3%AAmico-problemas/dp/6555644524/ref=asc_df_6555644524?mcid=1a9d61a7cc6338d9b91e813c04a32172&tag=googleshopp00-20&linkCode=df0&hvadid=709884549979&hvpos=&hvnetw=g&hvrand=3548037169505685974&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9100507&hvtargid=pla-1731229625504&psc=1&hvocijid=3548037169505685974-6555644524-&hvexpln=0&language=pt_BR)
+- *Thinking in Systems*: [página bibliográfica no Penguin Random House](https://www.penguinrandomhouse.com/books/801035/thinking-in-systems-by-donella-meadows/)
+- Teleologia: [verbete da Wikipédia em português](https://pt.wikipedia.org/wiki/Teleologia)
+- Fernandes et al. (2020): [artigo com DOI](https://doi.org/10.2478/hukin-2019-0141)
