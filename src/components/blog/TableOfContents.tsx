@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import type { Heading } from "@/lib/blog/extractHeadings";
 
-export default function TableOfContents({ headings }: { headings: Heading[] }) {
+export default function TableOfContents({
+  headings,
+  title = "Sumário",
+}: {
+  headings: Heading[];
+  /** Rótulo acessível e de cabeçalho (ex.: i18n). */
+  title?: string;
+}) {
   const [activeId, setActiveId] = useState<string>(headings[0]?.id ?? "");
 
   useEffect(() => {
@@ -31,10 +38,8 @@ export default function TableOfContents({ headings }: { headings: Heading[] }) {
   if (!headings.length) return null;
 
   return (
-    <nav aria-label="Sumário do artigo">
-      <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-[color:var(--muted)]">
-        Sumário
-      </p>
+    <nav aria-label={title}>
+      <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-[color:var(--muted)]">{title}</p>
       <ul className="relative space-y-1 pl-3">
         <div
           className="pointer-events-none absolute inset-y-0 left-0 w-px bg-[color:var(--border)]"

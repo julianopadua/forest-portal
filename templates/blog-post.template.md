@@ -4,6 +4,7 @@
 
   Convenções:
   - Um ficheiro por post: content/blog/{slug}.md
+  - Inglês no mesmo URL: opcional content/blog/{slug}.en.md (um slug no catalog.ts; idioma segue o seletor do site)
   - Imagens estáticas em public/images/blog/{slug}/ (referência: /images/blog/{slug}/ficheiro.png)
   - cardImage / mainImage: opcionais — omita ambos para post só texto (card no índice usa gradiente)
   - Corpo: Markdown (GFM: tabelas, listas, ~~riscado~~). Figuras: ![legenda](/images/...)

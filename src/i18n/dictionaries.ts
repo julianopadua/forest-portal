@@ -147,6 +147,16 @@ export type Dict = {
     continue: string;
     backHome: string;
   };
+
+  /** Listagem /blog e navegação do artigo */
+  blogsPage: {
+    eyebrow: string;
+    title: string;
+    intro: string;
+    backToBlog: string;
+    categoryLabel: string;
+    tocLabel: string;
+  };
 };
 
 export const dictionaries: Record<Locale, Dict> = {
@@ -381,6 +391,16 @@ export const dictionaries: Record<Locale, Dict> = {
       continue: "Continuar para cadastro",
       backHome: "Voltar para a home",
     },
+
+    blogsPage: {
+      eyebrow: "Publicações / Blog",
+      title: "Notas do fundador",
+      intro:
+        "Textos sobre dados abertos, automação, meio ambiente e o modo como o Forest Portal organiza informação pública.",
+      backToBlog: "Voltar para o blog",
+      categoryLabel: "Blog",
+      tocLabel: "Sumário",
+    },
   },
 
   en: {
@@ -612,6 +632,16 @@ export const dictionaries: Record<Locale, Dict> = {
         "Creating an account lets you save progress, join the community, and access exclusive content and tools. In this early version, the signup flow will be connected later.",
       continue: "Continue to signup",
       backHome: "Back to home",
+    },
+
+    blogsPage: {
+      eyebrow: "Publications / Blog",
+      title: "Founder's notes",
+      intro:
+        "Notes on open data, automation, the environment, and how the Forest Portal structures public information.",
+      backToBlog: "Back to blog",
+      categoryLabel: "Blog",
+      tocLabel: "On this page",
     },
   },
 };

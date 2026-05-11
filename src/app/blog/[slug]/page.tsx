@@ -1,26 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import BlogArticleLayout from "@/components/blog/BlogArticleLayout";
-import TableOfContents from "@/components/blog/TableOfContents";
+import BlogPostPageClient from "@/components/blog/BlogPostPageClient";
+import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
+import type { Locale } from "@/i18n/dictionaries";
 import { BLOG_POST_SLUGS } from "@/lib/blog/catalog";
-import { getPostBySlug } from "@/lib/blog/loadPost";
-import { extractHeadings } from "@/lib/blog/extractHeadings";
+import { getBilingualPostsIfAny, getPostBySlug } from "@/lib/blog/loadPost";
 
-function ChevronLeftIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-  );
+function readLocaleFromCookies(jar: Awaited<ReturnType<typeof cookies>>): Locale {
+  const v = jar.get(LOCALE_COOKIE_NAME)?.value;
+  return v === "en" ? "en" : "pt";
 }
 
 export async function generateStaticParams() {
@@ -33,7 +22,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const jar = await cookies();
+  const loc = readLocaleFromCookies(jar);
+
+  const pair = await getBilingualPostsIfAny(slug);
+  const post = pair ? (loc === "en" ? pair.en : pair.pt) : await getPostBySlug(slug, loc);
   if (!post) return { title: "Blog" };
 
   const { title, excerpt, mainImage } = post.frontmatter;
@@ -81,36 +74,14 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
 
+  const pair = await getBilingualPostsIfAny(slug);
+  if (pair) {
+    return <BlogPostPageClient single={null} bilingual={pair} />;
+  }
+
+  const post = await getPostBySlug(slug, "pt");
   if (!post) notFound();
 
-  const headings = extractHeadings(post.content);
-
-  return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
-      <div className="mb-6">
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] transition-colors hover:text-[color:var(--foreground)]"
-        >
-          <ChevronLeftIcon className="h-4 w-4" />
-          Voltar para o blog
-        </Link>
-      </div>
-
-      <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12 xl:grid-cols-[1fr_260px] xl:gap-16">
-        <div className="min-w-0">
-          <BlogArticleLayout post={post} />
-        </div>
-        {headings.length > 0 && (
-          <aside className="hidden lg:block">
-            <div className="sticky top-28 pt-2">
-              <TableOfContents headings={headings} />
-            </div>
-          </aside>
-        )}
-      </div>
-    </main>
-  );
+  return <BlogPostPageClient single={post} bilingual={null} />;
 }

@@ -2,18 +2,39 @@ import Image from "next/image";
 import Link from "next/link";
 import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
+import { blogRehypeSanitizeSchema } from "@/lib/blog/blogRehypeSanitizeSchema";
 import { slugify } from "@/lib/blog/extractHeadings";
 
 /**
  * Markdown wraps block images in <p>. We replace <img> with <figure> (block content),
  * which must not sit inside <p>. Unwrap when the paragraph only contains that figure.
  */
-function MarkdownParagraph({ children }: { children?: ReactNode }) {
+function MarkdownParagraph({
+  children,
+  node,
+}: {
+  children?: ReactNode;
+  node?: {
+    children?: Array<{ type?: string; tagName?: string }>;
+  };
+}) {
   const nodes = Children.toArray(children).filter(
     (n) => !(typeof n === "string" && n.trim() === ""),
   );
-  if (nodes.length === 1 && isValidElement(nodes[0]) && nodes[0].type === "figure") {
+  const onlyChild = nodes[0];
+  const containsOnlyImageNode =
+    node?.children?.length === 1 &&
+    node.children[0]?.type === "element" &&
+    node.children[0]?.tagName === "img";
+  const rendersAsImageFigure =
+    nodes.length === 1 &&
+    isValidElement(onlyChild) &&
+    typeof (onlyChild.props as { src?: unknown })?.src === "string";
+
+  if (containsOnlyImageNode || rendersAsImageFigure) {
     return nodes[0];
   }
   return <p>{children}</p>;
@@ -96,6 +117,7 @@ export default function BlogMarkdown({ content }: { content: string }) {
     <div className="prose prose-lg max-w-none text-[color:var(--foreground)] prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-[color:var(--foreground)] prose-h2:mt-12 prose-h2:text-2xl prose-h3:mt-8 prose-p:leading-relaxed prose-p:text-justify prose-p:text-[color:var(--muted)] prose-li:text-justify prose-li:text-[color:var(--muted)] prose-blockquote:border-[color:var(--primary)]/40 prose-blockquote:text-[color:var(--muted)] prose-code:rounded-md prose-code:bg-[color:var(--surface-2)] prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.9em] prose-code:text-[color:var(--foreground)] prose-pre:bg-[color:var(--surface-2)] prose-pre:border prose-pre:border-[color:var(--border)] prose-hr:border-[color:var(--border)] prose-strong:text-[color:var(--foreground)]">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, blogRehypeSanitizeSchema]]}
         components={{
           p: MarkdownParagraph,
           h2: makeHeading("h2"),

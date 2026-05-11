@@ -4,9 +4,8 @@
  * regenerar `posts.generated.json` via `npm run build` ou `node scripts/build-blog-bundle.mjs`.
  */
 export const BLOG_POST_SLUGS = [
+  "intro-pensamento-sistemico",
   "comunidade-open-source",
-  "teoria-geral-dos-sistemas",
-  "blog-000",
 ] as const;
 
 export type BlogSlug = (typeof BLOG_POST_SLUGS)[number];

@@ -33,10 +33,16 @@ const bundle = {};
 
 for (const slug of slugs) {
   const mdPath = join(root, "content/blog", `${slug}.md`);
+  const enPath = join(root, "content/blog", `${slug}.en.md`);
   if (!existsSync(mdPath)) {
     throw new Error(`markdown ausente para slug catalogado: ${slug} (${mdPath})`);
   }
-  bundle[slug] = readFileSync(mdPath, "utf8");
+  const pt = readFileSync(mdPath, "utf8");
+  if (existsSync(enPath)) {
+    bundle[slug] = { bilingual: true, pt, en: readFileSync(enPath, "utf8") };
+  } else {
+    bundle[slug] = pt;
+  }
 }
 
 writeFileSync(outPath, `${JSON.stringify(bundle)}\n`, "utf8");
