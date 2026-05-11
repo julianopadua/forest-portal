@@ -27,10 +27,6 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
         className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-28 bg-gradient-to-b from-[color:var(--background)] via-[color:var(--background)]/45 to-transparent"
         aria-hidden
       />
-      <div
-        className="absolute inset-0 bg-gradient-to-t from-[color:var(--background)]/70 via-[color:var(--background)]/10 to-[color:var(--background)]/10 dark:from-[color:var(--background)] dark:via-[color:var(--background)]/55 dark:to-[color:var(--background)]/25"
-        aria-hidden
-      />
       <div className="absolute inset-0 bg-[color:var(--primary)]/15 mix-blend-multiply dark:mix-blend-soft-light" aria-hidden />
 
       <div className="forest-about-hero-text relative z-10 mx-auto w-full max-w-5xl px-4 pb-16 pt-32 sm:px-6 sm:pb-20 md:pb-28">

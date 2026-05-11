@@ -8,8 +8,16 @@
    ========================= */
 
 :root {
+  /*
+   * Calibragem rapida de contraste (tema claro: fundo; tema escuro: texto).
+   * Ajuste apenas estes valores se quiser mais ou menos pastel.
+   */
+  --fp-theme-light-bg: #e7e1d5;
+  --fp-theme-dark-text: #f4f0ea;
+  --fp-theme-dark-muted: #d2cdc2;
+
   /* Base */
-  --background: #ffffff;
+  --background: var(--fp-theme-light-bg);
   --foreground: #0b1b12;
 
   /* Text */
@@ -57,9 +65,9 @@ html {
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #06110b;
-    --foreground: #f4fff8;
+    --foreground: var(--fp-theme-dark-text);
 
-    --muted: #b7d4c5;
+    --muted: var(--fp-theme-dark-muted);
 
     --surface: rgba(255, 255, 255, 0.06);
     --surface-2: rgba(255, 255, 255, 0.08);
@@ -88,7 +96,7 @@ html {
 
 /* Manual overrides (se você setar class no <html>) */
 html.theme-light {
-  --background: #ffffff;
+  --background: var(--fp-theme-light-bg);
   --foreground: #0b1b12;
 
   --muted: #2a4b3b;
@@ -119,9 +127,9 @@ html.theme-light {
 
 html.theme-dark {
   --background: #06110b;
-  --foreground: #f4fff8;
+  --foreground: var(--fp-theme-dark-text);
 
-  --muted: #b7d4c5;
+  --muted: var(--fp-theme-dark-muted);
 
   --surface: rgba(255, 255, 255, 0.06);
   --surface-2: rgba(255, 255, 255, 0.08);
