@@ -3,10 +3,15 @@ import "server-only";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import matter from "gray-matter";
+import bundledPosts from "./posts.generated.json";
 import type { BlogIndexItem, BlogPost, BlogPostFrontmatter } from "./types";
 import { pickPostForLocale } from "./types";
 
 const BLOG_CONTENT_DIR = join(process.cwd(), "content/blog");
+
+type BundledEntry = string | { bilingual: true; pt: string; en: string };
+
+const POSTS_BUNDLE = bundledPosts as Record<string, BundledEntry>;
 
 function toStringArray(value: unknown): string[] {
   if (Array.isArray(value)) return value.map(String);
@@ -55,75 +60,101 @@ function matterToPost(slug: string, raw: string): BlogPost {
   };
 }
 
-async function listBlogFiles(): Promise<string[]> {
-  const entries = await readdir(BLOG_CONTENT_DIR, { withFileTypes: true });
-  return entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".mdx") && !entry.name.includes(".draft."))
-    .map((entry) => entry.name);
-}
-
 function fileNameToSlug(fileName: string): string | null {
   if (!fileName.endsWith(".mdx")) return null;
   if (fileName.endsWith(".en.mdx")) return fileName.slice(0, -".en.mdx".length);
   return fileName.slice(0, -".mdx".length);
 }
 
-async function readPostSource(fileName: string): Promise<string> {
-  return readFile(join(BLOG_CONTENT_DIR, fileName), "utf8");
+function isBilingualBundle(entry: BundledEntry): entry is { bilingual: true; pt: string; en: string } {
+  return typeof entry === "object" && entry !== null && entry.bilingual === true;
 }
 
-async function getBlogFileMap(): Promise<Map<string, { pt?: string; en?: string }>> {
-  const files = await listBlogFiles();
+async function readFilesystemPosts(): Promise<Map<string, { pt?: string; en?: string }>> {
+  const entries = await readdir(BLOG_CONTENT_DIR, { withFileTypes: true });
+  const files = entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".mdx") && !entry.name.includes(".draft."))
+    .map((entry) => entry.name);
+
   const map = new Map<string, { pt?: string; en?: string }>();
 
   for (const fileName of files) {
     const slug = fileNameToSlug(fileName);
     if (!slug) continue;
 
+    const raw = await readFile(join(BLOG_CONTENT_DIR, fileName), "utf8");
     const current = map.get(slug) ?? {};
+
     if (fileName.endsWith(".en.mdx")) {
-      current.en = fileName;
+      current.en = raw;
     } else {
-      current.pt = fileName;
+      current.pt = raw;
     }
+
     map.set(slug, current);
   }
 
   return map;
 }
 
+function readBundledPosts(): Map<string, { pt?: string; en?: string }> {
+  const map = new Map<string, { pt?: string; en?: string }>();
+
+  for (const [slug, entry] of Object.entries(POSTS_BUNDLE)) {
+    if (isBilingualBundle(entry)) {
+      map.set(slug, { pt: entry.pt, en: entry.en });
+      continue;
+    }
+
+    map.set(slug, { pt: entry });
+  }
+
+  return map;
+}
+
+async function getBlogSourceMap(): Promise<Map<string, { pt?: string; en?: string }>> {
+  try {
+    return await readFilesystemPosts();
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return readBundledPosts();
+    }
+    throw error;
+  }
+}
+
 export async function getBlogSlugs(): Promise<string[]> {
-  const fileMap = await getBlogFileMap();
+  const fileMap = await getBlogSourceMap();
   return [...fileMap.keys()].sort();
 }
 
 export async function getPostBySlug(slug: string, locale: "pt" | "en" = "pt"): Promise<BlogPost | null> {
-  const fileMap = await getBlogFileMap();
+  const fileMap = await getBlogSourceMap();
   const files = fileMap.get(slug);
   if (!files?.pt) return null;
 
   if (locale === "en" && files.en) {
-    return matterToPost(slug, await readPostSource(files.en));
+    return matterToPost(slug, files.en);
   }
 
-  return matterToPost(slug, await readPostSource(files.pt));
+  return matterToPost(slug, files.pt);
 }
 
 export async function getBilingualPostsIfAny(
   slug: string,
 ): Promise<{ pt: BlogPost; en: BlogPost } | null> {
-  const fileMap = await getBlogFileMap();
+  const fileMap = await getBlogSourceMap();
   const files = fileMap.get(slug);
   if (!files?.pt || !files.en) return null;
 
   return {
-    pt: matterToPost(slug, await readPostSource(files.pt)),
-    en: matterToPost(slug, await readPostSource(files.en)),
+    pt: matterToPost(slug, files.pt),
+    en: matterToPost(slug, files.en),
   };
 }
 
 export async function getBlogIndexItems(): Promise<BlogIndexItem[]> {
-  const fileMap = await getBlogFileMap();
+  const fileMap = await getBlogSourceMap();
   const items: BlogIndexItem[] = [];
 
   for (const [slug, files] of fileMap) {
@@ -133,8 +164,8 @@ export async function getBlogIndexItems(): Promise<BlogIndexItem[]> {
       items.push({
         kind: "bilingual",
         slug,
-        pt: matterToPost(slug, await readPostSource(files.pt)),
-        en: matterToPost(slug, await readPostSource(files.en)),
+        pt: matterToPost(slug, files.pt),
+        en: matterToPost(slug, files.en),
       });
       continue;
     }
@@ -142,7 +173,7 @@ export async function getBlogIndexItems(): Promise<BlogIndexItem[]> {
     items.push({
       kind: "single",
       slug,
-      post: matterToPost(slug, await readPostSource(files.pt)),
+      post: matterToPost(slug, files.pt),
     });
   }
 

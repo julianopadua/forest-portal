@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "blog:bundle": "node scripts/build-blog-bundle.mjs",
+    "prebuild": "npm run blog:bundle",
+    "prepreview": "npm run blog:bundle",
+    "predeploy": "npm run blog:bundle",
+    "preupload": "npm run blog:bundle",
     "build": "next build",
     "clean": "node -e \"try { require('fs').rmSync('.next', { recursive: true, force: true }) } catch (_) {}\"",
     "dev": "next dev",
