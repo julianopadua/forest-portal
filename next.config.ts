@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 85],
   },
+  // OpenNext Cloudflare runs the server from `/bundle`; blog posts are read from disk via
+  // `process.cwd()/content/blog` in `src/lib/blog/loadPost.ts`. Without this, those files are
+  // not copied into the standalone trace and Workers throw ENOENT on `readdir`.
+  outputFileTracingIncludes: {
+    "/blog": ["./content/blog/**/*"],
+    "/blog/[slug]": ["./content/blog/**/*"],
+  },
 };
 
 export default createMDX()(nextConfig);
