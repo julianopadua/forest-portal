@@ -22,11 +22,6 @@ export default function SuggestDatasetForm({
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  function mapApiError(code: string | undefined): string {
-    if (code === "rate_limited") return sg.errorRateLimited;
-    return sg.errorGeneric;
-  }
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (status === "sending") return;
@@ -55,7 +50,7 @@ export default function SuggestDatasetForm({
         if (data.error === "rate_limited") {
           setErrorMsg(sg.errorRateLimited);
         } else {
-          setErrorMsg(mapApiError(data.error));
+          setErrorMsg(sg.errorGeneric);
         }
         setStatus("error");
         return;

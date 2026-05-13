@@ -42,8 +42,8 @@ function itemSortKey(item: OpenDataItem) {
   if (isoMatch) {
     const y = Number(isoMatch[1]);
     const m = Number(isoMatch[2]);
-    const d = isoMatch[4] ? Number(isoMatch[4]) : 0;
-    return y * 400 + m * 32 + d;
+    const dayNum = isoMatch[4] ? Number(isoMatch[4]) : 0;
+    return y * 400 + m * 32 + dayNum;
   }
 
   //tenta apenas o ano

@@ -276,6 +276,7 @@ export default function OpenDataCatalog({
     return categories;
   }, [query, datasets, locale]);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- sync catalog expand with search */
   useEffect(() => {
     const q = normalize(query);
     if (!q) {
@@ -306,6 +307,7 @@ export default function OpenDataCatalog({
     setOpenCats(nextCats);
     setOpenSources(nextSources);
   }, [query, tree]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function toggleCat(catKey: string) {
     setOpenCats((s) => ({ ...s, [catKey]: !s[catKey] }));
