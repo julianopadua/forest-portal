@@ -157,6 +157,64 @@ export type Dict = {
     categoryLabel: string;
     tocLabel: string;
   };
+
+  openData: {
+    meta: {
+      catalogTitle: string;
+      catalogDescription: string;
+      datasetTitleSuffix: string;
+    };
+    catalog: {
+      pageTitle: string;
+      intro: string;
+      searchPlaceholder: string;
+      clearSearch: string;
+      clearSearchAria: string;
+      searchAria: string;
+    };
+    catalogTree: {
+      updatedOn: string;
+      viewDownloads: string;
+      noDatasetsInCategory: string;
+      noDatasetsFound: string;
+      /** Use `{count}` placeholder */
+      datasetCount: string;
+      displayGeneral: string;
+      displaySourceFallback: string;
+    };
+    suggest: {
+      titleDefault: string;
+      titleEmpty: string;
+      body: string;
+      currentQuery: string;
+      thanks: string;
+      nameOptional: string;
+      emailOptional: string;
+      descriptionLabel: string;
+      descriptionPlaceholder: string;
+      submit: string;
+      submitting: string;
+      errorDescribeDataset: string;
+      errorRateLimited: string;
+      errorGeneric: string;
+      errorNetwork: string;
+    };
+    downloadAll: {
+      idle: string;
+      loading: string;
+    };
+    dataset: {
+      backToCatalog: string;
+      scanLabel: string;
+      /** Use `{source}` placeholder */
+      officialSourceWithName: string;
+      dataDictionary: string;
+      lastRelease: string;
+      colPeriod: string;
+      colFile: string;
+      colSize: string;
+    };
+  };
 };
 
 export const dictionaries: Record<Locale, Dict> = {
@@ -401,6 +459,66 @@ export const dictionaries: Record<Locale, Dict> = {
       categoryLabel: "Blog",
       tocLabel: "Sumário",
     },
+
+    openData: {
+      meta: {
+        catalogTitle: "Dados abertos | Instituto Forest",
+        catalogDescription:
+          "Catálogo público de arquivos em storage e links às fontes oficiais, organizados por conjunto de dados e período.",
+        datasetTitleSuffix: " | Dados abertos | Instituto Forest",
+      },
+      catalog: {
+        pageTitle: "Dados abertos",
+        intro:
+          "Arquivos no Storage público e links diretos às fontes oficiais, organizados por dataset e período.",
+        searchPlaceholder: "Buscar datasets…",
+        clearSearch: "Limpar",
+        clearSearchAria: "Limpar busca",
+        searchAria: "Buscar datasets",
+      },
+      catalogTree: {
+        updatedOn: "Atualizado em:",
+        viewDownloads: "Ver downloads",
+        noDatasetsInCategory: "Nenhum dataset nesta categoria ainda.",
+        noDatasetsFound: "Nenhum dataset encontrado.",
+        datasetCount: "{count} datasets",
+        displayGeneral: "Geral",
+        displaySourceFallback: "Fonte",
+      },
+      suggest: {
+        titleDefault: "Não encontrou o que procurava?",
+        titleEmpty: "Não encontramos o que você procurava",
+        body:
+          "Descreva o dataset que você gostaria de ver aqui e nós avaliaremos para implementar.",
+        currentQuery: "Sua busca atual:",
+        thanks: "Obrigado! Recebemos sua sugestão e vamos avaliar.",
+        nameOptional: "Nome (opcional)",
+        emailOptional: "E-mail para retorno (opcional)",
+        descriptionLabel: "Descrição do dataset",
+        descriptionPlaceholder:
+          "Ex.: Dados mensais de produção de petróleo da ANP por estado, desde 2010.",
+        submit: "Enviar sugestão",
+        submitting: "Enviando…",
+        errorDescribeDataset: "Por favor, descreva o dataset que você procura.",
+        errorRateLimited: "Aguarde um instante antes de enviar novamente.",
+        errorGeneric: "Não foi possível enviar agora. Tente novamente em alguns minutos.",
+        errorNetwork: "Falha de rede. Verifique sua conexão e tente novamente.",
+      },
+      downloadAll: {
+        idle: "Baixar coleção completa",
+        loading: "Baixando…",
+      },
+      dataset: {
+        backToCatalog: "Voltar para o catálogo",
+        scanLabel: "Varredura:",
+        officialSourceWithName: "Fonte oficial ({source})",
+        dataDictionary: "Dicionário de dados",
+        lastRelease: "Último release:",
+        colPeriod: "Referência",
+        colFile: "Arquivo",
+        colSize: "Tamanho",
+      },
+    },
   },
 
   en: {
@@ -642,6 +760,66 @@ export const dictionaries: Record<Locale, Dict> = {
       backToBlog: "Back to blog",
       categoryLabel: "Blog",
       tocLabel: "On this page",
+    },
+
+    openData: {
+      meta: {
+        catalogTitle: "Open data | Instituto Forest",
+        catalogDescription:
+          "Public catalog of files in shared storage and links to official sources, organized by dataset and period.",
+        datasetTitleSuffix: " | Open data | Instituto Forest",
+      },
+      catalog: {
+        pageTitle: "Open data",
+        intro:
+          "Files in public storage and direct links to official sources, organized by dataset and period.",
+        searchPlaceholder: "Search datasets…",
+        clearSearch: "Clear",
+        clearSearchAria: "Clear search",
+        searchAria: "Search datasets",
+      },
+      catalogTree: {
+        updatedOn: "Updated:",
+        viewDownloads: "View downloads",
+        noDatasetsInCategory: "No datasets in this category yet.",
+        noDatasetsFound: "No datasets found.",
+        datasetCount: "{count} datasets",
+        displayGeneral: "General",
+        displaySourceFallback: "Source",
+      },
+      suggest: {
+        titleDefault: "Did not find what you need?",
+        titleEmpty: "We could not find what you searched for",
+        body:
+          "Describe the dataset you would like to see here and we will review it for a future release.",
+        currentQuery: "Your current search:",
+        thanks: "Thank you. We received your suggestion and will review it.",
+        nameOptional: "Name (optional)",
+        emailOptional: "Reply email (optional)",
+        descriptionLabel: "Dataset description",
+        descriptionPlaceholder:
+          "Example: Monthly ANP oil production by state since 2010.",
+        submit: "Send suggestion",
+        submitting: "Sending…",
+        errorDescribeDataset: "Please describe the dataset you are looking for.",
+        errorRateLimited: "Please wait a moment before sending again.",
+        errorGeneric: "We could not send right now. Try again in a few minutes.",
+        errorNetwork: "Network error. Check your connection and try again.",
+      },
+      downloadAll: {
+        idle: "Download full collection",
+        loading: "Downloading…",
+      },
+      dataset: {
+        backToCatalog: "Back to catalog",
+        scanLabel: "Catalog refresh:",
+        officialSourceWithName: "Official source ({source})",
+        dataDictionary: "Data dictionary",
+        lastRelease: "Last release:",
+        colPeriod: "Period",
+        colFile: "File",
+        colSize: "Size",
+      },
     },
   },
 };

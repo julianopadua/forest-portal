@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "@/i18n/I18nProvider";
+import { localeToBcp47 } from "@/i18n/localeTag";
 import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
 
 function normalize(s: string) {
@@ -12,11 +14,11 @@ function normalize(s: string) {
     .trim();
 }
 
-function formatDateOnly(iso: string | undefined) {
+function formatDateOnly(iso: string | undefined, bcp47: "pt-BR" | "en-US") {
   if (!iso) return "-";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleDateString("pt-BR");
+  return d.toLocaleDateString(bcp47);
 }
 
 type SourceNode = {
@@ -79,33 +81,40 @@ function subcategorySortIndexFlat(catTitle: string, subTitle: string): number {
   return 100;
 }
 
-function sortSubsEnergy(subs: SubCategoryNode[]): SubCategoryNode[] {
+function sortSubsEnergy(subs: SubCategoryNode[], bcp47: "pt-BR" | "en-US"): SubCategoryNode[] {
   return subs.slice().sort((a, b) => {
     const ia = ENERGY_SUBORDER.indexOf(a.title);
     const ib = ENERGY_SUBORDER.indexOf(b.title);
     const fa = ia >= 0 ? ia : 999;
     const fb = ib >= 0 ? ib : 999;
     if (fa !== fb) return fa - fb;
-    return a.title.localeCompare(b.title, "pt-BR");
+    return a.title.localeCompare(b.title, bcp47);
   });
 }
 
-function sortFlatSubcategories(catTitle: string, subs: SubCategoryNode[]): SubCategoryNode[] {
+function sortFlatSubcategories(
+  catTitle: string,
+  subs: SubCategoryNode[],
+  bcp47: "pt-BR" | "en-US"
+): SubCategoryNode[] {
   return subs.slice().sort((a, b) => {
     const ia = subcategorySortIndexFlat(catTitle, a.title);
     const ib = subcategorySortIndexFlat(catTitle, b.title);
     if (ia !== ib) return ia - ib;
-    return a.title.localeCompare(b.title, "pt-BR");
+    return a.title.localeCompare(b.title, bcp47);
   });
 }
 
-function buildSourceNodes(srcMap: Map<string, OpenDataDataset[]>): SourceNode[] {
+function buildSourceNodes(
+  srcMap: Map<string, OpenDataDataset[]>,
+  bcp47: "pt-BR" | "en-US"
+): SourceNode[] {
   return Array.from(srcMap.entries())
     .map(([sourceId, datasets]) => {
-      datasets.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+      datasets.sort((a, b) => a.title.localeCompare(b.title, bcp47));
       return { key: sourceId, title: datasets[0]?.source_title || sourceId, datasets };
     })
-    .sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+    .sort((a, b) => a.title.localeCompare(b.title, bcp47));
 }
 
 /** Chave única por painel de fonte (evita colisão ANP/EIA no mesmo source em subs diferentes). */
@@ -138,11 +147,16 @@ export default function OpenDataCatalog({
   query: string;
   datasets: OpenDataDataset[];
 }) {
+  const { locale, dict } = useI18n();
+  const ct = dict.openData.catalogTree;
+  const bcp47 = localeToBcp47(locale);
+
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [openSources, setOpenSources] = useState<Record<string, boolean>>({});
 
   const tree = useMemo<CategoryNode[]>(() => {
     const q = normalize(query);
+    const bcp47 = localeToBcp47(locale);
 
     const filtered = q
       ? datasets.filter((ds) => {
@@ -207,32 +221,32 @@ export default function OpenDataCatalog({
           const fa = ia >= 0 ? ia : 999;
           const fb = ib >= 0 ? ib : 999;
           if (fa !== fb) return fa - fb;
-          return a[0].localeCompare(b[0], "pt-BR");
+          return a[0].localeCompare(b[0], bcp47);
         })
         .map(([segTitle, subMap]) => {
           const subcategories: SubCategoryNode[] = Array.from(subMap.entries()).map(([subTitle, srcMap]) => ({
             key: subTitle,
             title: subTitle,
-            sources: buildSourceNodes(srcMap),
+            sources: buildSourceNodes(srcMap, bcp47),
           }));
           return {
             key: segTitle,
             title: segTitle,
-            subcategories: sortSubsEnergy(subcategories),
+            subcategories: sortSubsEnergy(subcategories, bcp47),
           };
         });
 
       const flatSubcategories: SubCategoryNode[] = Array.from(data.flat.entries()).map(([subTitle, srcMap]) => ({
         key: subTitle,
         title: subTitle,
-        sources: buildSourceNodes(srcMap),
+        sources: buildSourceNodes(srcMap, bcp47),
       }));
 
       return {
         key: catTitle,
         title: catTitle,
         segmentGroups,
-        flatSubcategories: sortFlatSubcategories(catTitle, flatSubcategories),
+        flatSubcategories: sortFlatSubcategories(catTitle, flatSubcategories, bcp47),
       };
     });
 
@@ -253,14 +267,14 @@ export default function OpenDataCatalog({
       categories.sort((a, b) => {
         const ia = orderIndex.has(a.title) ? orderIndex.get(a.title)! : 999;
         const ib = orderIndex.has(b.title) ? orderIndex.get(b.title)! : 999;
-        return ia !== ib ? ia - ib : a.title.localeCompare(b.title, "pt-BR");
+        return ia !== ib ? ia - ib : a.title.localeCompare(b.title, bcp47);
       });
     } else {
-      categories.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+      categories.sort((a, b) => a.title.localeCompare(b.title, bcp47));
     }
 
     return categories;
-  }, [query, datasets]);
+  }, [query, datasets, locale]);
 
   useEffect(() => {
     const q = normalize(query);
@@ -303,7 +317,7 @@ export default function OpenDataCatalog({
 
   function renderDatasetRows(dsList: OpenDataDataset[]) {
     return dsList.map((ds) => {
-      const updatedLabel = formatDateOnly(ds.generated_at);
+      const updatedLabel = formatDateOnly(ds.generated_at, bcp47);
 
       return (
         <li key={ds.id} className="px-4 py-3">
@@ -313,14 +327,16 @@ export default function OpenDataCatalog({
               <div className="mt-1 text-xs text-[color:var(--muted)] leading-relaxed line-clamp-4">
                 {ds.description}
               </div>
-              <div className="mt-2 text-xs text-[color:var(--muted)]">Atualizado em: {updatedLabel}</div>
+              <div className="mt-2 text-xs text-[color:var(--muted)]">
+                {ct.updatedOn} {updatedLabel}
+              </div>
             </div>
             <div className="shrink-0 sm:pt-0.5">
               <Link
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
                 href={`/open-data/${ds.source_id}/${ds.slug}`}
               >
-                Ver downloads
+                {ct.viewDownloads}
               </Link>
             </div>
           </div>
@@ -340,13 +356,14 @@ export default function OpenDataCatalog({
           <div key={sub.key}>
             <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--muted)]">
               <span className="h-px w-4 bg-[color:var(--border)]"></span>
-              {sub.title}
+              {sub.key === "Geral" ? ct.displayGeneral : sub.title}
             </h3>
 
             <div className="flex flex-col gap-3">
               {sub.sources.map((src) => {
                 const pkey = sourcePanelKey(cat.key, segmentKey, sub.key, src.key);
                 const srcOpen = !!openSources[pkey];
+                const sourceHeading = src.key === "fonte" ? ct.displaySourceFallback : src.title;
 
                 return (
                   <div key={pkey} className="rounded-xl border border-[color:var(--border)]">
@@ -357,7 +374,7 @@ export default function OpenDataCatalog({
                       className="flex w-full items-center justify-between gap-4 bg-[color:var(--surface-2)] px-4 py-3 text-left"
                     >
                       <div className="text-sm font-medium text-[color:var(--text)]">
-                        {src.title}{" "}
+                        {sourceHeading}{" "}
                         <span className="text-xs font-normal text-[color:var(--muted)]">
                           ({src.datasets.length})
                         </span>
@@ -398,7 +415,9 @@ export default function OpenDataCatalog({
             >
               <div>
                 <h2 className="text-base font-semibold text-[color:var(--text)]">{cat.title}</h2>
-                <div className="mt-1 text-xs text-[color:var(--muted)]">{totalDatasets} datasets</div>
+                <div className="mt-1 text-xs text-[color:var(--muted)]">
+                  {ct.datasetCount.replace("{count}", String(totalDatasets))}
+                </div>
               </div>
               <span className="text-[color:var(--muted)]">{isOpen ? "−" : "+"}</span>
             </button>
@@ -407,7 +426,7 @@ export default function OpenDataCatalog({
               <div className="space-y-10 px-5 pb-5">
                 {!hasContent ? (
                   <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-3 text-sm text-[color:var(--muted)]">
-                    Nenhum dataset nesta categoria ainda.
+                    {ct.noDatasetsInCategory}
                   </div>
                 ) : (
                   <>
@@ -441,7 +460,7 @@ export default function OpenDataCatalog({
 
       {tree.length === 0 && (
         <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] p-5 text-sm text-[color:var(--muted)] shadow-[var(--shadow-float)]">
-          Nenhum dataset encontrado.
+          {ct.noDatasetsFound}
         </div>
       )}
     </div>

@@ -8,6 +8,7 @@ type Payload = {
   email?: string;
   query?: string;
   hp?: string;
+  locale?: string;
 };
 
 const lastByIp = new Map<string, number>();
@@ -65,10 +66,24 @@ export async function POST(req: Request) {
   const name = (body.name ?? "").trim().slice(0, 200);
   const email = (body.email ?? "").trim().slice(0, 200);
   const query = (body.query ?? "").trim().slice(0, 500);
+  const isEn = body.locale === "en";
 
-  const subject = `[Forest] Sugestão de dataset${query ? ` — busca: "${query}"` : ""}`;
+  const subject = isEn
+    ? `[Forest] Dataset suggestion${query ? ` - search: "${query}"` : ""}`
+    : `[Forest] Sugestão de dataset${query ? ` - busca: "${query}"` : ""}`;
 
-  const html = `
+  const html = isEn
+    ? `
+    <h2>New dataset suggestion</h2>
+    ${query ? `<p><strong>Current search:</strong> ${escapeHtml(query)}</p>` : ""}
+    ${name ? `<p><strong>Name:</strong> ${escapeHtml(name)}</p>` : ""}
+    ${email ? `<p><strong>Email:</strong> ${escapeHtml(email)}</p>` : ""}
+    <p><strong>Message:</strong></p>
+    <pre style="white-space:pre-wrap;font-family:inherit">${escapeHtml(message)}</pre>
+    <hr />
+    <p style="color:#888;font-size:12px">IP: ${escapeHtml(ip)}</p>
+  `
+    : `
     <h2>Nova sugestão de dataset</h2>
     ${query ? `<p><strong>Busca atual:</strong> ${escapeHtml(query)}</p>` : ""}
     ${name ? `<p><strong>Nome:</strong> ${escapeHtml(name)}</p>` : ""}
@@ -79,18 +94,31 @@ export async function POST(req: Request) {
     <p style="color:#888;font-size:12px">IP: ${escapeHtml(ip)}</p>
   `;
 
-  const text = [
-    query ? `Busca atual: ${query}` : null,
-    name ? `Nome: ${name}` : null,
-    email ? `E-mail: ${email}` : null,
-    "",
-    "Mensagem:",
-    message,
-    "",
-    `IP: ${ip}`,
-  ]
-    .filter((l) => l !== null)
-    .join("\n");
+  const text = isEn
+    ? [
+        query ? `Current search: ${query}` : null,
+        name ? `Name: ${name}` : null,
+        email ? `Email: ${email}` : null,
+        "",
+        "Message:",
+        message,
+        "",
+        `IP: ${ip}`,
+      ]
+        .filter((l) => l !== null)
+        .join("\n")
+    : [
+        query ? `Busca atual: ${query}` : null,
+        name ? `Nome: ${name}` : null,
+        email ? `E-mail: ${email}` : null,
+        "",
+        "Mensagem:",
+        message,
+        "",
+        `IP: ${ip}`,
+      ]
+        .filter((l) => l !== null)
+        .join("\n");
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",

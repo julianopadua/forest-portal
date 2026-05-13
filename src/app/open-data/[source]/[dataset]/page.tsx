@@ -1,7 +1,13 @@
 // src/app/open-data/[source]/[dataset]/page.tsx
 
 import Link from "next/link";
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { DownloadAllButton } from "@/components/open-data/DownloadAllButton";
+import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
+import { dictionaries, type Locale } from "@/i18n/dictionaries";
+import { localeToBcp47 } from "@/i18n/localeTag";
 import { getOpenDataDatasets } from "@/lib/openData/catalog";
 import {
   ANP_CATALOG_COMPACT_PATH,
@@ -12,7 +18,6 @@ import {
 import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
 import { withDownload } from "@/lib/openData/publicUrls";
 import { fetchJsonFromStorage } from "@/lib/storageFetch";
-import { DownloadAllButton } from "@/components/open-data/DownloadAllButton";
 
 function formatBytes(n: number) {
   if (!Number.isFinite(n)) return "-";
@@ -26,15 +31,13 @@ function formatBytes(n: number) {
   return `${v.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
 }
 
-/**
- * Lógica de ordenação robusta para períodos.
- * Suporta "Atual", datas ISO (YYYY-MM-DD), meses (YYYY-MM) e anos (YYYY).
- */
+//ordenacao por periodo: atual/current, data ISO, ano
 function itemSortKey(item: OpenDataItem) {
   const p = (item.period || "").trim();
-  if (p.toLowerCase() === "atual") return Number.POSITIVE_INFINITY;
+  const pl = p.toLowerCase();
+  if (pl === "atual" || pl === "current") return Number.POSITIVE_INFINITY;
 
-  // Tenta capturar YYYY-MM-DD ou YYYY-MM
+  //tenta YYYY-MM-DD ou YYYY-MM
   const isoMatch = /^(\d{4})-(\d{2})(-(\d{2}))?$/.exec(p);
   if (isoMatch) {
     const y = Number(isoMatch[1]);
@@ -43,7 +46,7 @@ function itemSortKey(item: OpenDataItem) {
     return y * 400 + m * 32 + d;
   }
 
-  // Tenta capturar apenas o Ano
+  //tenta apenas o ano
   const yMatch = /^(\d{4})$/.exec(p);
   if (yMatch) return Number(yMatch[1]) * 400;
 
@@ -58,13 +61,42 @@ function ChevronLeftIcon({ className }: { className?: string }) {
   );
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ source: string; dataset: string }>;
+}): Promise<Metadata> {
+  const { source, dataset } = await params;
+  const cookieStore = await cookies();
+  const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
+  const locale: Locale = rawLocale === "en" ? "en" : "pt";
+  const meta = dictionaries[locale].openData.meta;
+
+  const datasets = await getOpenDataDatasets();
+  const ds = datasets.find((d) => d.source_id === source && d.slug === dataset);
+  if (!ds) {
+    return { title: meta.catalogTitle, description: meta.catalogDescription };
+  }
+
+  return {
+    title: `${ds.title}${meta.datasetTitleSuffix}`,
+    description: ds.description || meta.catalogDescription,
+  };
+}
+
 export default async function OpenDataDatasetPage({
   params,
 }: {
   params: Promise<{ source: string; dataset: string }>;
 }) {
   const { source, dataset } = await params;
-  // anp eh detectavel pela URL, entao kick off do compact em paralelo com o catalogo
+  const cookieStore = await cookies();
+  const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
+  const locale: Locale = rawLocale === "en" ? "en" : "pt";
+  const d = dictionaries[locale].openData.dataset;
+  const bcp47 = localeToBcp47(locale);
+
+  //anp eh detectavel pela URL, entao kick off do compact em paralelo com o catalogo
   const isAnp = isAnpDatasetSource(source);
   const datasetsPromise = getOpenDataDatasets();
   const anpCompactPromise = isAnp
@@ -100,7 +132,7 @@ export default async function OpenDataDatasetPage({
             className="inline-flex items-center gap-2 text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--foreground)] transition-colors"
           >
             <ChevronLeftIcon className="h-4 w-4" />
-            Voltar para o catálogo
+            {d.backToCatalog}
           </Link>
         </div>
 
@@ -118,11 +150,12 @@ export default async function OpenDataDatasetPage({
           </div>
         </div>
 
-        {/* Faixa de Informações: Generalizável e Enxuta */}
         <div className="mt-8 flex flex-wrap items-center gap-y-3 gap-x-8 text-[11px] font-bold text-[color:var(--muted)] uppercase tracking-wider border-t border-[color:var(--border)] pt-6">
           <div className="flex items-center gap-2">
-            <span className="opacity-50">Varredura:</span>
-            <span className="text-[color:var(--foreground)]">{new Date(manifest.generated_at).toLocaleDateString("pt-BR")}</span>
+            <span className="opacity-50">{d.scanLabel}</span>
+            <span className="text-[color:var(--foreground)]">
+              {new Date(manifest.generated_at).toLocaleDateString(bcp47)}
+            </span>
           </div>
 
           <a 
@@ -131,35 +164,33 @@ export default async function OpenDataDatasetPage({
             rel="noreferrer" 
             className="hover:text-[color:var(--primary)] transition-colors border-b border-transparent hover:border-[color:var(--primary)]"
           >
-            Fonte Oficial ({ds.source_title})
+            {d.officialSourceWithName.replace("{source}", ds.source_title)}
           </a>
 
-          {/* Dicionário: usa meta.metadata_file (schema 1.0). */}
           {manifest.meta?.metadata_file?.filename && manifest.meta?.metadata_file?.public_url && (
             <a
               href={withDownload(manifest.meta.metadata_file.public_url, manifest.meta.metadata_file.filename)}
               className="text-[color:var(--primary)] hover:opacity-80"
             >
-              Dicionário de Dados
+              {d.dataDictionary}
             </a>
           )}
 
-          {/* Release: usa meta.release (schema 1.0). */}
           {manifest.meta?.release?.last_release_iso && (
             <div className="flex items-center gap-2 text-[color:var(--success)]">
               <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
-              Último release: {new Date(manifest.meta.release.last_release_iso).toLocaleDateString("pt-BR")}
+              {d.lastRelease}{" "}
+              {new Date(manifest.meta.release.last_release_iso).toLocaleDateString(bcp47)}
             </div>
           )}
         </div>
       </header>
 
-      {/* Tabela de Arquivos */}
       <section className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-sm overflow-hidden">
         <div className="grid grid-cols-12 bg-[color:var(--surface-2)] px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-[color:var(--muted)] border-b border-[color:var(--border)]">
-          <div className="col-span-3">Referência</div>
-          <div className="col-span-6">Arquivo</div>
-          <div className="col-span-2 text-right">Tamanho</div>
+          <div className="col-span-3">{d.colPeriod}</div>
+          <div className="col-span-6">{d.colFile}</div>
+          <div className="col-span-2 text-right">{d.colSize}</div>
           <div className="col-span-1"></div>
         </div>
 
@@ -167,9 +198,9 @@ export default async function OpenDataDatasetPage({
           {manifest.items
             .slice()
             .sort((a, b) => {
-              const d = itemSortKey(b) - itemSortKey(a);
-              if (d !== 0) return d;
-              return (a.title || a.filename).localeCompare(b.title || b.filename, "pt-BR");
+              const diff = itemSortKey(b) - itemSortKey(a);
+              if (diff !== 0) return diff;
+              return (a.title || a.filename).localeCompare(b.title || b.filename, bcp47);
             })
             .map((it) => (
               <li key={it.public_url} className="grid grid-cols-12 px-6 py-4 text-sm items-center hover:bg-[color:var(--surface-2)]/40 transition-colors group">

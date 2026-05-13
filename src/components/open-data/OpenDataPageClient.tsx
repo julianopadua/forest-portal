@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import OpenDataCatalog from "@/components/open-data/OpenDataCatalog";
 import SuggestDatasetForm from "@/components/open-data/SuggestDatasetForm";
+import { useI18n } from "@/i18n/I18nProvider";
 import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
 
 function SearchIcon({ className }: { className?: string }) {
@@ -33,6 +34,8 @@ function normalize(s: string) {
 }
 
 export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDataset[] }) {
+  const { dict } = useI18n();
+  const od = dict.openData;
   const [query, setQuery] = useState("");
 
   const hasResults = useMemo(() => {
@@ -60,7 +63,7 @@ export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDat
       <header className="mb-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-semibold text-[color:var(--text)]">
-            Dados abertos
+            {od.catalog.pageTitle}
           </h1>
 
           <div className="flex w-full items-center gap-2 md:max-w-[min(100%,28rem)]">
@@ -69,9 +72,9 @@ export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDat
                 type="button"
                 onClick={() => setQuery("")}
                 className="shrink-0 rounded-lg px-2 py-1.5 text-xs font-medium text-[color:var(--muted)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]"
-                aria-label="Limpar busca"
+                aria-label={od.catalog.clearSearchAria}
               >
-                Limpar
+                {od.catalog.clearSearch}
               </button>
             ) : (
               <span className="shrink-0 w-[3.25rem]" aria-hidden />
@@ -81,16 +84,16 @@ export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDat
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar datasets…"
+                placeholder={od.catalog.searchPlaceholder}
                 className="w-full rounded-xl border border-[color:var(--border)] bg-transparent py-2 pl-10 pr-3 text-sm text-[color:var(--text)] outline-none placeholder:text-[color:var(--muted)] focus:ring-2 focus:ring-[color:var(--primary)]"
-                aria-label="Buscar datasets"
+                aria-label={od.catalog.searchAria}
               />
             </div>
           </div>
         </div>
 
         <p className="mt-2 text-[color:var(--muted)]">
-          Arquivos no Storage público e links diretos às fontes oficiais, organizados por dataset e período.
+          {od.catalog.intro}
         </p>
       </header>
 
