@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { localeToBcp47 } from "@/i18n/localeTag";
+import { openDataTaxonomyLabel } from "@/lib/openData/openDataTaxonomyEn";
 import type { OpenDataDataset } from "@/lib/openData/openDataDataset";
 
 function normalize(s: string) {
@@ -150,6 +151,10 @@ export default function OpenDataCatalog({
   const { locale, dict } = useI18n();
   const ct = dict.openData.catalogTree;
   const bcp47 = localeToBcp47(locale);
+
+  function taxonomyTitle(pt: string) {
+    return openDataTaxonomyLabel(pt, locale, ct.taxonomyEnByPt);
+  }
 
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [openSources, setOpenSources] = useState<Record<string, boolean>>({});
@@ -358,7 +363,7 @@ export default function OpenDataCatalog({
           <div key={sub.key}>
             <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--muted)]">
               <span className="h-px w-4 bg-[color:var(--border)]"></span>
-              {sub.key === "Geral" ? ct.displayGeneral : sub.title}
+              {sub.key === "Geral" ? ct.displayGeneral : taxonomyTitle(sub.title)}
             </h3>
 
             <div className="flex flex-col gap-3">
@@ -416,7 +421,7 @@ export default function OpenDataCatalog({
               className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
             >
               <div>
-                <h2 className="text-base font-semibold text-[color:var(--text)]">{cat.title}</h2>
+                <h2 className="text-base font-semibold text-[color:var(--text)]">{taxonomyTitle(cat.title)}</h2>
                 <div className="mt-1 text-xs text-[color:var(--muted)]">
                   {ct.datasetCount.replace("{count}", String(totalDatasets))}
                 </div>
@@ -435,7 +440,7 @@ export default function OpenDataCatalog({
                     {cat.segmentGroups.map((seg) => (
                       <div key={seg.key} className="space-y-4">
                         <h3 className="border-b border-[color:var(--border)] pb-2 text-sm font-semibold text-[color:var(--text)]">
-                          {seg.title}
+                          {taxonomyTitle(seg.title)}
                         </h3>
                         {renderSourcePanels(cat, seg.key, seg.subcategories)}
                       </div>

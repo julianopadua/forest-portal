@@ -17,6 +17,7 @@ import {
 } from "@/lib/openData/anpCatalog";
 import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
 import { withDownload } from "@/lib/openData/publicUrls";
+import { openDataTaxonomyLabel } from "@/lib/openData/openDataTaxonomyEn";
 import { fetchJsonFromStorage } from "@/lib/storageFetch";
 
 function formatBytes(n: number) {
@@ -94,6 +95,7 @@ export default async function OpenDataDatasetPage({
   const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
   const locale: Locale = rawLocale === "en" ? "en" : "pt";
   const d = dictionaries[locale].openData.dataset;
+  const catalogTree = dictionaries[locale].openData.catalogTree;
   const bcp47 = localeToBcp47(locale);
 
   //anp eh detectavel pela URL, entao kick off do compact em paralelo com o catalogo
@@ -139,7 +141,8 @@ export default async function OpenDataDatasetPage({
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
           <div className="flex-1">
             <div className="text-[10px] font-black text-[color:var(--primary)] uppercase tracking-[0.2em] mb-2">
-              {ds.category_title} / {ds.subcategory_title}
+              {openDataTaxonomyLabel(ds.category_title, locale, catalogTree.taxonomyEnByPt)} /{" "}
+              {openDataTaxonomyLabel(ds.subcategory_title, locale, catalogTree.taxonomyEnByPt)}
             </div>
             <h1 className="text-4xl font-black text-[color:var(--foreground)] tracking-tight">{ds.title}</h1>
             <p className="mt-3 max-w-2xl text-base text-[color:var(--muted)] leading-relaxed">{ds.description}</p>

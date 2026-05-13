@@ -1,5 +1,7 @@
 // src/i18n/dictionaries.ts
 
+import { OPEN_DATA_TAXONOMY_EN_BY_PT } from "@/lib/openData/openDataTaxonomyEn";
+
 export type Locale = "pt" | "en";
 
 export type Dict = {
@@ -181,6 +183,8 @@ export type Dict = {
       datasetCount: string;
       displayGeneral: string;
       displaySourceFallback: string;
+      /**PT taxonomy strings from API -> EN labels; empty for pt locale */
+      taxonomyEnByPt: Record<string, string>;
     };
     suggest: {
       titleDefault: string;
@@ -484,6 +488,7 @@ export const dictionaries: Record<Locale, Dict> = {
         datasetCount: "{count} datasets",
         displayGeneral: "Geral",
         displaySourceFallback: "Fonte",
+        taxonomyEnByPt: {},
       },
       suggest: {
         titleDefault: "Não encontrou o que procurava?",
@@ -786,6 +791,7 @@ export const dictionaries: Record<Locale, Dict> = {
         datasetCount: "{count} datasets",
         displayGeneral: "General",
         displaySourceFallback: "Source",
+        taxonomyEnByPt: OPEN_DATA_TAXONOMY_EN_BY_PT,
       },
       suggest: {
         titleDefault: "Did not find what you need?",
