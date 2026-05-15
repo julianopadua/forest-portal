@@ -1,6 +1,6 @@
 import { OpenApiGeneratorV31 } from "@asteasolutions/zod-to-openapi";
 
-import { registry, API_VERSION } from "./registry";
+import { registry, z, API_VERSION } from "./registry";
 import {
   CatalogResponse,
   DatasetItemsResponse,
@@ -14,50 +14,7 @@ import {
 
 const PATH_PREFIX = `/api/${API_VERSION}`;
 
-function registerPath(opts: {
-  path: string;
-  summary: string;
-  description: string;
-  responseSchema: typeof CatalogResponse;
-  pathParam?: { name: string; description: string };
-}) {
-  registry.registerPath({
-    method: "get",
-    path: `${PATH_PREFIX}${opts.path}`,
-    summary: opts.summary,
-    description: opts.description,
-    request: opts.pathParam
-      ? {
-          params: registry.register(
-            `Path_${opts.pathParam.name}`,
-            (await import("./registry")).z.object({
-              [opts.pathParam.name]: (await import("./registry")).z.string().openapi({
-                description: opts.pathParam.description,
-              }),
-            }),
-          ),
-        }
-      : undefined,
-    responses: {
-      200: {
-        description: "Successful response",
-        content: { "application/json": { schema: opts.responseSchema } },
-      },
-      404: {
-        description: "Resource not found",
-        content: { "application/problem+json": { schema: ProblemDetails } },
-      },
-      503: {
-        description: "Upstream catalog unavailable",
-        content: { "application/problem+json": { schema: ProblemDetails } },
-      },
-    },
-  });
-}
-
-export async function buildOpenApiDocument() {
-  const { z } = await import("./registry");
-
+export function buildOpenApiDocument() {
   registry.registerPath({
     method: "get",
     path: `${PATH_PREFIX}/health`,
