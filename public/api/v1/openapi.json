@@ -1,0 +1,1033 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Forest Open Data API",
+    "version": "v1",
+    "description": "Public, read-only HTTP API for the Instituto Forest open-data catalog. Returns JSON manifests pointing at file artifacts hosted on Supabase Storage. The API is intentionally thin: it serves metadata; actual file bytes are downloaded directly from the `public_url` fields it exposes.",
+    "contact": {
+      "name": "Instituto Forest",
+      "url": "https://institutoforest.org"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://institutoforest.org"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "DatasetSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "inpe_bdqueimadas_focos"
+          },
+          "slug": {
+            "type": "string",
+            "example": "focos-bdqueimadas"
+          },
+          "title": {
+            "type": "string",
+            "example": "INPE - BDQueimadas - Focos Brasil"
+          },
+          "description": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string",
+            "example": "inpe"
+          },
+          "source_title": {
+            "type": "string",
+            "example": "Instituto Nacional de Pesquisas Espaciais"
+          },
+          "category_title": {
+            "type": "string"
+          },
+          "subcategory_title": {
+            "type": "string"
+          },
+          "segment_title": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "manifest_path": {
+            "type": "string",
+            "description": "Storage path of the dataset manifest, relative to the bucket.",
+            "example": "inpe/bdqueimadas/focos_br_ref/manifest.json"
+          },
+          "generated_at": {
+            "type": "string"
+          },
+          "last_release_iso": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "description",
+          "source_id",
+          "source_title",
+          "category_title",
+          "subcategory_title",
+          "source_url",
+          "manifest_path"
+        ]
+      },
+      "ReportSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "source_title": {
+            "type": "string"
+          },
+          "category_title": {
+            "type": "string"
+          },
+          "manifest_path": {
+            "type": "string"
+          },
+          "stable_report_path": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_dataset_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "description",
+          "source_title",
+          "category_title",
+          "manifest_path",
+          "stable_report_path",
+          "tags"
+        ]
+      },
+      "OpenDataItem": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "data"
+            ]
+          },
+          "period": {
+            "type": "string",
+            "description": "Time partition: YYYY, YYYY-MM, ISO date, or 'Atual'."
+          },
+          "filename": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Hex sha256 of the file."
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "storage_path": {
+            "type": "string"
+          },
+          "public_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "release_time": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "period",
+          "filename",
+          "sha256",
+          "size_bytes",
+          "public_url",
+          "source_url"
+        ]
+      },
+      "DatasetMeta": {
+        "type": "object",
+        "properties": {
+          "source_agency": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "metadata_file": {
+            "$ref": "#/components/schemas/DatasetMetaFile"
+          },
+          "release": {
+            "$ref": "#/components/schemas/DatasetMetaRelease"
+          },
+          "custom_tags": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "description": "Strict metadata envelope. Free-form fields go under `custom_tags`; no other top-level keys are emitted."
+      },
+      "DatasetMetaFile": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "storage_path": {
+            "type": "string"
+          },
+          "public_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "filename",
+          "public_url"
+        ]
+      },
+      "DatasetMetaRelease": {
+        "type": "object",
+        "properties": {
+          "last_release_iso": {
+            "type": "string"
+          },
+          "next_release_iso": {
+            "type": "string"
+          },
+          "week_ending": {
+            "type": "string"
+          }
+        }
+      },
+      "DatasetManifest": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "dataset_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "source_dataset_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "bucket_prefix": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenDataItem"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/DatasetMeta"
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "dataset_id",
+          "title",
+          "source_dataset_url",
+          "bucket_prefix",
+          "items",
+          "meta"
+        ]
+      },
+      "ReportManifest": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "report_id": {
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "pt": {
+                    "type": "string"
+                  },
+                  "en": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "pt",
+                  "en"
+                ]
+              }
+            ]
+          },
+          "bucket_prefix": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "public_urls": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "source_label": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "pt": {
+                        "type": "string"
+                      },
+                      "en": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "pt",
+                      "en"
+                    ]
+                  }
+                ]
+              },
+              "dataset_id": {
+                "type": "string"
+              },
+              "first_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "latest_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "year_range": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "latest_period": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "llm_enabled": {
+                "type": "boolean"
+              },
+              "available_locales": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "pt",
+                    "en"
+                  ]
+                }
+              },
+              "default_locale": {
+                "type": "string",
+                "enum": [
+                  "pt",
+                  "en"
+                ]
+              },
+              "available_biomes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "custom_tags": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "report_id",
+          "title",
+          "bucket_prefix",
+          "paths",
+          "public_urls",
+          "meta"
+        ]
+      },
+      "SourceFacet": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "example": "inpe"
+          },
+          "source_title": {
+            "type": "string",
+            "example": "Instituto Nacional de Pesquisas Espaciais"
+          },
+          "dataset_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "source_id",
+          "source_title",
+          "dataset_count"
+        ]
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          },
+          "api_version": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "api_version",
+          "schema_version",
+          "generated_at"
+        ]
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://institutoforest.org/api/errors/not-found"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status"
+        ]
+      },
+      "Response_datasets": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "datasets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatasetSummary"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "datasets"
+        ]
+      },
+      "Response_reports": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "reports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportSummary"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "reports"
+        ]
+      },
+      "Response_manifest": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/DatasetManifest"
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "manifest"
+        ]
+      },
+      "Response_items": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenDataItem"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "items"
+        ]
+      },
+      "Response_sources": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceFacet"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "sources"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "Service health",
+        "description": "Returns service status, API version, and the manifest schema version this deployment understands. Use as a low-cost reachability and version probe.",
+        "responses": {
+          "200": {
+            "description": "Service is reachable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog": {
+      "get": {
+        "summary": "List datasets",
+        "description": "Compact list of all open-data datasets. Each entry exposes the identifier, slug, source, category, and the storage path of the full manifest.",
+        "responses": {
+          "200": {
+            "description": "Catalog payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_datasets"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream catalog unavailable.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/reports": {
+      "get": {
+        "summary": "List reports",
+        "description": "Compact list of all published analytical reports.",
+        "responses": {
+          "200": {
+            "description": "Reports catalog payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_reports"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream catalog unavailable.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets/{id}": {
+      "get": {
+        "summary": "Get dataset manifest",
+        "description": "Full dataset manifest envelope (schema 1.0). The `{id}` path parameter accepts either the dataset identifier (e.g., `inpe_bdqueimadas_focos`) or the slug.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Dataset id or slug."
+            },
+            "required": true,
+            "description": "Dataset id or slug.",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset manifest payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_manifest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown dataset id or slug.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream catalog unavailable.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets/{id}/items": {
+      "get": {
+        "summary": "Get dataset items",
+        "description": "Returns only the `items[]` array of the dataset manifest. Suitable for clients that need download URLs but not full metadata.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Dataset id or slug."
+            },
+            "required": true,
+            "description": "Dataset id or slug.",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item array payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_items"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown dataset id or slug.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream catalog unavailable.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/{id}": {
+      "get": {
+        "summary": "Get report manifest",
+        "description": "Full report manifest envelope (schema 1.0).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Report id or slug."
+            },
+            "required": true,
+            "description": "Report id or slug.",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report manifest payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_manifest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown report id or slug.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream catalog unavailable.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sources": {
+      "get": {
+        "summary": "List source agencies",
+        "description": "Distinct source agencies derived from the catalog, with dataset counts per source. Useful for faceted browsing.",
+        "responses": {
+          "200": {
+            "description": "Source facet payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response_sources"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Upstream catalog unavailable.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}

@@ -7,11 +7,18 @@ import { fileURLToPath } from "node:url";
 
 import { buildOpenApiDocument } from "../src/lib/api/v1/openapi";
 
-const here = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(here, "..");
+async function main() {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const repoRoot = join(here, "..");
 
-const doc = buildOpenApiDocument();
-const outDir = join(repoRoot, "public/api/v1");
-await mkdir(outDir, { recursive: true });
-await writeFile(join(outDir, "openapi.json"), JSON.stringify(doc, null, 2));
-console.log("[openapi] wrote public/api/v1/openapi.json");
+  const doc = buildOpenApiDocument();
+  const outDir = join(repoRoot, "public/api/v1");
+  await mkdir(outDir, { recursive: true });
+  await writeFile(join(outDir, "openapi.json"), JSON.stringify(doc, null, 2));
+  console.log("[openapi] wrote public/api/v1/openapi.json");
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
