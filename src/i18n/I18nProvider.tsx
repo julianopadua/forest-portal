@@ -2,6 +2,7 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, {
   createContext,
   useCallback,
@@ -82,6 +83,8 @@ type I18nProviderProps = {
 };
 
 export function I18nProvider({ children, initialLocale = "pt" }: I18nProviderProps) {
+  const router = useRouter();
+
   const getSnapshot = useCallback((): Locale => {
     return readLocaleFromStorage() ?? initialLocale;
   }, [initialLocale]);
@@ -92,15 +95,19 @@ export function I18nProvider({ children, initialLocale = "pt" }: I18nProviderPro
 
   const [fontLevel, setFontLevelState] = useState<FontLevel>(0);
 
-  const setLocale = useCallback((next: Locale) => {
-    try {
-      localStorage.setItem(LOCALE_STORAGE_KEY, next);
-      document.cookie = `${LOCALE_COOKIE_NAME}=${next}; path=/; max-age=31536000; SameSite=Lax`;
-      window.dispatchEvent(new Event(LOCALE_CHANGE_EVENT));
-    } catch {
-      // ignore
-    }
-  }, []);
+  const setLocale = useCallback(
+    (next: Locale) => {
+      try {
+        localStorage.setItem(LOCALE_STORAGE_KEY, next);
+        document.cookie = `${LOCALE_COOKIE_NAME}=${next}; path=/; max-age=31536000; SameSite=Lax`;
+        window.dispatchEvent(new Event(LOCALE_CHANGE_EVENT));
+        router.refresh();
+      } catch {
+        // ignore
+      }
+    },
+    [router],
+  );
 
   // Carrega fontLevel (sem impacto nas strings i18n)
   useEffect(() => {

@@ -2,12 +2,10 @@
 
 "use client";
 
-import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import { useI18n } from "@/i18n/I18nProvider";
 
 export default function LanguageSwitcher() {
-  const router = useRouter();
   const { locale, setLocale, dict } = useI18n();
 
   return (
@@ -16,10 +14,7 @@ export default function LanguageSwitcher() {
 
       <Button
         variant="ghost"
-        onClick={() => {
-          setLocale("pt");
-          router.refresh();
-        }}
+        onClick={() => setLocale("pt")}
         className={locale === "pt" ? "opacity-100" : "opacity-60"}
       >
         {dict.common.pt}
@@ -27,10 +22,7 @@ export default function LanguageSwitcher() {
 
       <Button
         variant="ghost"
-        onClick={() => {
-          setLocale("en");
-          router.refresh();
-        }}
+        onClick={() => setLocale("en")}
         className={locale === "en" ? "opacity-100" : "opacity-60"}
       >
         {dict.common.en}

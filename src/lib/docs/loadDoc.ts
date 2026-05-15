@@ -4,15 +4,11 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import type { Locale } from "@/i18n/dictionaries";
+import type { DocSource } from "@/lib/docs/types";
+
+export type { DocSource } from "@/lib/docs/types";
 
 const DOCS_DIR = join(process.cwd(), "content/docs");
-
-export type DocSource = {
-  slug: string;
-  locale: Locale;
-  markdown: string;
-  publicMarkdownPath: string;
-};
 
 export async function loadDoc(slug: string, locale: Locale): Promise<DocSource> {
   const filename = `${slug}.${locale}.md`;
