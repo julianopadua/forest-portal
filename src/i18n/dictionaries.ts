@@ -13,6 +13,7 @@ export type Dict = {
     home: string;
     blog: string;
     aboutUs: string;
+    api: string;
 
     menuTitle: string;
     openMenu: string;
@@ -49,6 +50,7 @@ export type Dict = {
       openData: string;
       commodities: string;
       reports: string;
+      api: string;
     };
     socialLinks: {
       instagram: string;
@@ -217,6 +219,30 @@ export type Dict = {
       colPeriod: string;
       colFile: string;
       colSize: string;
+    };
+  };
+
+  docs: {
+    header: {
+      eyebrow: string;
+      title: string;
+    };
+    copyMarkdown: string;
+    copied: string;
+    feedback: {
+      title: string;
+      subtitle: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      messageLabel: string;
+      messagePlaceholder: string;
+      submit: string;
+      sending: string;
+      thanks: string;
+      errorTooShort: string;
+      errorRateLimited: string;
+      errorGeneric: string;
+      errorNetwork: string;
     };
   };
 };
