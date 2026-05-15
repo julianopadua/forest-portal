@@ -116,7 +116,7 @@ O componente combina três animações:
 2. **Ciclo de cores** via `filter` (`forest-marketing-logo-hue`, 24s, `ease-in-out`): azul (padrão) → vermelho → verde → cinza-claro/branco → preto → azul.
 3. **Tipografia cíclica** (typewriter): a palavra "INSTITUTO" permanece estática e a palavra abaixo dela é digitada, mantida, apagada e substituída pela próxima da lista.
 
-**Lista de palavras cíclicas** — definida em [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). Para adicionar, remover ou reordenar palavras, edite apenas esse arquivo:
+**Lista de palavras cíclicas** - definida em [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). Para adicionar, remover ou reordenar palavras, edite apenas esse arquivo:
 
 ```ts
 export const SPINNING_LOGO_CYCLING_WORDS: string[] = [
@@ -138,7 +138,7 @@ export const SPINNING_LOGO_STATIC_WORD = "INSTITUTO";
 
 Recomendações:
 
-- Mantenha entradas curtas (≈ 3 a 12 caracteres) — a maior palavra reserva a largura da linha para evitar saltos durante o ciclo.
+- Mantenha entradas curtas (≈ 3 a 12 caracteres) - a maior palavra reserva a largura da linha para evitar saltos durante o ciclo.
 - A ordem é preservada em runtime; o ciclo é simples (incremento módulo `length`).
 - Sobrescritas ad hoc são possíveis via props (`<AboutSpinningLogo cyclingWords={[...]} staticWord="..." />`), úteis para variações por página.
 

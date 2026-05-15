@@ -4,7 +4,7 @@
 // (manifests, reports, catalogs) from Supabase Storage, with a local
 // public/<path> fallback for offline development.
 //
-// Not a business-logic module — callers wrap it with typed signatures.
+// Not a business-logic module - callers wrap it with typed signatures.
 import { readFile } from "fs/promises";
 import path from "path";
 

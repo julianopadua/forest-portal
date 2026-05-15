@@ -14,7 +14,6 @@
     "dev:clean": "npm run clean && next dev",
     "start": "next start",
     "lint": "eslint",
-    "generate:anp-catalog": "node scripts/generate-anp-catalog.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",

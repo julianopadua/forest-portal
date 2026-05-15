@@ -40,7 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-AGENT.md
+AGENTS.md
+
+# Auto-generated docs (forest-portal-helper)
+/doc/
 
 # OpenNext
 .open-next

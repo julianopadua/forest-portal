@@ -81,7 +81,7 @@ function referencePeriodFromResource(r: AnpResource): string {
   if (y) return y[1];
   const y2 = r.url.match(/(20\d{2})[-_/]/);
   if (y2) return y2[1];
-  return "—";
+  return "-";
 }
 
 function isDataResource(r: AnpResource): boolean {

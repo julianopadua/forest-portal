@@ -22,7 +22,7 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
         sizes="100vw"
         className="object-cover"
       />
-      {/* Opção B: suaviza o encontro com a faixa do layout (fundo sólido) acima do hero — não altera o Header global */}
+      {/* Opção B: suaviza o encontro com a faixa do layout (fundo sólido) acima do hero - não altera o Header global */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-28 bg-gradient-to-b from-[color:var(--background)] via-[color:var(--background)]/45 to-transparent"
         aria-hidden

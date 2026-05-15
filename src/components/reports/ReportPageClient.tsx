@@ -737,7 +737,7 @@ export default function ReportPageClient({
   const [selectedStartDate, setSelectedStartDate] = useState<string>(initialStartDate);
   const [selectedEndDate, setSelectedEndDate] = useState<string>(initialEndDate);
 
-  // Mobile filter panel state — pending values are buffered until user confirms
+  // Mobile filter panel state - pending values are buffered until user confirms
   const [filterOpen, setFilterOpen] = useState(false);
   const [pendingBiome, setPendingBiome] = useState<string>(
     biomeFilter?.default_value ?? ALL_BIOMES_VALUE,
