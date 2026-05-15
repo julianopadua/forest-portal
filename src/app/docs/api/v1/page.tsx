@@ -90,7 +90,7 @@ export default async function ApiDocsPage() {
 
   return (
     <DocsLayout
-      sections={[...sections]}
+      sections={sections}
       rightRail={<DocsFeedbackForm context="docs/api/v1" />}
     >
       <header className="not-prose mb-8 flex items-start justify-between gap-4">

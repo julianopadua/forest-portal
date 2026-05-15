@@ -1,16 +1,16 @@
 import Link from "next/link";
 
 export type DocsNavItem = {
-  href: string;
-  label: string;
+  readonly href: string;
+  readonly label: string;
 };
 
 export type DocsNavSection = {
-  title: string;
-  items: DocsNavItem[];
+  readonly title: string;
+  readonly items: readonly DocsNavItem[];
 };
 
-export default function DocsSidebar({ sections }: { sections: DocsNavSection[] }) {
+export default function DocsSidebar({ sections }: { sections: readonly DocsNavSection[] }) {
   return (
     <nav
       aria-label="Documentation"

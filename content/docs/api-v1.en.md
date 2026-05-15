@@ -1,5 +1,3 @@
-# Forest Open Data API
-
 A public, read-only HTTP API over the Instituto Forest open-data catalog. Exposes the dataset and report manifests already published by the platform pipelines and points callers at the underlying file artifacts hosted on Supabase Storage.
 
 ## Overview

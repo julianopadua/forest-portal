@@ -129,6 +129,10 @@ export default function Header() {
                     {dict.common.blog}
                   </Link>
 
+                  <Link className={`${navLinkClass} text-center`} href="/docs/api/v1">
+                    {dict.common.api}
+                  </Link>
+
                   <Link className={`${navLinkClass} text-center`} href="/quem-somos">
                     {dict.common.aboutUs}
                   </Link>

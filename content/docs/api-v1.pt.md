@@ -1,5 +1,3 @@
-# API de Dados Abertos Forest
-
 API HTTP pública e somente-leitura sobre o catálogo de dados abertos do Instituto Forest. Expõe os manifestos de datasets e relatórios já publicados pelas pipelines da plataforma e direciona o consumidor para os artefatos de arquivo hospedados no Supabase Storage.
 
 ## Visão geral

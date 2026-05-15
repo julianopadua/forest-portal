@@ -7,7 +7,7 @@ export default function DocsLayout({
   rightRail,
   children,
 }: {
-  sections: DocsNavSection[];
+  sections: readonly DocsNavSection[];
   rightRail?: ReactNode;
   children: ReactNode;
 }) {

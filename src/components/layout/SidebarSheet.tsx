@@ -205,6 +205,10 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
               {dict.common.blog}
             </Link>
 
+            <Link className={navItemClass} href="/docs/api/v1" onClick={onClose}>
+              {dict.common.api}
+            </Link>
+
             <Link className={navItemClass} href="/quem-somos" onClick={onClose}>
               {dict.common.aboutUs}
             </Link>

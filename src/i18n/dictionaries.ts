@@ -257,6 +257,7 @@ export const dictionaries: Record<Locale, Dict> = {
       home: "Home",
       blog: "Blog",
       aboutUs: "Quem somos",
+      api: "API",
 
       menuTitle: "Menu",
       openMenu: "Abrir menu",
@@ -293,6 +294,7 @@ export const dictionaries: Record<Locale, Dict> = {
         openData: "Dados abertos",
         commodities: "Commodities",
         reports: "Reports",
+        api: "API",
       },
       socialLinks: {
         instagram: "Instagram",
@@ -550,6 +552,31 @@ export const dictionaries: Record<Locale, Dict> = {
         colSize: "Tamanho",
       },
     },
+
+    docs: {
+      header: {
+        eyebrow: "Referência da API",
+        title: "API de Dados Abertos Forest",
+      },
+      copyMarkdown: "Copiar Markdown",
+      copied: "Copiado",
+      feedback: {
+        title: "Encontrou algum erro?",
+        subtitle:
+          "Se algo nesta página estiver incorreto, desatualizado ou faltando, escreva abaixo e enviamos para a nossa caixa.",
+        emailLabel: "Email (opcional)",
+        emailPlaceholder: "voce@exemplo.com",
+        messageLabel: "O que está errado ou faltando?",
+        messagePlaceholder: "Descreva o problema ou a sugestão.",
+        submit: "Enviar",
+        sending: "Enviando...",
+        thanks: "Obrigado. Sua mensagem foi enviada.",
+        errorTooShort: "Por favor, descreva o problema com pelo menos algumas palavras.",
+        errorRateLimited: "Muitas solicitações. Aguarde alguns instantes e tente novamente.",
+        errorGeneric: "Não foi possível enviar agora. Tente novamente em instantes.",
+        errorNetwork: "Falha de rede ao enviar a mensagem.",
+      },
+    },
   },
 
   en: {
@@ -561,6 +588,7 @@ export const dictionaries: Record<Locale, Dict> = {
       home: "Home",
       blog: "Blog",
       aboutUs: "About us",
+      api: "API",
 
       menuTitle: "Menu",
       openMenu: "Open menu",
@@ -597,6 +625,7 @@ export const dictionaries: Record<Locale, Dict> = {
         openData: "Open data",
         commodities: "Commodities",
         reports: "Reports",
+        api: "API",
       },
       socialLinks: {
         instagram: "Instagram",
@@ -851,6 +880,31 @@ export const dictionaries: Record<Locale, Dict> = {
         colPeriod: "Period",
         colFile: "File",
         colSize: "Size",
+      },
+    },
+
+    docs: {
+      header: {
+        eyebrow: "API Reference",
+        title: "Forest Open Data API",
+      },
+      copyMarkdown: "Copy Markdown",
+      copied: "Copied",
+      feedback: {
+        title: "Found an error?",
+        subtitle:
+          "If anything on this page is wrong, outdated, or missing, write below and it lands in our inbox.",
+        emailLabel: "Email (optional)",
+        emailPlaceholder: "you@example.com",
+        messageLabel: "What is wrong or missing?",
+        messagePlaceholder: "Describe the issue or the suggestion.",
+        submit: "Send",
+        sending: "Sending...",
+        thanks: "Thanks. Your message has been sent.",
+        errorTooShort: "Please describe the problem in at least a few words.",
+        errorRateLimited: "Too many requests. Please wait a moment and try again.",
+        errorGeneric: "We could not send right now. Please try again shortly.",
+        errorNetwork: "Network failure while sending the message.",
       },
     },
   },
