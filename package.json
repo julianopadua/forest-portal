@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "blog:bundle": "node scripts/build-blog-bundle.mjs",
-    "prebuild": "npm run blog:bundle",
-    "prepreview": "npm run blog:bundle",
-    "predeploy": "npm run blog:bundle",
-    "preupload": "npm run blog:bundle",
+    "api:openapi": "tsx scripts/generate-openapi.ts",
+    "prebuild": "npm run blog:bundle && npm run api:openapi",
+    "prepreview": "npm run blog:bundle && npm run api:openapi",
+    "predeploy": "npm run blog:bundle && npm run api:openapi",
+    "preupload": "npm run blog:bundle && npm run api:openapi",
     "build": "next build",
     "clean": "node -e \"try { require('fs').rmSync('.next', { recursive: true, force: true }) } catch (_) {}\"",
     "dev": "next dev",
@@ -48,6 +49,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "tailwindcss": "^4",
+    "tsx": "^4.22.0",
     "typescript": "^5",
     "wrangler": "^4.87.0"
   }
