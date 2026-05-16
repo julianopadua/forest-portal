@@ -3,12 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-function formatDateOnly(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleDateString("pt-BR");
-}
-
 export type ReportsIndexTileProps = {
   href: string;
   categoryTitle: string;
@@ -16,9 +10,7 @@ export type ReportsIndexTileProps = {
   title: string;
   excerpt: string;
   heroImageSrc?: string;
-  generatedAt: string | null;
-  yearRange: string | null;
-  latestYear: number | null;
+  metaParts: string[];
   tags: string[];
   priorityImage?: boolean;
 };
@@ -30,17 +22,10 @@ export default function ReportsIndexTile({
   title,
   excerpt,
   heroImageSrc,
-  generatedAt,
-  yearRange,
-  latestYear,
+  metaParts,
   tags,
   priorityImage,
 }: ReportsIndexTileProps) {
-  const metaParts: string[] = [];
-  if (generatedAt) metaParts.push(`Atualizado ${formatDateOnly(generatedAt)}`);
-  if (yearRange) metaParts.push(`Cobertura ${yearRange}`);
-  else if (latestYear) metaParts.push(`Ano ${latestYear}`);
-
   return (
     <article className="group overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)] transition hover:border-[color:var(--primary)]/35 hover:shadow-lg">
       <Link href={href} className="block outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--background)]">

@@ -12,9 +12,13 @@ export type ReportCatalogItem = {
   id: string;
   slug: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   sourceTitle: string;
+  sourceTitleEn?: string;
   categoryTitle: string;
+  categoryTitleEn?: string;
   manifestPath: string;
   stableReportPath: string;
   sourcePortalHref?: string;
@@ -36,9 +40,13 @@ type RawReportEntry = {
   id: string;
   slug: string;
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
   source_title: string;
+  source_title_en?: string;
   category_title: string;
+  category_title_en?: string;
   manifest_path: string;
   stable_report_path: string;
   source_portal_href?: string;
@@ -67,9 +75,13 @@ function toCamelCase(raw: RawReportEntry): ReportCatalogItem {
     id: raw.id,
     slug: raw.slug,
     title: raw.title,
+    titleEn: raw.title_en,
     description: raw.description,
+    descriptionEn: raw.description_en,
     sourceTitle: raw.source_title,
+    sourceTitleEn: raw.source_title_en,
     categoryTitle: raw.category_title,
+    categoryTitleEn: raw.category_title_en,
     manifestPath: raw.manifest_path,
     stableReportPath: raw.stable_report_path,
     tags: raw.tags ?? [],

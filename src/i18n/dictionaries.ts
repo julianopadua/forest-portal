@@ -245,6 +245,22 @@ export type Dict = {
       errorNetwork: string;
     };
   };
+
+  reports: {
+    index: {
+      eyebrow: string;
+      title: string;
+      paragraphs: string[];
+    };
+    detail: {
+      back: string;
+    };
+    meta: {
+      updated: string;
+      coverage: string;
+      year: string;
+    };
+  };
 };
 
 export const dictionaries: Record<Locale, Dict> = {
@@ -577,6 +593,25 @@ export const dictionaries: Record<Locale, Dict> = {
         errorNetwork: "Falha de rede ao enviar a mensagem.",
       },
     },
+
+    reports: {
+      index: {
+        eyebrow: "Publicações / Relatórios",
+        title: "Relatórios analíticos",
+        paragraphs: [
+          "Esta seção reúne relatórios analíticos elaborados a partir de bases públicas e atualizados por pipelines reprodutíveis, integralmente auditáveis no catálogo de dados abertos. O conteúdo combina indicadores quantitativos com leitura contextual redigida com apoio de inteligência artificial.",
+          "Cada relatório indica referências externas, como notícias e estudos correlatos, destinadas a ampliar a análise. Essas referências não substituem a consulta às fontes primárias.",
+        ],
+      },
+      detail: {
+        back: "Voltar para relatórios",
+      },
+      meta: {
+        updated: "Atualizado",
+        coverage: "Cobertura",
+        year: "Ano",
+      },
+    },
   },
 
   en: {
@@ -905,6 +940,25 @@ export const dictionaries: Record<Locale, Dict> = {
         errorRateLimited: "Too many requests. Please wait a moment and try again.",
         errorGeneric: "We could not send right now. Please try again shortly.",
         errorNetwork: "Network failure while sending the message.",
+      },
+    },
+
+    reports: {
+      index: {
+        eyebrow: "Publications / Reports",
+        title: "Analytical reports",
+        paragraphs: [
+          "This section gathers analytical reports built from public datasets and refreshed by reproducible pipelines, fully auditable in the open data catalog. The content combines quantitative indicators with contextual analysis drafted with the support of artificial intelligence.",
+          "Each report links to external references, such as news items and related studies, intended to extend the analysis. These references do not replace consultation of the primary sources.",
+        ],
+      },
+      detail: {
+        back: "Back to reports",
+      },
+      meta: {
+        updated: "Updated",
+        coverage: "Coverage",
+        year: "Year",
       },
     },
   },

@@ -14,7 +14,20 @@ export default function DocsLayout({
   return (
     <div className="mx-auto flex w-full max-w-7xl gap-8 px-6">
       <DocsSidebar sections={sections} />
-      <article className="prose prose-neutral min-w-0 flex-1 py-10 text-[color:var(--foreground)] dark:prose-invert text-justify hyphens-auto max-w-3xl">
+      <article
+        className={[
+          "forest-docs-prose prose min-w-0 flex-1 max-w-3xl py-10 text-justify hyphens-auto",
+          "text-[color:var(--foreground)]",
+          "prose-headings:scroll-mt-28 prose-headings:font-semibold prose-headings:tracking-tight",
+          "prose-headings:text-[color:var(--foreground)]",
+          "prose-h2:mt-10 prose-h2:text-2xl",
+          "prose-h3:mt-8 prose-h3:text-xl",
+          "prose-p:leading-relaxed prose-p:text-[color:var(--foreground)]",
+          "prose-li:text-[color:var(--foreground)]",
+          "prose-strong:text-[color:var(--foreground)]",
+          "prose-hr:border-[color:var(--border)]",
+        ].join(" ")}
+      >
         {children}
       </article>
       {rightRail ? (

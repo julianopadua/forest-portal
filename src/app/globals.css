@@ -305,3 +305,14 @@ html.theme-dark .forest-about-hero-text .forest-about-hero-eyebrow {
     animation: none;
   }
 }
+
+/* docs: titulos usam --foreground (bege no theme-dark), nao cores fixas do prose-neutral */
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) .forest-docs-prose :where(h1, h2, h3, h4, strong) {
+    color: var(--foreground);
+  }
+}
+
+html.theme-dark .forest-docs-prose :where(h1, h2, h3, h4, strong) {
+  color: var(--foreground);
+}

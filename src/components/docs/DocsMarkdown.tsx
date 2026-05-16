@@ -17,10 +17,14 @@ function extractText(node: ReactNode): string {
 }
 
 function makeHeading(Tag: "h2" | "h3") {
+  const sizeClass = Tag === "h2" ? "text-2xl mt-10" : "text-xl mt-8";
   return function DocsHeading({ children }: { children?: ReactNode }) {
     const id = slugify(extractText(children));
     return (
-      <Tag id={id} className="scroll-mt-28">
+      <Tag
+        id={id}
+        className={`scroll-mt-28 font-semibold tracking-tight text-[color:var(--foreground)] ${sizeClass}`}
+      >
         {children}
       </Tag>
     );
