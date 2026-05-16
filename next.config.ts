@@ -6,9 +6,8 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 85],
   },
-  // OpenNext Cloudflare runs the server from `/bundle`; blog posts are read from disk via
-  // `process.cwd()/content/blog` in `src/lib/blog/loadPost.ts`. Without this, those files are
-  // not copied into the standalone trace and Workers throw ENOENT on `readdir`.
+  // OpenNext Cloudflare: blog e docs leem disco em dev; em producao usam JSON gerado no prebuild
+  // (posts.generated.json, docs.generated.json). outputFileTracingIncludes mantem fallback em Node.
   outputFileTracingIncludes: {
     "/blog": ["./content/blog/**/*"],
     "/blog/[slug]": ["./content/blog/**/*"],
