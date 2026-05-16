@@ -9,6 +9,11 @@ import Footer from "@/components/layout/Footer";
 import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
 import type { Locale } from "@/i18n/dictionaries";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { getSiteUrl } from "@/lib/siteUrl";
+
+const SITE_NAME = "Instituto Forest";
+const SITE_DESCRIPTION =
+  "Dados abertos por meio de código aberto. Portal do Instituto Forest: catálogo público, relatórios analíticos e API de metadados.";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -18,8 +23,26 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Forest Portal",
-  description: "Instituto - portal e plataforma",
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    alternateLocale: ["en_US"],
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
   icons: {
     icon: "/favicon_logo/favicon-32x32.png",
   },
