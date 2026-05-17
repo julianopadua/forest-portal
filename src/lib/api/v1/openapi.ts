@@ -71,7 +71,7 @@ export function buildOpenApiDocument() {
     path: `${PATH_PREFIX}/datasets/{id}`,
     summary: "Get dataset manifest",
     description:
-      "Full dataset manifest envelope (schema 1.0). The `{id}` path parameter accepts " +
+      "Full dataset manifest envelope (schema 2.0). The `{id}` path parameter accepts " +
       "either the dataset identifier (e.g., `inpe_bdqueimadas_focos`) or the slug.",
     request: {
       params: z.object({
@@ -100,7 +100,7 @@ export function buildOpenApiDocument() {
     summary: "Get dataset items",
     description:
       "Returns only the `items[]` array of the dataset manifest. Suitable for clients " +
-      "that need download URLs but not full metadata.",
+      "that need official source URLs and profile metadata but not full dataset metadata.",
     request: {
       params: z.object({
         id: z.string().openapi({ description: "Dataset id or slug." }),
@@ -175,9 +175,8 @@ export function buildOpenApiDocument() {
       version: API_VERSION,
       description:
         "Public, read-only HTTP API for the Instituto Forest open-data catalog. Returns " +
-        "JSON manifests pointing at file artifacts hosted on Supabase Storage. The API is " +
-        "intentionally thin: it serves metadata; actual file bytes are downloaded directly " +
-        "from the `public_url` fields it exposes.",
+        "JSON manifests with official source URLs and local profiling metadata. The API " +
+        "serves metadata only; dataset bytes stay at the official source.",
       contact: { name: "Instituto Forest", url: "https://institutoforest.org" },
     },
     servers: [{ url: "https://institutoforest.org" }],

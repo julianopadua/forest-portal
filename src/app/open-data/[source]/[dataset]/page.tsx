@@ -1,4 +1,4 @@
-// src/app/open-data/[source]/[dataset]/page.tsx
+//src/app/open-data/[source]/[dataset]/page.tsx
 
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -16,7 +16,6 @@ import {
   type AnpCatalogCompact,
 } from "@/lib/openData/anpCatalog";
 import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
-import { withDownload } from "@/lib/openData/publicUrls";
 import { openDataTaxonomyLabel } from "@/lib/openData/openDataTaxonomyEn";
 import { fetchJsonFromStorage } from "@/lib/storageFetch";
 
@@ -30,6 +29,14 @@ function formatBytes(n: number) {
     i++;
   }
   return `${v.toFixed(i === 0 ? 0 : 2)} ${units[i]}`;
+}
+
+function profileLabel(item: OpenDataItem) {
+  if (!item.profile_status) return "-";
+  const bits: string[] = [item.profile_status];
+  if (item.row_count != null) bits.push(`${item.row_count.toLocaleString()} rows`);
+  if (item.column_count != null) bits.push(`${item.column_count.toLocaleString()} cols`);
+  return bits.join(" | ");
 }
 
 //ordenacao por periodo: atual/current, data ISO, ano
@@ -149,7 +156,7 @@ export default async function OpenDataDatasetPage({
           </div>
 
           <div className="shrink-0 pt-2">
-            <DownloadAllButton urls={manifest.items.map(it => ({ url: it.public_url, name: it.filename }))} />
+            <DownloadAllButton urls={manifest.items.map(it => ({ url: it.source_url, name: it.filename }))} />
           </div>
         </div>
 
@@ -170,9 +177,11 @@ export default async function OpenDataDatasetPage({
             {d.officialSourceWithName.replace("{source}", ds.source_title)}
           </a>
 
-          {manifest.meta?.metadata_file?.filename && manifest.meta?.metadata_file?.public_url && (
+          {manifest.meta?.metadata_file?.filename && manifest.meta?.metadata_file?.source_url && (
             <a
-              href={withDownload(manifest.meta.metadata_file.public_url, manifest.meta.metadata_file.filename)}
+              href={manifest.meta.metadata_file.source_url}
+              target="_blank"
+              rel="noreferrer"
               className="text-[color:var(--primary)] hover:opacity-80"
             >
               {d.dataDictionary}
@@ -206,7 +215,7 @@ export default async function OpenDataDatasetPage({
               return (a.title || a.filename).localeCompare(b.title || b.filename, bcp47);
             })
             .map((it) => (
-              <li key={it.public_url} className="grid grid-cols-12 px-6 py-4 text-sm items-center hover:bg-[color:var(--surface-2)]/40 transition-colors group">
+              <li key={it.source_url} className="grid grid-cols-12 px-6 py-4 text-sm items-center hover:bg-[color:var(--surface-2)]/40 transition-colors group">
                 <div className="col-span-3 font-medium text-[color:var(--text)]">
                   {it.period}
                 </div>
@@ -218,16 +227,19 @@ export default async function OpenDataDatasetPage({
                   <div className="text-[10px] text-[color:var(--muted)] font-mono mt-0.5 opacity-50">
                     {it.filename}
                   </div>
+                  <div className="text-[10px] text-[color:var(--muted)] mt-1">
+                    {profileLabel(it)}
+                  </div>
                 </div>
 
                 <div className="col-span-2 text-right text-[color:var(--muted)] font-mono text-xs">
-                  {formatBytes(it.size_bytes)}
+                  {it.size_bytes != null ? formatBytes(it.size_bytes) : "-"}
                 </div>
 
                 <div className="col-span-1 flex justify-end">
                   <a 
                     className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text)] hover:bg-[color:var(--primary)] hover:text-white transition-all" 
-                    href={withDownload(it.public_url, it.filename)} 
+                    href={it.source_url} 
                     target="_blank" 
                     rel="noreferrer"
                   >

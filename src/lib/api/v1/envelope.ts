@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { API_VERSION } from "./registry";
 
-export const SCHEMA_VERSION = "1.0";
+export const SCHEMA_VERSION = "2.0";
 
 export type GenerationStatus = "success" | "success_partial_fallback" | "failed";
 
@@ -84,7 +84,7 @@ export function corsPreflightResponse() {
 }
 
 export function weakEtagFromObject(obj: unknown): string {
-  // FNV-1a 32-bit. Sufficient for ETag (no security claim).
+  //fnv-1a 32-bit. sufficient for etag, no security claim.
   const json = JSON.stringify(obj);
   let hash = 0x811c9dc5;
   for (let i = 0; i < json.length; i++) {

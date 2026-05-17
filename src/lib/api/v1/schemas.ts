@@ -17,7 +17,7 @@ export const Warnings = z
   });
 
 export const EnvelopeBase = z.object({
-  schema_version: z.string().openapi({ example: "1.0" }),
+  schema_version: z.string().openapi({ example: "2.0" }),
   generated_at: z
     .string()
     .openapi({ description: "ISO 8601 timestamp (UTC).", example: "2026-04-23T12:00:00Z" }),
@@ -69,6 +69,53 @@ export const ReportSummary = registry.register(
     .openapi("ReportSummary"),
 );
 
+export const ProfileStatus = z
+  .enum(["ok", "partial", "failed", "skipped"])
+  .openapi({
+    description:
+      "Outcome of local profiling for a source resource. `ok` means expected " +
+      "metrics were computed. `partial`, `failed`, and `skipped` require clients " +
+      "to inspect `profile_warnings` before automated use.",
+  });
+
+export const ProfileWarning = registry.register(
+  "ProfileWarning",
+  z
+    .object({
+      code: z.string(),
+      message: z.string(),
+    })
+    .openapi("ProfileWarning"),
+);
+
+export const ArchiveMemberProfile = registry.register(
+  "ArchiveMemberProfile",
+  z
+    .object({
+      filename: z.string(),
+      size_bytes: z.number().int().nonnegative().optional(),
+      format: z.string().optional(),
+      row_count: z.number().int().nonnegative().nullable().optional(),
+      column_count: z.number().int().nonnegative().nullable().optional(),
+      columns: z.array(z.string()).nullable().optional(),
+      profile_status: ProfileStatus.optional(),
+      profile_warnings: z.array(ProfileWarning).optional(),
+    })
+    .openapi("ArchiveMemberProfile"),
+);
+
+export const ArchiveProfile = registry.register(
+  "ArchiveProfile",
+  z
+    .object({
+      member_count: z.number().int().nonnegative(),
+      members: z.array(z.string()),
+      uncompressed_size_bytes: z.number().int().nonnegative().optional(),
+      tabular_members: z.array(ArchiveMemberProfile).optional(),
+    })
+    .openapi("ArchiveProfile"),
+);
+
 export const OpenDataItem = registry.register(
   "OpenDataItem",
   z
@@ -78,13 +125,26 @@ export const OpenDataItem = registry.register(
         .string()
         .openapi({ description: "Time partition: YYYY, YYYY-MM, ISO date, or 'Atual'." }),
       filename: z.string(),
-      sha256: z.string().openapi({ description: "Hex sha256 of the file." }),
-      size_bytes: z.number().int().nonnegative(),
-      storage_path: z.string().optional(),
-      public_url: z.string().url(),
-      source_url: z.string().url(),
+      source_url: z.string().url().openapi({
+        description: "Canonical official source URL for downloading the resource.",
+      }),
+      sha256: z.string().optional().openapi({
+        description: "Hex sha256 computed during local profiling when available.",
+      }),
+      size_bytes: z.number().int().nonnegative().optional(),
+      row_count: z.number().int().nonnegative().optional(),
+      column_count: z.number().int().nonnegative().optional(),
+      columns: z.array(z.string()).optional(),
+      content_type: z.string().nullable().optional(),
+      format: z.string().optional(),
+      last_modified: z.string().nullable().optional(),
+      profiled_at: z.string().optional(),
+      profile_status: ProfileStatus.optional(),
+      profile_warnings: z.array(ProfileWarning).optional(),
+      archive_profile: ArchiveProfile.optional(),
       title: z.string().optional(),
       release_time: z.string().optional(),
+      source_page_url: z.string().url().optional(),
     })
     .openapi("OpenDataItem"),
 );
@@ -94,9 +154,17 @@ export const DatasetMetaFile = z
     filename: z.string(),
     sha256: z.string().optional(),
     size_bytes: z.number().int().nonnegative().optional(),
-    storage_path: z.string().optional(),
-    public_url: z.string().url(),
-    source_url: z.string().url().optional(),
+    source_url: z.string().url(),
+    row_count: z.number().int().nonnegative().optional(),
+    column_count: z.number().int().nonnegative().optional(),
+    columns: z.array(z.string()).optional(),
+    content_type: z.string().nullable().optional(),
+    format: z.string().optional(),
+    last_modified: z.string().nullable().optional(),
+    profiled_at: z.string().optional(),
+    profile_status: ProfileStatus.optional(),
+    profile_warnings: z.array(ProfileWarning).optional(),
+    archive_profile: ArchiveProfile.optional(),
   })
   .openapi("DatasetMetaFile");
 
@@ -179,14 +247,9 @@ export const SourceFacet = registry.register(
 
 export const HealthBody = registry.register(
   "Health",
-  z
-    .object({
-      status: z.literal("ok"),
-      api_version: z.string(),
-      schema_version: z.string(),
-      generated_at: z.string(),
-    })
-    .openapi("Health"),
+  EnvelopeBase.extend({
+    status: z.literal("ok"),
+  }).openapi("Health"),
 );
 
 const responseEnvelope = <T extends z.ZodTypeAny>(payload: T, payloadKey: string) =>

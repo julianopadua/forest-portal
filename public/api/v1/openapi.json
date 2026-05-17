@@ -3,7 +3,7 @@
   "info": {
     "title": "Forest Open Data API",
     "version": "v1",
-    "description": "Public, read-only HTTP API for the Instituto Forest open-data catalog. Returns JSON manifests pointing at file artifacts hosted on Supabase Storage. The API is intentionally thin: it serves metadata; actual file bytes are downloaded directly from the `public_url` fields it exposes.",
+    "description": "Public, read-only HTTP API for the Instituto Forest open-data catalog. Returns JSON manifests with official source URLs and local profiling metadata. The API serves metadata only; dataset bytes stay at the official source.",
     "contact": {
       "name": "Instituto Forest",
       "url": "https://institutoforest.org"
@@ -130,6 +130,107 @@
           "tags"
         ]
       },
+      "ProfileWarning": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "ArchiveMemberProfile": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "format": {
+            "type": "string"
+          },
+          "row_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "column_count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "columns": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "profile_status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "partial",
+              "failed",
+              "skipped"
+            ],
+            "description": "Outcome of local profiling for a source resource. `ok` means expected metrics were computed. `partial`, `failed`, and `skipped` require clients to inspect `profile_warnings` before automated use."
+          },
+          "profile_warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileWarning"
+            }
+          }
+        },
+        "required": [
+          "filename"
+        ]
+      },
+      "ArchiveProfile": {
+        "type": "object",
+        "properties": {
+          "member_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "uncompressed_size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tabular_members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArchiveMemberProfile"
+            }
+          }
+        },
+        "required": [
+          "member_count",
+          "members"
+        ]
+      },
       "OpenDataItem": {
         "type": "object",
         "properties": {
@@ -146,39 +247,85 @@
           "filename": {
             "type": "string"
           },
+          "source_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical official source URL for downloading the resource."
+          },
           "sha256": {
             "type": "string",
-            "description": "Hex sha256 of the file."
+            "description": "Hex sha256 computed during local profiling when available."
           },
           "size_bytes": {
             "type": "integer",
             "minimum": 0
           },
-          "storage_path": {
+          "row_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "column_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "format": {
             "type": "string"
           },
-          "public_url": {
-            "type": "string",
-            "format": "uri"
+          "last_modified": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
-          "source_url": {
+          "profiled_at": {
+            "type": "string"
+          },
+          "profile_status": {
             "type": "string",
-            "format": "uri"
+            "enum": [
+              "ok",
+              "partial",
+              "failed",
+              "skipped"
+            ],
+            "description": "Outcome of local profiling for a source resource. `ok` means expected metrics were computed. `partial`, `failed`, and `skipped` require clients to inspect `profile_warnings` before automated use."
+          },
+          "profile_warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileWarning"
+            }
+          },
+          "archive_profile": {
+            "$ref": "#/components/schemas/ArchiveProfile"
           },
           "title": {
             "type": "string"
           },
           "release_time": {
             "type": "string"
+          },
+          "source_page_url": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
           "kind",
           "period",
           "filename",
-          "sha256",
-          "size_bytes",
-          "public_url",
           "source_url"
         ]
       },
@@ -217,21 +364,65 @@
             "type": "integer",
             "minimum": 0
           },
-          "storage_path": {
-            "type": "string"
-          },
-          "public_url": {
-            "type": "string",
-            "format": "uri"
-          },
           "source_url": {
             "type": "string",
             "format": "uri"
+          },
+          "row_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "column_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "content_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "format": {
+            "type": "string"
+          },
+          "last_modified": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "profiled_at": {
+            "type": "string"
+          },
+          "profile_status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "partial",
+              "failed",
+              "skipped"
+            ],
+            "description": "Outcome of local profiling for a source resource. `ok` means expected metrics were computed. `partial`, `failed`, and `skipped` require clients to inspect `profile_warnings` before automated use."
+          },
+          "profile_warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileWarning"
+            }
+          },
+          "archive_profile": {
+            "$ref": "#/components/schemas/ArchiveProfile"
           }
         },
         "required": [
           "filename",
-          "public_url"
+          "source_url"
         ]
       },
       "DatasetMetaRelease": {
@@ -253,7 +444,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -318,7 +509,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -505,27 +696,45 @@
       "Health": {
         "type": "object",
         "properties": {
+          "schema_version": {
+            "type": "string",
+            "example": "2.0"
+          },
+          "generated_at": {
+            "type": "string",
+            "description": "ISO 8601 timestamp (UTC).",
+            "example": "2026-04-23T12:00:00Z"
+          },
+          "generation_status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "success_partial_fallback",
+              "failed"
+            ],
+            "description": "Outcome of the upstream pipeline run that produced the artifact. `success_partial_fallback` indicates the artifact is internally consistent but does not include 100% of the expected items."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Human-readable warnings surfaced by the upstream pipeline.",
+            "example": []
+          },
           "status": {
             "type": "string",
             "enum": [
               "ok"
             ]
-          },
-          "api_version": {
-            "type": "string"
-          },
-          "schema_version": {
-            "type": "string"
-          },
-          "generated_at": {
-            "type": "string"
           }
         },
         "required": [
-          "status",
-          "api_version",
           "schema_version",
-          "generated_at"
+          "generated_at",
+          "generation_status",
+          "warnings",
+          "status"
         ]
       },
       "ProblemDetails": {
@@ -560,7 +769,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -604,7 +813,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -648,7 +857,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -689,7 +898,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -733,7 +942,7 @@
         "properties": {
           "schema_version": {
             "type": "string",
-            "example": "1.0"
+            "example": "2.0"
           },
           "generated_at": {
             "type": "string",
@@ -853,7 +1062,7 @@
     "/api/v1/datasets/{id}": {
       "get": {
         "summary": "Get dataset manifest",
-        "description": "Full dataset manifest envelope (schema 1.0). The `{id}` path parameter accepts either the dataset identifier (e.g., `inpe_bdqueimadas_focos`) or the slug.",
+        "description": "Full dataset manifest envelope (schema 2.0). The `{id}` path parameter accepts either the dataset identifier (e.g., `inpe_bdqueimadas_focos`) or the slug.",
         "parameters": [
           {
             "schema": {
@@ -903,7 +1112,7 @@
     "/api/v1/datasets/{id}/items": {
       "get": {
         "summary": "Get dataset items",
-        "description": "Returns only the `items[]` array of the dataset manifest. Suitable for clients that need download URLs but not full metadata.",
+        "description": "Returns only the `items[]` array of the dataset manifest. Suitable for clients that need official source URLs and profile metadata but not full dataset metadata.",
         "parameters": [
           {
             "schema": {

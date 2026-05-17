@@ -554,8 +554,8 @@ export const dictionaries: Record<Locale, Dict> = {
         errorNetwork: "Falha de rede. Verifique sua conexão e tente novamente.",
       },
       downloadAll: {
-        idle: "Baixar coleção completa",
-        loading: "Baixando…",
+        idle: "Copiar URLs da coleção",
+        loading: "Copiando…",
       },
       dataset: {
         backToCatalog: "Voltar para o catálogo",
@@ -903,8 +903,8 @@ export const dictionaries: Record<Locale, Dict> = {
         errorNetwork: "Network error. Check your connection and try again.",
       },
       downloadAll: {
-        idle: "Download full collection",
-        loading: "Downloading…",
+        idle: "Copy collection URLs",
+        loading: "Copying…",
       },
       dataset: {
         backToCatalog: "Back to catalog",

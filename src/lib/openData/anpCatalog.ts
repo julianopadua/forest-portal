@@ -158,12 +158,16 @@ export function buildManifestFromAnpDataset(
       kind: "data" as const,
       period,
       filename,
-      sha256: "",
-      size_bytes: 0,
-      storage_path: "",
-      public_url: r.url,
-      source_url: sourceUrl,
+      source_url: r.url,
       title: nm || filename,
+      format: (r.format || "").toLowerCase() || undefined,
+      profile_status: "skipped",
+      profile_warnings: [
+        {
+          code: "checksum_unavailable",
+          message: "ANP compact resources are indexed from catalog metadata and not locally profiled.",
+        },
+      ],
     };
   });
 
@@ -172,13 +176,12 @@ export function buildManifestFromAnpDataset(
   if (docPdf?.url) {
     meta.metadata_file = {
       filename: filenameFromUrl(docPdf.url),
-      public_url: docPdf.url,
-      source_url: sourceUrl,
+      source_url: docPdf.url,
     };
   }
 
   return {
-    schema_version: "1.0",
+    schema_version: "2.0",
     dataset_id: dataset.package_id,
     title: dataset.title,
     source_dataset_url: sourceUrl,

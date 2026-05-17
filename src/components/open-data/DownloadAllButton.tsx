@@ -15,17 +15,12 @@ export function DownloadAllButton({ urls }: DownloadAllButtonProps) {
   const handleDownloadAll = async () => {
     if (!urls.length) return;
     setIsDownloading(true);
+    const text = urls.map(({ url }) => url).join("\n");
 
-    for (let i = 0; i < urls.length; i++) {
-      const { url, name } = urls[i];
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = name;
-      a.target = "_blank";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      await new Promise((resolve) => setTimeout(resolve, 450));
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      window.open(urls[0]?.url, "_blank", "noopener,noreferrer");
     }
 
     setIsDownloading(false);
