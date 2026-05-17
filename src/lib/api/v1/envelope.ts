@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { API_VERSION } from "./registry";
+import { API_VERSION } from "./constants";
 
 export const SCHEMA_VERSION = "2.0";
 
