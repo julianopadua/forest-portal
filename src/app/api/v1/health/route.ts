@@ -1,5 +1,5 @@
 import { jsonResponse, corsPreflightResponse, SCHEMA_VERSION } from "@/lib/api/v1/envelope";
-import { API_VERSION } from "@/lib/api/v1/registry";
+import { API_VERSION } from "@/lib/api/v1/constants";
 
 export const runtime = "edge";
 

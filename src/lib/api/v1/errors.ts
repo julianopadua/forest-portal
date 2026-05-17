@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { API_VERSION } from "./registry";
+import { API_VERSION } from "./constants";
 
 const ERROR_BASE = "https://institutoforest.org/api/errors";
 
