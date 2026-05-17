@@ -2,12 +2,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { allowFor } from "@/lib/rateLimit";
 
 function isEmailLike(v: string) {
   return v.includes("@") && v.includes(".");
 }
 
+//budget: 10 attempts per ip per 60s. brute-force becomes economically
+//unattractive while honest typos and password manager retries pass.
+const LOGIN_MAX = 10;
+const LOGIN_WINDOW_MS = 60_000;
+
 export async function POST(request: NextRequest) {
+  if (!allowFor("auth.login", request, LOGIN_MAX, LOGIN_WINDOW_MS)) {
+    return NextResponse.json(
+      { ok: false, error: "rate_limited" },
+      { status: 429, headers: { "Retry-After": "60" } },
+    );
+  }
   // cookieResponse acumula os Set-Cookie emitidos pelo supabase client
   let cookieResponse = NextResponse.json({ ok: true });
 

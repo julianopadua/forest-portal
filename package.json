@@ -32,7 +32,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@types/mdx": "^2.0.13",
     "gray-matter": "^4.0.3",
-    "next": "^16.2.4",
+    "next": "^16.2.6",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-markdown": "^10.1.0",
@@ -53,5 +53,8 @@
     "tsx": "^4.22.0",
     "typescript": "^5",
     "wrangler": "^4.87.0"
+  },
+  "overrides": {
+    "fast-xml-builder": "^1.1.7"
   }
 }

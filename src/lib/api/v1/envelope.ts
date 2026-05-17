@@ -22,6 +22,18 @@ export type EnvelopeOptions = {
 const DEFAULT_CACHE = 3600;
 const DEFAULT_SWR = 86400;
 
+//defensive baseline headers. these are cheap and well-understood by
+//browsers and gateways. content-security-policy is omitted on purpose
+//for the json api: it doesn't render html, and CSP on json responses
+//breaks tooling without adding security.
+const SECURITY_HEADERS: Record<string, string> = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "no-referrer",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "Permissions-Policy": "interest-cohort=()",
+};
+
 export function buildEnvelope<T extends PayloadObject>(
   payload: T,
   options: EnvelopeOptions = {},
@@ -51,6 +63,7 @@ export function jsonResponse<T extends PayloadObject>(payload: T, options: Envel
     "Access-Control-Allow-Methods": "GET, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "X-Api-Version": API_VERSION,
+    ...SECURITY_HEADERS,
     ...(options.extraHeaders ?? {}),
   };
   if (options.etag) headers["ETag"] = options.etag;
@@ -67,6 +80,7 @@ export function notModifiedResponse(etag: string) {
       ETag: etag,
       "Cache-Control": `public, max-age=${DEFAULT_CACHE}, stale-while-revalidate=${DEFAULT_SWR}`,
       "X-Api-Version": API_VERSION,
+      ...SECURITY_HEADERS,
     },
   });
 }
