@@ -8,7 +8,6 @@ import { problemResponse } from "@/lib/api/v1/errors";
 import { resolveDatasetByIdOrSlug } from "@/lib/api/v1/resolvers";
 import { fetchOpenDataManifest } from "@/lib/openData/fetch";
 
-export const runtime = "edge";
 export const revalidate = 3600;
 
 type Ctx = { params: Promise<{ id: string }> };

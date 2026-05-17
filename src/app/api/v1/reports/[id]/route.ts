@@ -8,7 +8,6 @@ import { problemResponse } from "@/lib/api/v1/errors";
 import { resolveReportByIdOrSlug } from "@/lib/api/v1/resolvers";
 import { fetchReportManifest } from "@/lib/reports/fetch";
 
-export const runtime = "edge";
 export const revalidate = 3600;
 
 type Ctx = { params: Promise<{ id: string }> };

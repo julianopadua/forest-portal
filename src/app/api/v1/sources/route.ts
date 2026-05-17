@@ -7,7 +7,6 @@ import {
 } from "@/lib/api/v1/envelope";
 import { problemResponse } from "@/lib/api/v1/errors";
 
-export const runtime = "edge";
 export const revalidate = 3600;
 
 export async function GET(request: Request) {
