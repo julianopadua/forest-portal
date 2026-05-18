@@ -6,7 +6,10 @@ import {
 } from "@/lib/api/v1/envelope";
 import { problemResponse } from "@/lib/api/v1/errors";
 import { resolveDatasetByIdOrSlug } from "@/lib/api/v1/resolvers";
-import { fetchOpenDataManifest } from "@/lib/openData/fetch";
+import {
+  loadManifestForDataset,
+  ManifestNotFoundForSlugError,
+} from "@/lib/api/v1/manifestForDataset";
 
 export const revalidate = 3600;
 
@@ -22,8 +25,11 @@ export async function GET(request: Request, ctx: Ctx) {
 
   let manifest;
   try {
-    manifest = await fetchOpenDataManifest(dataset.manifest_path);
+    manifest = await loadManifestForDataset(dataset);
   } catch (e) {
+    if (e instanceof ManifestNotFoundForSlugError) {
+      return problemResponse("not_found", e.message);
+    }
     const detail = e instanceof Error ? e.message : "unknown error";
     return problemResponse("upstream_unavailable", detail);
   }
