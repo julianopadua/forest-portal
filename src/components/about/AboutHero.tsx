@@ -41,7 +41,7 @@ export function AboutHero({ title, subtitle, imageSrc, imageAlt, imageCaption }:
         </p>
         {imageCaption ? (
           <p
-            className="mt-8 max-w-2xl text-justify text-[10px] leading-snug tracking-wide text-white/60 sm:text-[11px]"
+            className="mt-8 max-w-2xl text-justify text-[10px] leading-snug tracking-wide text-white/60 sm:text-[15px]"
             role="note"
           >
             {imageCaption}
