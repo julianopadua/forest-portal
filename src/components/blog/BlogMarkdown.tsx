@@ -104,6 +104,30 @@ function makeHeading(Tag: "h2" | "h3") {
   };
 }
 
+function BlogTable({ children }: { children?: ReactNode }) {
+  return (
+    <div className="not-prose my-6 -mx-1 overflow-x-auto px-1 sm:mx-0 sm:px-0">
+      <table className="w-full min-w-[32rem] border-collapse text-sm">{children}</table>
+    </div>
+  );
+}
+
+function BlogTh({ children }: { children?: ReactNode }) {
+  return (
+    <th className="border-b border-[color:var(--border)] py-2 pr-4 text-left font-medium text-[color:var(--muted)]">
+      {children}
+    </th>
+  );
+}
+
+function BlogTd({ children }: { children?: ReactNode }) {
+  return (
+    <td className="border-b border-[color:var(--border)]/60 py-2 pr-4 align-top text-[color:var(--foreground)]">
+      {children}
+    </td>
+  );
+}
+
 function MarkdownLink({
   href,
   children,
@@ -137,7 +161,7 @@ function MarkdownLink({
 
 export default function BlogMarkdown({ content }: { content: string }) {
   return (
-    <div className="prose prose-lg max-w-none text-[color:var(--foreground)] prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-[color:var(--foreground)] prose-h2:mt-12 prose-h2:text-2xl prose-h3:mt-8 prose-p:leading-relaxed prose-p:text-justify prose-p:text-[color:var(--muted)] prose-li:text-justify prose-li:text-[color:var(--muted)] prose-blockquote:border-[color:var(--primary)]/40 prose-blockquote:text-[color:var(--muted)] prose-code:rounded-md prose-code:bg-[color:var(--surface-2)] prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.9em] prose-code:text-[color:var(--foreground)] prose-pre:bg-[color:var(--surface-2)] prose-pre:border prose-pre:border-[color:var(--border)] prose-hr:border-[color:var(--border)] prose-strong:text-[color:var(--foreground)]">
+    <motion>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw, [rehypeSanitize, blogRehypeSanitizeSchema]]}
@@ -145,6 +169,9 @@ export default function BlogMarkdown({ content }: { content: string }) {
           p: MarkdownParagraph,
           h2: makeHeading("h2"),
           h3: makeHeading("h3"),
+          table: BlogTable,
+          th: BlogTh,
+          td: BlogTd,
           img: ({ src, alt }) => <MarkdownImage src={typeof src === "string" ? src : undefined} alt={alt} />,
           a: ({ href, children }) => (
             <MarkdownLink href={typeof href === "string" ? href : undefined}>{children}</MarkdownLink>

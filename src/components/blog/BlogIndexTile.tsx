@@ -1,13 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Locale } from "@/i18n/dictionaries";
 
-function formatDateOnly(iso: string) {
+function formatDateOnly(iso: string, locale: Locale) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleDateString("pt-BR");
+  return d.toLocaleDateString(locale === "en" ? "en-US" : "pt-BR");
 }
 
 export type BlogIndexTileProps = {
+  locale: Locale;
   href: string;
   categoryTitle: string;
   authorLine: string;
@@ -20,6 +22,7 @@ export type BlogIndexTileProps = {
 };
 
 export default function BlogIndexTile({
+  locale,
   href,
   categoryTitle,
   authorLine,
@@ -31,7 +34,7 @@ export default function BlogIndexTile({
   priorityImage,
 }: BlogIndexTileProps) {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)] transition hover:border-[color:var(--primary)]/35 hover:shadow-lg">
+    <article className="group min-w-0 overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-float)] transition hover:border-[color:var(--primary)]/35 hover:shadow-lg">
       <Link
         href={href}
         className="block outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--background)]"
@@ -59,22 +62,23 @@ export default function BlogIndexTile({
           />
 
           <div className="absolute inset-x-0 bottom-0 p-3 md:p-4">
-            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/85 md:text-[10px]">
+            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-white/85 sm:tracking-[0.16em] md:text-[10px]">
               {categoryTitle}
-              <span className="text-white/40"> · </span>
+            </p>
+            <p className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white/65 line-clamp-1 sm:tracking-[0.14em] md:text-[10px]">
               {authorLine}
             </p>
-            <h2 className="mt-1 text-balance text-base font-black leading-snug tracking-tight text-white line-clamp-2 md:mt-1.5 md:text-lg">
+            <h2 className="mt-1.5 text-balance break-words text-base font-black leading-snug tracking-tight text-white line-clamp-2 md:mt-2 md:text-lg">
               {title}
             </h2>
           </div>
         </div>
 
         <div className="space-y-2 p-3 md:p-4">
-          <p className="text-sm leading-snug text-[color:var(--muted)] line-clamp-3">{excerpt}</p>
+          <p className="break-words text-sm leading-snug text-[color:var(--muted)] line-clamp-3">{excerpt}</p>
 
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[color:var(--muted)]">
-            {formatDateOnly(publishedAt)}
+            {formatDateOnly(publishedAt, locale)}
           </p>
 
           {tags.length > 0 ? (

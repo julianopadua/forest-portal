@@ -29,6 +29,7 @@ export default function BlogPageClient({ items }: { items: BlogIndexItem[] }) {
           return (
             <BlogIndexTile
               key={item.slug}
+              locale={locale}
               href={`/blog/${item.slug}`}
               categoryTitle={copy.categoryLabel}
               authorLine={post.frontmatter.author}

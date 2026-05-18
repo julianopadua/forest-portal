@@ -1,35 +1,38 @@
 import Image from "next/image";
 import BlogMarkdown from "@/components/blog/BlogMarkdown";
+import type { Locale } from "@/i18n/dictionaries";
 import type { BlogPost } from "@/lib/blog/types";
 
-function formatDate(iso: string) {
+function formatDate(iso: string, locale: Locale) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("pt-BR", {
+  return d.toLocaleDateString(locale === "en" ? "en-US" : "pt-BR", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 }
 
-export default function BlogArticleLayout({ post }: { post: BlogPost }) {
+export default function BlogArticleLayout({ post, locale }: { post: BlogPost; locale: Locale }) {
   const { frontmatter, content } = post;
 
   return (
-    <article className="mx-auto w-full max-w-3xl">
+    <article className="mx-auto w-full min-w-0 max-w-3xl">
       <header className="text-center">
-        <h1 className="text-balance text-3xl font-semibold tracking-tight text-[color:var(--foreground)] md:text-4xl md:leading-tight">
+        <h1 className="text-balance break-words text-3xl font-semibold tracking-tight text-[color:var(--foreground)] md:text-4xl md:leading-tight">
           {frontmatter.title}
         </h1>
         {frontmatter.subtitle ? (
-          <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-[color:var(--muted)] md:text-xl">
+          <p className="mx-auto mt-4 max-w-2xl break-words text-lg leading-relaxed text-[color:var(--muted)] md:text-xl">
             {frontmatter.subtitle}
           </p>
         ) : null}
-        <p className="mt-6 text-sm text-[color:var(--muted)]">
+        <p className="mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-[color:var(--muted)]">
           <span className="font-medium text-[color:var(--foreground)]">{frontmatter.author}</span>
-          <span className="mx-2 text-[color:var(--border)]">·</span>
-          <time dateTime={frontmatter.publishedAt}>{formatDate(frontmatter.publishedAt)}</time>
+          <span className="text-[color:var(--border)]" aria-hidden>
+            ·
+          </span>
+          <time dateTime={frontmatter.publishedAt}>{formatDate(frontmatter.publishedAt, locale)}</time>
         </p>
       </header>
 

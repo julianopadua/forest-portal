@@ -51,7 +51,7 @@ export default function BlogPostPageClient({
 
       <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12 xl:grid-cols-[1fr_260px] xl:gap-16">
         <div className="min-w-0">
-          <BlogArticleLayout post={post} />
+          <BlogArticleLayout post={post} locale={locale} />
         </div>
         {headings.length > 0 && (
           <aside className="hidden lg:block">
