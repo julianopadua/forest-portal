@@ -55,7 +55,6 @@ export type Dict = {
     socialLinks: {
       instagram: string;
       linkedin: string;
-      comingSoon: string;
     };
   };
 
@@ -315,7 +314,6 @@ export const dictionaries: Record<Locale, Dict> = {
       socialLinks: {
         instagram: "Instagram",
         linkedin: "LinkedIn",
-        comingSoon: "Em breve",
       },
     },
 
@@ -665,7 +663,6 @@ export const dictionaries: Record<Locale, Dict> = {
       socialLinks: {
         instagram: "Instagram",
         linkedin: "LinkedIn",
-        comingSoon: "Coming soon",
       },
     },
 

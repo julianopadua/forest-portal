@@ -4,6 +4,11 @@
 import Link from "next/link";
 import { useI18n } from "@/i18n/I18nProvider";
 
+const SOCIAL_LINKS = {
+  instagram: "https://www.instagram.com/institutoforest/",
+  linkedin: "https://www.linkedin.com/company/instituto-forest",
+} as const;
+
 export default function Footer() {
   const { dict } = useI18n();
 
@@ -50,16 +55,27 @@ export default function Footer() {
           <div className="space-y-2 text-xs">
             <div className="font-semibold text-[color:var(--text)]">{dict.footer.social}</div>
             <div className="flex flex-col gap-2">
-              <div className="inline-flex items-center gap-1.5 opacity-50">
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-[color:var(--text)]"
+                aria-label={dict.footer.socialLinks.instagram}
+              >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <rect x="2" y="2" width="20" height="20" rx="5" />
                   <circle cx="12" cy="12" r="4.5" />
                   <circle cx="17.5" cy="6.5" r="1" />
                 </svg>
                 <span>{dict.footer.socialLinks.instagram}</span>
-                <span className="text-[10px] italic">({dict.footer.socialLinks.comingSoon})</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 opacity-50">
+              </a>
+              <a
+                href={SOCIAL_LINKS.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-[color:var(--text)]"
+                aria-label={dict.footer.socialLinks.linkedin}
+              >
                 <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <path d="M8 10v7" />
@@ -68,8 +84,7 @@ export default function Footer() {
                   <path d="M12 10v7" />
                 </svg>
                 <span>{dict.footer.socialLinks.linkedin}</span>
-                <span className="text-[10px] italic">({dict.footer.socialLinks.comingSoon})</span>
-              </div>
+              </a>
             </div>
           </div>
         </div>
