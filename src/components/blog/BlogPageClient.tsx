@@ -23,7 +23,7 @@ export default function BlogPageClient({ items }: { items: BlogIndexItem[] }) {
         </div>
       </header>
 
-      <section className="mt-10 grid gap-8 md:grid-cols-2">
+      <section className="mt-10 grid min-w-0 gap-8 md:grid-cols-2">
         {items.map((item, index) => {
           const post = pickPostForLocale(item, locale);
           return (
