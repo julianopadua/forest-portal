@@ -1,122 +1,166 @@
 # Instituto Forest Portal
 
-Repositório oficial do portal web do Instituto Forest. O sistema consolida presença institucional, acesso a dados abertos, publicação de relatórios analíticos e fluxos de autenticação com perfil de usuário, sobre uma base técnica em Next.js (App Router), TypeScript e Supabase.
+Official repository of the Instituto Forest web portal. The system unifies the institutional presence, the open-data catalog, the public read-only HTTP API at `/api/v1`, interactive analytical reports, a Markdown-driven blog, public documentation, and authenticated user flows, on top of Next.js 16 (App Router), TypeScript 5 and Supabase.
 
-## Sumário
+> **Reading the portal docs vs. consuming the data**: if you only want to **use** Forest open data, you do not need this repository — install the official Python SDK [`forest-data`](https://pypi.org/project/forest-data/) or call the public HTTP API at <https://institutoforest.org/api/v1>. This repository is for portal contributors.
 
-- [Objetivos](#objetivos)
-- [Visão do sistema](#visão-do-sistema)
-- [Pilha tecnológica](#pilha-tecnológica)
-- [Arquitetura e fluxos principais](#arquitetura-e-fluxos-principais)
-- [Rotas e módulos](#rotas-e-módulos)
-- [Internacionalização](#internacionalização)
-- [Landing page e página institucional](#landing-page-e-página-institucional)
-- [Temas e tokens de interface](#temas-e-tokens-de-interface)
-- [Dados abertos e pipeline externo](#dados-abertos-e-pipeline-externo)
-- [Relatórios analíticos](#relatórios-analíticos)
-- [Estrutura do repositório](#estrutura-do-repositório)
-- [Documentação de código](#documentação-de-código)
-- [Variáveis de ambiente](#variáveis-de-ambiente)
-- [Execução local](#execução-local)
-- [Build e produção](#build-e-produção)
-- [Implantação](#implantação)
-- [Evolução planejada](#evolução-planejada)
-- [Contribuição e licença](#contribuição-e-licença)
+## Table of contents
 
-## Objetivos
+- [Goals](#goals)
+- [System overview](#system-overview)
+- [Tech stack](#tech-stack)
+- [Architecture and main flows](#architecture-and-main-flows)
+- [Public HTTP API (`/api/v1`)](#public-http-api-apiv1)
+- [Routes and modules](#routes-and-modules)
+- [Internationalization](#internationalization)
+- [Landing page and institutional page](#landing-page-and-institutional-page)
+- [Themes and UI tokens](#themes-and-ui-tokens)
+- [Open data](#open-data)
+- [Analytical reports](#analytical-reports)
+- [Blog and documentation](#blog-and-documentation)
+- [Repository layout](#repository-layout)
+- [Code documentation](#code-documentation)
+- [Environment variables](#environment-variables)
+- [Local development](#local-development)
+- [Build and production](#build-and-production)
+- [Deployment](#deployment)
+- [Roadmap](#roadmap)
+- [Contributing and license](#contributing-and-license)
 
-O portal visa oferecer experiência unificada para:
+## Goals
 
-- Educação e conteúdo aplicado (incluindo rotas dedicadas a educação e exploração).
-- Comunidade e engajamento (com âncoras na landing e rotas de entrada).
-- Distribuição de dados abertos (catálogo, metadados e downloads alinhados ao Storage).
-- Área autenticada (perfil, sessão e ações de servidor para atualização de dados do usuário).
+The portal offers a unified experience for:
 
-## Visão do sistema
+- Education and applied content (dedicated routes for education and exploration).
+- Community and engagement (anchors on the landing page and entry routes).
+- Open-data distribution (catalog, metadata and downloads aligned with Supabase Storage, plus a public REST API and a Python SDK).
+- An authenticated area (profile, session and server actions for updating user data).
+- Public technical documentation under `/docs` (including the API reference).
+- A Markdown-driven blog with bilingual support.
 
-A aplicação é um monólito frontend desacoplado de jobs de extração e transformação de dados. O Next.js entrega páginas e rotas de API leves; o Supabase fornece autenticação, banco relacional e armazenamento de objetos para arquivos públicos. O middleware renova cookies de sessão em cada requisição compatível com o matcher, mantendo coerência entre cliente e servidor. Componentes de interface seguem tokens CSS centralizados e padrão responsivo com navegação principal fixa e menu lateral em viewports reduzidos.
+## System overview
 
-## Pilha tecnológica
+The application is a frontend monolith decoupled from data extraction and transformation jobs. Next.js delivers pages and lightweight API routes; Supabase provides authentication, the relational database and object storage for public files. Middleware refreshes session cookies on every matched request, keeping the client and server in sync. UI components follow centralized CSS tokens and a responsive pattern with a fixed primary navigation and a side menu on narrow viewports.
 
-| Camada | Tecnologia |
-|--------|------------|
-| Framework | Next.js 16 (App Router) |
-| Linguagem | TypeScript 5 |
-| UI | React 19, Tailwind CSS 4 (`@import "tailwindcss"` em `globals.css`) |
-| Autenticação e backend gerenciado | Supabase (`@supabase/ssr`, `@supabase/supabase-js`) |
-| Compilação React | React Compiler habilitado em `next.config.ts` |
-| Runtime local | Node.js (LTS recomendado), npm |
+All dynamic data (datasets, reports, catalogs) is fetched from Supabase Storage via `manifest.json` files written by the sibling repository [`forest-open-data-pipelines`](https://github.com/julianopadua/forest-open-data-pipelines). The portal is a pure consumer of Storage — it never writes to it.
 
-Configuração de build: consulte [doc/src/next.config/next.config.md](doc/src/next.config/next.config.md).
+## Tech stack
 
-## Arquitetura e fluxos principais
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 16 (App Router, edge runtime for `/api/v1`) |
+| Language | TypeScript 5 |
+| UI | React 19, Tailwind CSS 4 (`@import "tailwindcss"` in `globals.css`) |
+| Authentication and managed backend | Supabase (`@supabase/ssr`, `@supabase/supabase-js`) |
+| Schemas and OpenAPI | Zod 4, `@asteasolutions/zod-to-openapi` |
+| Content | MDX (`@next/mdx`), `gray-matter`, `react-markdown`, `remark-gfm`, `rehype-raw`, `rehype-sanitize` |
+| React compilation | React Compiler enabled in `next.config.ts` |
+| Hosting | Cloudflare via `@opennextjs/cloudflare` (`npm run preview` / `deploy`) |
+| Runtime (local) | Node.js (current LTS), npm |
 
-1. **Solicitação HTTP**: `src/middleware.ts` delega a [atualização de sessão Supabase](doc/src/src/lib/supabase/middleware/middleware.md) antes de servir rotas aplicáveis.
-2. **Renderização**: o [layout raiz](doc/src/src/app/layout/layout.md) aplica fonte, provedor de i18n, cabeçalho e rodapé; o conteúdo roteado ocupa a área principal.
-3. **Autenticação**: rotas de API [login](doc/src/src/app/api/auth/login/route/route.md) e [cadastro](doc/src/src/app/api/auth/signup/route/route.md) utilizam o cliente adequado; o [callback OAuth](doc/src/src/app/auth/callback/route/route.md) troca o código por sessão e redireciona com validação de `next` interno.
-4. **Dados do usuário**: [ações de servidor para perfil](doc/src/src/app/actions/profile/profile.md) atualizam tabelas como `profiles` com revalidação de cache.
-5. **Dados abertos**: catálogo e URLs públicas derivam de variáveis e convenções de bucket; ver biblioteca em [catalog](doc/src/src/lib/openData/catalog/catalog.md) e [publicUrls](doc/src/src/lib/openData/publicUrls/publicUrls.md).
+Build configuration: see [doc/src/next.config/next.config.md](doc/src/next.config/next.config.md).
 
-Documentação do middleware de borda: [doc/src/src/middleware/middleware.md](doc/src/src/middleware/middleware.md).
+## Architecture and main flows
 
-## Rotas e módulos
+1. **HTTP request**: `src/middleware.ts` delegates to the [Supabase session refresher](doc/src/src/lib/supabase/middleware/middleware.md) before serving applicable routes.
+2. **Rendering**: the [root layout](doc/src/src/app/layout/layout.md) applies fonts, the i18n provider, header and footer; routed content fills the main area.
+3. **Authentication**: API routes [login](doc/src/src/app/api/auth/login/route/route.md) and [signup](doc/src/src/app/api/auth/signup/route/route.md) use the appropriate client; the [OAuth callback](doc/src/src/app/auth/callback/route/route.md) exchanges the code for a session and redirects with validation of the internal `next` parameter.
+4. **User data**: [server actions for the profile](doc/src/src/app/actions/profile/profile.md) update tables such as `profiles` with cache revalidation.
+5. **Open data**: the catalog and public URLs derive from envelopes published by the pipeline; see the libraries in [catalog](doc/src/src/lib/openData/catalog/catalog.md) and [publicUrls](doc/src/src/lib/openData/publicUrls/publicUrls.md).
+6. **Public API**: routes under `src/app/api/v1/` expose the same data the UI reads, through the exact same helpers — see [Public HTTP API](#public-http-api-apiv1).
 
-Cada rota principal possui nota técnica em `doc/` quando indexada em [doc/INDEX.md](doc/INDEX.md).
+Edge middleware documentation: [doc/src/src/middleware/middleware.md](doc/src/src/middleware/middleware.md).
 
-| Rota | Descrição | Documentação |
+## Public HTTP API (`/api/v1`)
+
+The portal exposes a public, read-only REST API rooted at `https://institutoforest.org/api/v1`. The same `getOpenDataCatalog`, `getReportsCatalog`, `fetchOpenDataManifest` and `fetchReportManifest` helpers used by the UI back the API — both surfaces read the exact same data through the exact same path. Dataset payload bytes are never served by the portal; each item's `source_url` points to the official source.
+
+| Route | Returns |
+|------|---------|
+| `GET /api/v1/health` | Service and schema version probe |
+| `GET /api/v1/catalog` | Compact dataset list |
+| `GET /api/v1/catalog/reports` | Compact report list |
+| `GET /api/v1/datasets/{id}` | Full dataset manifest (id or slug) |
+| `GET /api/v1/datasets/{id}/items` | Items array only |
+| `GET /api/v1/reports/{id}` | Full report manifest |
+| `GET /api/v1/sources` | Source agencies and counts |
+| `GET /api/v1/openapi.json` | OpenAPI 3.1 spec (generated at build time) |
+
+Conventions enforced by `src/lib/api/v1/`:
+
+- Single response envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, plus the payload key.
+- Errors: RFC 7807 `application/problem+json` via `errors.ts` (`not_found`, `bad_request`, `upstream_unavailable`, `internal_error`).
+- Caching: `Cache-Control: public, max-age=3600, stale-while-revalidate=86400`, weak ETag from `generated_at` + count, supports `If-None-Match`.
+- CORS: `*` (public open data). `OPTIONS` handler on every route.
+- Edge runtime (`export const runtime = "edge"`).
+- Zod schemas in `src/lib/api/v1/schemas.ts`; the OpenAPI spec is regenerated by `npm run api:openapi` (runs at `prebuild`).
+
+The official Python SDK [`forest-data`](https://pypi.org/project/forest-data/) wraps these endpoints; the human-readable reference page lives at [`/docs/api/v1`](https://institutoforest.org/docs/api/v1).
+
+## Routes and modules
+
+Each primary route has a technical note in `doc/` when indexed in [doc/INDEX.md](doc/INDEX.md).
+
+| Route | Description | Documentation |
 |------|-----------|--------------|
-| `/` | Landing institucional baseada em MDX (`content/home/{en-US,pt-BR}.mdx`) com hero do Cerrado e logo animado | [page.md (marketing)](doc/src/src/app/(marketing)/page/page.md) |
-| `/explore` | Exploração de conteúdo | [explore/page.md](doc/src/src/app/explore/page/page.md) |
-| `/join` | Entrada para cadastro e autenticação | [join/page.md](doc/src/src/app/join/page/page.md) |
-| `/education` | Educação | [education/page.md](doc/src/src/app/education/page/page.md) |
+| `/` | MDX-driven institutional landing (`content/home/{en-US,pt-BR}.mdx`) with the Cerrado hero and animated logo | [page.md (marketing)](doc/src/src/app/(marketing)/page/page.md) |
+| `/explore` | Content discovery | [explore/page.md](doc/src/src/app/explore/page/page.md) |
+| `/join` | Sign-up and authentication entry | [join/page.md](doc/src/src/app/join/page/page.md) |
+| `/education` | Education | [education/page.md](doc/src/src/app/education/page/page.md) |
 | `/commodities` | Commodities | [commodities/page.md](doc/src/src/app/commodities/page/page.md) |
-| `/open-data` | Catálogo de dados abertos | [open-data/page.md](doc/src/src/app/open-data/page/page.md) |
-| `/open-data/[source]/[dataset]` | Detalhe de conjunto de dados | [dataset page.md](doc/src/src/app/open-data/[source]/[dataset]/page/page.md) |
-| `/reports` | Listagem de relatórios | [reports/page.md](doc/src/src/app/reports/page/page.md) |
-| `/reports/[report]` | Relatório dinâmico (manifest JSON, seções) | Implementação em `src/app/reports/[report]/page.tsx` (documentação granular pendente no índice) |
-| `/settings` | Configurações e perfil | [settings/page.md](doc/src/src/app/settings/page/page.md) |
+| `/quem-somos` | "About us" (bilingual MDX) | (see `src/app/quem-somos/page.tsx`) |
+| `/open-data` | Open-data catalog | [open-data/page.md](doc/src/src/app/open-data/page/page.md) |
+| `/open-data/[source]/[dataset]` | Dataset detail | [dataset page.md](doc/src/src/app/open-data/[source]/[dataset]/page/page.md) |
+| `/reports` | Report listing | [reports/page.md](doc/src/src/app/reports/page/page.md) |
+| `/reports/[report]` | Dynamic report (manifest JSON, sections) | `src/app/reports/[report]/page.tsx` |
+| `/blog` and `/blog/[slug]` | Markdown blog with bilingual support | `src/app/blog/` |
+| `/docs` and `/docs/api/v1` | Public technical docs, including the API reference | `src/app/docs/` |
+| `/api/v1/*` | Public read-only HTTP API | see [Public HTTP API](#public-http-api-apiv1) |
+| `/api/auth/*`, `/api/suggest-dataset` | Write-side routes (auth, suggestion form) | `src/app/api/` |
+| `/admin` | Internal admin area (gated) | `src/app/admin/` |
+| `/settings` | Settings and profile | [settings/page.md](doc/src/src/app/settings/page/page.md) |
 
-A navegação da landing utiliza âncoras (por exemplo `#missao`, `#programas`). O [Header](doc/src/src/components/layout/Header/Header.md) concentra tema, idioma, autenticação e links responsivos; o [SidebarSheet](doc/src/src/components/layout/SidebarSheet/SidebarSheet.md) atende ao menu em telas estreitas.
+The landing navigation uses anchors (e.g., `#missao`, `#programas`). The [Header](doc/src/src/components/layout/Header/Header.md) concentrates theme, language, authentication and responsive links; the [SidebarSheet](doc/src/src/components/layout/SidebarSheet/SidebarSheet.md) drives the menu on narrow screens.
 
-## Internacionalização
+## Internationalization
 
-Textos são organizados via [I18nProvider](doc/src/src/i18n/I18nProvider/I18nProvider.md) e [dicionários](doc/src/src/i18n/dictionaries/dictionaries.md). O componente [LanguageSwitcher](doc/src/src/components/ui/LanguageSwitcher/LanguageSwitcher.md) altera o idioma da interface conforme a estratégia definida no provedor.
+UI strings are organized via [I18nProvider](doc/src/src/i18n/I18nProvider/I18nProvider.md) and [dictionaries](doc/src/src/i18n/dictionaries/dictionaries.md). Two locales are supported: `pt` (primary) and `en`. Locale is persisted in `localStorage` (no URL prefix). Every new key must land in both `pt` and `en` simultaneously. The [LanguageSwitcher](doc/src/src/components/ui/LanguageSwitcher/LanguageSwitcher.md) toggles the active locale.
 
-## Landing page e página institucional
+## Landing page and institutional page
 
-A rota raiz (`/`) e a rota `/quem-somos` compartilham o mesmo padrão visual e de autoria de conteúdo: ambas carregam um arquivo MDX por idioma e renderizam-no usando os componentes em `src/components/about/`. Isso permite que o conteúdo seja revisado como texto, sem reabrir páginas React.
+The root route (`/`) and `/quem-somos` share the same visual pattern and authoring model: both load an MDX file per locale and render it with the components in `src/components/about/`. Content can be reviewed as plain text without reopening React pages.
 
-**Arquivos de conteúdo**:
+**Content files**:
 
 ```txt
-content/home/en-US.mdx          Landing em inglês
-content/home/pt-BR.mdx          Landing em português
-content/about/en-US.mdx         "Quem somos" em inglês
-content/about/pt-BR.mdx         "Quem somos" em português
+content/home/en-US.mdx          Landing (English)
+content/home/pt-BR.mdx          Landing (Portuguese)
+content/about/en-US.mdx         About us (English)
+content/about/pt-BR.mdx         About us (Portuguese)
 ```
 
-A escolha do idioma é feita pelo `useI18n()` em `src/app/(marketing)/page.tsx` e `src/app/quem-somos/page.tsx`.
+The active locale is resolved via `useI18n()` in `src/app/(marketing)/page.tsx` and `src/app/quem-somos/page.tsx`.
 
-**Componentes reutilizáveis** (em `src/components/about/`):
+**Reusable components** (in `src/components/about/`):
 
-| Componente | Uso |
+| Component | Use |
 |------------|-----|
-| `AboutHero` | Hero de tela cheia com imagem de fundo, gradiente para o `--background`, título e subtítulo. A landing usa `public/images/landingpage/cerrado.png`. |
-| `AboutSection` | Bloco de texto com título opcional, com variantes `contentWidth="default"` e `wide`; suporta uma ou duas imagens laterais. |
-| `AboutDivider` | Divisor horizontal sutil em gradiente. |
-| `AboutQuote` | Citação destacada. |
-| `AboutPersonInline` | Foto + biografia para a seção de inspirações. |
-| `AboutSpinningLogo` | Logo girando com tipografia "INSTITUTO" + palavra cíclica em efeito máquina de escrever (ver abaixo). |
+| `AboutHero` | Full-screen hero with a background image, gradient to `--background`, title and subtitle. The landing uses `public/images/landingpage/cerrado.png`. |
+| `AboutSection` | Text block with optional title, variants `contentWidth="default"` and `wide`, supporting one or two side images. |
+| `AboutDivider` | Subtle gradient horizontal divider. |
+| `AboutQuote` | Highlighted pull quote. |
+| `AboutPersonInline` | Photo + bio for the inspirations section. |
+| `AboutSpinningLogo` | Spinning logo with the "INSTITUTO" wordmark and a cyclic typewriter word below (see below). |
 
-### Logo animado da landing (`AboutSpinningLogo`)
+### Animated landing logo (`AboutSpinningLogo`)
 
-O componente combina três animações:
+The component combines three animations:
 
-1. **Rotação contínua** do logo (`forest-marketing-logo-spin`, 14s linear).
-2. **Ciclo de cores** via `filter` (`forest-marketing-logo-hue`, 24s, `ease-in-out`): azul (padrão) → vermelho → verde → cinza-claro/branco → preto → azul.
-3. **Tipografia cíclica** (typewriter): a palavra "INSTITUTO" permanece estática e a palavra abaixo dela é digitada, mantida, apagada e substituída pela próxima da lista.
+1. **Continuous rotation** of the logo (`forest-marketing-logo-spin`, 14s linear).
+2. **Hue cycle** via `filter` (`forest-marketing-logo-hue`, 24s `ease-in-out`): blue (default) → red → green → light gray/white → black → blue.
+3. **Cyclic typography** (typewriter): the word "INSTITUTO" stays static while the word below is typed, held, erased and replaced by the next entry in the list.
 
-**Lista de palavras cíclicas** - definida em [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). Para adicionar, remover ou reordenar palavras, edite apenas esse arquivo:
+**Cyclic word list** — defined in [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). To add, remove or reorder words, edit only that file:
 
 ```ts
 export const SPINNING_LOGO_CYCLING_WORDS: string[] = [
@@ -136,119 +180,148 @@ export const SPINNING_LOGO_CYCLING_WORDS: string[] = [
 export const SPINNING_LOGO_STATIC_WORD = "INSTITUTO";
 ```
 
-Recomendações:
+Recommendations:
 
-- Mantenha entradas curtas (≈ 3 a 12 caracteres) - a maior palavra reserva a largura da linha para evitar saltos durante o ciclo.
-- A ordem é preservada em runtime; o ciclo é simples (incremento módulo `length`).
-- Sobrescritas ad hoc são possíveis via props (`<AboutSpinningLogo cyclingWords={[...]} staticWord="..." />`), úteis para variações por página.
+- Keep entries short (≈ 3 to 12 characters) — the widest word reserves the line width to avoid layout jumps.
+- Order is preserved at runtime; the cycle is a simple `length`-modulo increment.
+- Ad-hoc overrides are possible via props (`<AboutSpinningLogo cyclingWords={[...]} staticWord="..." />`), useful for page-specific variants.
 
-**Reduced motion**: tanto a rotação quanto o cursor piscante respeitam `prefers-reduced-motion: reduce` (`src/app/globals.css`).
+**Reduced motion**: rotation and the blinking cursor honor `prefers-reduced-motion: reduce` (`src/app/globals.css`).
 
-## Temas e tokens de interface
+## Themes and UI tokens
 
-Tokens e paletas light e dark estão em [globals.md](doc/src/src/app/globals/globals.md). O modo pode seguir `prefers-color-scheme` ou classes `theme-light` / `theme-dark` no elemento `html`, com persistência em `localStorage` sob a chave `fp_theme`. Superfícies e sombras seguem variáveis como `--surface`, `--border` e `--shadow-float`.
+Tokens and light/dark palettes are defined in [globals.md](doc/src/src/app/globals/globals.md). The theme follows `prefers-color-scheme` or the `theme-light` / `theme-dark` classes on the `html` element, persisted in `localStorage` under the `fp_theme` key. Surfaces and shadows use variables such as `--surface`, `--border` and `--shadow-float`.
 
-Componentes base: [Button](doc/src/src/components/ui/Button/Button.md), [Modal](doc/src/src/components/ui/Modal/Modal.md). Layout: [Footer](doc/src/src/components/layout/Footer/Footer.md).
+Tailwind utility classes are the only styling channel — no CSS modules, no inline `style` objects for design values. Font scaling uses `--fp-font-scale` (5 levels, managed by `I18nProvider`); never set `font-size` directly on text elements.
 
-## Dados abertos e pipeline externo
+Base components: [Button](doc/src/src/components/ui/Button/Button.md), [Modal](doc/src/src/components/ui/Modal/Modal.md). Layout: [Footer](doc/src/src/components/layout/Footer/Footer.md).
 
-O portal lista metadados e expõe downloads; a ingestão pesada (ETL), agregações e geração de arquivos permanece fora deste repositório, em linha com separação de responsabilidades e custos de execução. Tipos e contratos: [types.md](doc/src/src/lib/openData/types/types.md). Esquema SQL de apoio ao projeto (quando aplicável): [doc/supabase/docSQL.md](doc/supabase/docSQL.md).
+## Open data
 
-Componentes de catálogo e página: [OpenDataCatalog](doc/src/src/components/open-data/OpenDataCatalog/OpenDataCatalog.md), [OpenDataPageClient](doc/src/src/components/open-data/OpenDataPageClient/OpenDataPageClient.md), [DownloadAllButton](doc/src/src/components/open-data/DownloadAllButton/DownloadAllButton.md).
+The portal lists metadata and exposes downloads; heavy ingestion (ETL), aggregations and file generation live outside this repository in [`forest-open-data-pipelines`](https://github.com/julianopadua/forest-open-data-pipelines), in line with the separation of responsibilities and execution costs.
 
-## Relatórios analíticos
+- **For end users**: install [`forest-data`](https://pypi.org/project/forest-data/) (`pip install forest-data`) or call the [public HTTP API](#public-http-api-apiv1).
+- **Adding a dataset to the portal**: do not edit portal source. Add the entry to `forest-open-data-pipelines/configs/catalog/open_data.yml`, then run `forest-pipelines publish-catalog`. The portal picks it up on the next catalog fetch (≤ 1h due to revalidation).
+- **Types and contracts**: [types.md](doc/src/src/lib/openData/types/types.md). Supporting SQL schema (when applicable): [doc/supabase/docSQL.md](doc/supabase/docSQL.md).
 
-Relatórios são descritos por catálogo em `src/lib/reports/catalog.ts` (entradas com `slug`, caminhos de manifest e de dados estáveis no Storage). A listagem documentada encontra-se em [reports/page.md](doc/src/src/app/reports/page/page.md). Visualizações e seções residem em `src/components/reports/` e na rota dinâmica `src/app/reports/[report]/page.tsx`.
+Catalog and page components: [OpenDataCatalog](doc/src/src/components/open-data/OpenDataCatalog/OpenDataCatalog.md), [OpenDataPageClient](doc/src/src/components/open-data/OpenDataPageClient/OpenDataPageClient.md), [DownloadAllButton](doc/src/src/components/open-data/DownloadAllButton/DownloadAllButton.md).
 
-## Estrutura do repositório
+## Analytical reports
 
-Visão resumida (pastas principais):
+Reports are described in the catalog envelope at `catalog/reports_catalog.json` (published by the pipeline). The listing is documented in [reports/page.md](doc/src/src/app/reports/page/page.md). Visualizations and section types live in `src/components/reports/` and the dynamic route `src/app/reports/[report]/page.tsx`.
+
+To register a new report: edit `forest-open-data-pipelines/configs/catalog/reports.yml` and run `forest-pipelines publish-catalog` + `forest-pipelines build-report <id>`. Add a new section-type component in `src/components/reports/` only when the report introduces a section kind that is not yet supported.
+
+## Blog and documentation
+
+- **Blog** (`/blog`): Markdown files under `content/blog/<slug>.md`, registered in `src/lib/blog/catalog.ts`. An optional `content/blog/<slug>.en.md` bundles a second locale at the same URL. Front-matter requires `title`, `date`, `author`, `excerpt`. The bundler runs at `prebuild` via `npm run blog:bundle`.
+- **Public docs** (`/docs`): server-rendered docs in `src/app/docs/`. The API reference at `/docs/api/v1` is a Server Component that reuses `src/components/docs/{DocsLayout, DocsSidebar, EndpointBlock}.tsx`. Doc content is bundled at `prebuild` via `npm run docs:bundle`.
+
+## Repository layout
+
+Top-level summary:
 
 ```txt
-doc/                    Documentação por arquivo-fonte e índice
-public/                 Ativos estáticos e imagens
+content/                MDX/Markdown content (home, about, blog, docs)
+doc/                    Per-file technical notes and index
+public/                 Static assets and images
+scripts/                Bundlers for blog/docs/OpenAPI (run at prebuild)
+templates/              MDX/HTML templates
 src/
-  app/                  Rotas App Router, API routes, Server Actions
-  components/           UI, layout, auth, open-data, reports, settings
-  hooks/                Hooks (ex.: sessão Supabase no cliente)
-  i18n/                 Provedor e dicionários
-  lib/                  Utilitários, Supabase, openData, reports, tipos gerados
-middleware.ts         Sessão Supabase na borda
+  app/                  App Router routes, API routes, server actions
+    api/v1/             Public read-only HTTP API (edge runtime)
+    docs/               Public technical documentation
+    blog/               Blog routes
+    admin/              Internal admin area
+  components/           UI, layout, auth, open-data, reports, settings, blog, docs, admin
+  hooks/                Hooks (e.g., Supabase session on the client)
+  i18n/                 Provider and dictionaries
+  lib/                  Utilities, Supabase clients, openData, reports, blog, docs, api/v1, generated types
+  middleware.ts         Supabase session at the edge
 ```
 
-Tipos gerados do banco: [database.types.md](doc/src/src/lib/database.types/database.types.md). Utilitário de classes: [cn.md](doc/src/src/lib/cn/cn.md).
+Generated database types: [database.types.md](doc/src/src/lib/database.types/database.types.md). Class-name helper: [cn.md](doc/src/src/lib/cn/cn.md).
 
-Clientes Supabase: [client](doc/src/src/lib/supabase/client/client.md), [server](doc/src/src/lib/supabase/server/server.md), [admin](doc/src/src/lib/supabase/admin/admin.md).
+Supabase clients: [client](doc/src/src/lib/supabase/client/client.md), [server](doc/src/src/lib/supabase/server/server.md), [admin](doc/src/src/lib/supabase/admin/admin.md).
 
-## Documentação de código
+## Code documentation
 
-O índice canônico que mapeia cada arquivo implementado para o respectivo `.md` está em **[doc/INDEX.md](doc/INDEX.md)**. Recomenda-se consultá-lo antes de alterações amplas para localizar a nota técnica correspondente.
+The canonical index that maps each implemented file to its `.md` note is in **[doc/INDEX.md](doc/INDEX.md)**. Consult it before broad changes to locate the corresponding technical note. The full contributor contract (Supabase client rules, manifest-driven rendering, security, common pitfalls) lives in [AGENTS.md](AGENTS.md).
 
-Referência rápida por domínio:
+Quick reference by domain:
 
-- **Autenticação (UI)**: [AuthModal](doc/src/src/components/auth/AuthModal/AuthModal.md), [AuthForm](doc/src/src/components/auth/AuthForm/AuthForm.md)
-- **Sessão no cliente**: [useSupabaseUser](doc/src/src/hooks/useSupabaseUser/useSupabaseUser.md)
-- **Perfil (settings)**: [ProfileForm](doc/src/src/components/settings/ProfileForm/ProfileForm.md)
+- **Authentication (UI)**: [AuthModal](doc/src/src/components/auth/AuthModal/AuthModal.md), [AuthForm](doc/src/src/components/auth/AuthForm/AuthForm.md)
+- **Client-side session**: [useSupabaseUser](doc/src/src/hooks/useSupabaseUser/useSupabaseUser.md)
+- **Profile (settings)**: [ProfileForm](doc/src/src/components/settings/ProfileForm/ProfileForm.md)
 
-Arquivos sem entrada dedicada no índice (por exemplo módulos somente em `src/lib/reports/` ou `src/components/reports/`) devem ser interpretados a partir do código-fonte até eventual inclusão no gerador de documentação.
+Files without a dedicated index entry (for example modules only in `src/lib/reports/` or `src/components/reports/`) should be read from source until included by the documentation generator.
 
-## Variáveis de ambiente
+## Environment variables
 
-Crie `.env.local` na raiz do repositório. Os nomes abaixo refletem o uso atual no código.
+Create `.env.local` at the repository root. Names below reflect the current code usage.
 
-| Variável | Uso |
+| Variable | Use |
 |----------|-----|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL do projeto Supabase (obrigatória para auth e URLs de dados abertos) |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Chave publicável do Supabase (anon ou publishable, conforme painel) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Operações privilegiadas no servidor (por exemplo cliente admin); não exponha ao cliente |
-| `NEXT_PUBLIC_OPEN_DATA_BUCKET` | Nome do bucket de dados abertos (padrão `open-data` se omitido) |
-| `NEXT_PUBLIC_PORTFOLIO_URL` | URL opcional para CTA de portfólio na landing |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL (required for auth and open-data URLs) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (anon or publishable, per the dashboard) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Privileged server operations (e.g., admin client); never expose to the client |
+| `NEXT_PUBLIC_OPEN_DATA_BUCKET` | Open-data bucket name (defaults to `open-data` if omitted) |
+| `NEXT_PUBLIC_PORTFOLIO_URL` | Optional URL for the portfolio CTA on the landing |
 
-Variáveis listadas em documentos antigos mas não referenciadas no código-fonte atual não devem ser assumidas como obrigatórias até serem introduzidas explicitamente na aplicação.
+Variables listed in older documents but not referenced by the current code must not be assumed required until they are explicitly introduced into the application.
 
-## Execução local
+## Local development
 
-**Pré-requisitos**: Node.js em versão LTS atual ou compatível com Next.js 16; npm incluso ou instalado separadamente.
+**Prerequisites**: Node.js in a current LTS version compatible with Next.js 16; npm bundled or installed separately.
 
-**Instalação de dependências**:
+**Install dependencies**:
 
 ```bash
 npm install
 ```
 
-**Configuração**: copie ou crie `.env.local` e preencha pelo menos `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` para exercitar autenticação e fluxos que dependem do Supabase. Para downloads de dados abertos conforme implementação, a URL pública e o bucket devem estar coerentes com o ambiente.
+**Configuration**: copy or create `.env.local` and fill in at least `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to exercise auth and flows that depend on Supabase. For open-data downloads to resolve correctly, the public URL and bucket must match the target environment.
 
-**Servidor de desenvolvimento**:
+**Development server**:
 
 ```bash
 npm run dev
 ```
 
-A aplicação atende em `http://localhost:3000` por padrão do Next.js.
+The app listens on `http://localhost:3000` by Next.js default. The `prebuild` scripts (`blog:bundle`, `docs:bundle`, `api:openapi`) run automatically before production builds; you can invoke them manually during dev if you change blog posts, docs content, or the API schema.
 
-**Análise estática**:
+**Static analysis**:
 
 ```bash
 npm run lint
+npx tsc --noEmit
 ```
 
-## Build e produção
+## Build and production
 
 ```bash
 npm run build
 npm run start
 ```
 
-O comando `build` gera a saída otimizada; `start` serve a build em modo produção local. Valide variáveis de ambiente no mesmo formato esperado em produção antes de implantar.
+`build` produces the optimized output (after `prebuild` regenerates blog/docs bundles and the OpenAPI spec); `start` serves the build locally in production mode. Validate environment variables in the same format expected by production before deploying.
 
-## Implantação
+## Deployment
 
-Arquitetura típica: hospedagem do frontend Next.js em provedor compatível (por exemplo Vercel) e projeto Supabase para Auth, Postgres e Storage. Configure as variáveis no painel do provedor de hospedagem de forma espelhada a `.env.local`, sem commitar segredos. Revise políticas de Row Level Security e buckets conforme [doc/supabase/docSQL.md](doc/supabase/docSQL.md) e a documentação oficial do Supabase.
+Primary target: Cloudflare via `@opennextjs/cloudflare`.
 
-## Evolução planejada
+```bash
+npm run preview   # local Cloudflare preview
+npm run deploy    # deploy
+npm run upload    # upload assets without going live
+```
 
-Direções plausíveis incluem: fórum e moderação; expansão do catálogo de relatórios e documentação automática de novos componentes; APIs públicas para metadados; painel administrativo; consolidação de `CONTRIBUTING.md` e arquivo `LICENSE` quando a política institucional estiver definida.
+The Supabase project supplies Auth, Postgres and Storage. Mirror `.env.local` in the hosting provider's variables; never commit secrets. Review Row Level Security policies and bucket configuration per [doc/supabase/docSQL.md](doc/supabase/docSQL.md) and the official Supabase documentation.
 
-## Contribuição e licença
+## Roadmap
 
-Padrões de branch, revisão e licença de código ainda podem ser formalizados em `CONTRIBUTING.md` e `LICENSE`. Até lá, alinhe mudanças à estrutura existente e à documentação em `doc/`.
+Plausible directions include: forum and moderation; expansion of the report catalog and automatic documentation for new components; broader public API surface; admin dashboard; consolidation of `CONTRIBUTING.md` and `LICENSE` once the institutional policy is set.
+
+## Contributing and license
+
+Branch standards, review workflow and source license can still be formalized in `CONTRIBUTING.md` and `LICENSE`. Until then, align changes with the existing structure and the documentation in `doc/` and [AGENTS.md](AGENTS.md).
