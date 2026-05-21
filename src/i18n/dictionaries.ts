@@ -579,7 +579,7 @@ export const dictionaries: Record<Locale, Dict> = {
         subtitle:
           "Se algo nesta página estiver incorreto, desatualizado ou faltando, escreva abaixo e enviamos para a nossa caixa.",
         emailLabel: "Email (opcional)",
-        emailPlaceholder: "voce@exemplo.com",
+        emailPlaceholder: "você@exemplo.com",
         messageLabel: "O que está errado ou faltando?",
         messagePlaceholder: "Descreva o problema ou a sugestão.",
         submit: "Enviar",

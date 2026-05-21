@@ -1,92 +1,92 @@
-API HTTP publica e somente leitura para o catalogo de dados abertos do Instituto Forest.
+API HTTP pública e somente leitura para o catálogo de dados abertos do Instituto Forest.
 
-## Visao geral
+## Visão geral
 
-A API serve apenas metadados. Os arquivos dos datasets nao sao armazenados pelo Forest e nao sao servidos por esta API. Cada item de dataset expoe um `source_url` canonico que aponta para a fonte oficial. As pipelines do Forest podem baixar esses arquivos temporariamente durante uma execucao local ou por cron para validar e perfilar os dados. Depois disso, publicam apenas o manifesto e os metadados de perfil.
+A API serve apenas metadados. Os arquivos dos datasets não são armazenados pelo Forest e não são servidos por esta API. Cada item de dataset expõe um `source_url` canônico que aponta para a fonte oficial. As pipelines do Forest podem baixar esses arquivos temporariamente durante uma execução local ou por cron para validar e perfilar os dados. Depois disso, publicam apenas o manifesto e os metadados de perfil.
 
 URL base: `https://institutoforest.org/api/v1`
 
-Todas as respostas sao JSON em UTF-8, com o mesmo envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, mais uma chave de carga util como `datasets`, `manifest`, `items`, `reports` ou `sources`.
+Todas as respostas são JSON em UTF-8, com o mesmo envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, mais uma chave de carga útil como `datasets`, `manifest`, `items`, `reports` ou `sources`.
 
-## Autenticacao
+## Autenticação
 
-Nenhuma. O catalogo e publico. As requisicoes nao exigem credenciais. O CORS e permissivo (`Access-Control-Allow-Origin: *`).
+Nenhuma. O catálogo é público. As requisições não exigem credenciais. O CORS é permissivo (`Access-Control-Allow-Origin: *`).
 
 ## Versionamento
 
-A versao da API fica no prefixo da URL (`/api/v1`). O manifesto de dataset tem seu proprio `schema_version`. Os manifestos de dataset deste contrato usam schema `2.0`.
+A versão da API fica no prefixo da URL (`/api/v1`). O manifesto de dataset tem seu próprio `schema_version`. Os manifestos de dataset deste contrato usam schema `2.0`.
 
-Mudancas incompatíveis na API exigem um novo caminho de API. Mudancas incompatíveis no manifesto exigem incremento de schema.
+Mudanças incompatíveis na API exigem um novo caminho de API. Mudanças incompatíveis no manifesto exigem incremento de schema.
 
 ## Modelo de armazenamento
 
 O Forest armazena:
 
-- Envelopes de catalogo.
+- Envelopes de catálogo.
 - Manifestos de dataset.
-- Manifestos de relatorio e JSONs derivados de relatorios.
-- Catalogos compactos de metadados, como ANP.
+- Manifestos de relatório e JSONs derivados de relatórios.
+- Catálogos compactos de metadados, como ANP.
 - Metadados de perfil gerados pelas pipelines.
 
-O Forest nao armazena arquivos brutos de datasets no Supabase. Consumidores da API e usuarios do SDK baixam bytes pelos valores `source_url` dos itens.
+O Forest não armazena arquivos brutos de datasets no Supabase. Consumidores da API e usuários do SDK baixam bytes pelos valores `source_url` dos itens.
 
 ## URLs de dataset
 
-`source_dataset_url` e a pagina oficial do dataset ou pacote. Use esse campo para atribuicao, documentacao e inspecao manual.
+`source_dataset_url` é a página oficial do dataset ou pacote. Use esse campo para atribuição, documentação e inspeção manual.
 
-O `source_url` do item e a URL oficial baixavel do recurso. Use esse campo para download automatizado.
+O `source_url` do item é a URL oficial baixável do recurso. Use esse campo para download automatizado.
 
 ## Contrato de perfil
 
-O perfil acontece durante a execucao da pipeline. A pipeline baixa o arquivo fonte para armazenamento temporario local, inspeciona o arquivo, registra metricas e apaga o arquivo temporario, salvo quando uma flag de depuracao preserva o arquivo localmente.
+O perfil acontece durante a execução da pipeline. A pipeline baixa o arquivo fonte para armazenamento temporário local, inspeciona o arquivo, registra métricas e apaga o arquivo temporário, salvo quando uma flag de depuração preserva o arquivo localmente.
 
-`profiled_at` e o timestamp UTC em ISO 8601 de quando o Forest terminou o perfil daquele item. Nao e a data de release da fonte e nao e o horario da resposta da API.
+`profiled_at` é o timestamp UTC em ISO 8601 de quando o Forest terminou o perfil daquele item. Não é a data de release da fonte e não é o horário da resposta da API.
 
 `profile_status` descreve o resultado do perfil por item:
 
-| Valor | Significado | Orientacao ao consumidor |
+| Valor | Significado | Orientação ao consumidor |
 |------|-------------|--------------------------|
-| `ok` | O download funcionou, a validacao de formato passou e as metricas esperadas foram calculadas. | Adequado para uso automatizado. |
-| `partial` | O download funcionou, mas algumas metricas estao incompletas por limites de parser, estrutura de arquivo, membros nao suportados ou amostragem. | Use apenas se os campos necessarios existirem. Inspecione `profile_warnings`. |
-| `failed` | A URL foi descoberta, mas download, parse ou validacao falhou. | Nao automatize ingestao sem validacao independente. |
-| `skipped` | O perfil nao foi tentado de forma intencional, geralmente por formato nao suportado ou por nao ser arquivo tabular. | Use como registro de link. Nao presuma metricas de linhas ou colunas. |
+| `ok` | O download funcionou, a validação de formato passou e as métricas esperadas foram calculadas. | Adequado para uso automatizado. |
+| `partial` | O download funcionou, mas algumas métricas estão incompletas por limites de parser, estrutura de arquivo, membros não suportados ou amostragem. | Use apenas se os campos necessários existirem. Inspecione `profile_warnings`. |
+| `failed` | A URL foi descoberta, mas download, parse ou validação falhou. | Não automatize ingestão sem validação independente. |
+| `skipped` | O perfil não foi tentado de forma intencional, geralmente por formato não suportado ou por não ser arquivo tabular. | Use como registro de link. Não presuma métricas de linhas ou colunas. |
 
-`profile_warnings` e uma lista de objetos com `code` e `message`. As mensagens sao seguras para publico e nao incluem stack traces, segredos ou caminhos locais.
+`profile_warnings` é uma lista de objetos com `code` e `message`. As mensagens são seguras para público e não incluem stack traces, segredos ou caminhos locais.
 
-Codigos comuns:
+Códigos comuns:
 
-| Codigo | Significado |
+| Código | Significado |
 |-------|-------------|
-| `head_unavailable` | Metadados remotos nao puderam ser lidos por HEAD. |
-| `download_timeout` | O recurso nao foi baixado dentro do timeout de perfil. |
-| `unsupported_format` | Nao existe parser para o formato do arquivo. |
+| `head_unavailable` | Metadados remotos não puderam ser lidos por HEAD. |
+| `download_timeout` | O recurso não foi baixado dentro do timeout de perfil. |
+| `unsupported_format` | Não existe parser para o formato do arquivo. |
 | `row_count_sampled` | A contagem de linhas foi estimada ou amostrada. |
-| `archive_member_skipped` | Alguns membros de um arquivo compactado nao foram perfilados. |
-| `empty_tabular_data` | O arquivo nao tinha linhas de dados ou tinha apenas cabecalho. |
-| `checksum_unavailable` | Um checksum nao foi calculado ou nao esta disponivel para este item. |
+| `archive_member_skipped` | Alguns membros de um arquivo compactado não foram perfilados. |
+| `empty_tabular_data` | O arquivo não tinha linhas de dados ou tinha apenas cabeçalho. |
+| `checksum_unavailable` | Um checksum não foi calculado ou não está disponível para este item. |
 
 ## Campos de OpenDataItem
 
-| Campo | Tipo | Obrigatorio | Descricao |
+| Campo | Tipo | Obrigatório | Descrição |
 |------|------|-------------|-----------|
 | `kind` | string | sim | Atualmente `data`. |
-| `period` | string | sim | Particao temporal, como `2024`, `2024-03`, uma data ISO ou `Atual`. |
+| `period` | string | sim | Partição temporal, como `2024`, `2024-03`, uma data ISO ou `Atual`. |
 | `filename` | string | sim | Nome inferido da URL oficial ou dos metadados da fonte. |
-| `source_url` | URL string | sim | URL oficial canonica para baixar o recurso. |
-| `title` | string | nao | Titulo legivel do item. |
-| `release_time` | string | nao | Horario de publicacao quando a fonte distingue janelas de release. |
-| `size_bytes` | integer | nao | Bytes lidos durante o perfil. |
-| `sha256` | string | nao | Hash calculado durante o perfil quando o arquivo foi baixado. |
-| `row_count` | integer | nao | Numero de linhas de dados quando mensuravel. |
-| `column_count` | integer | nao | Numero de colunas quando mensuravel. |
-| `columns` | string array | nao | Nomes de colunas quando disponiveis. |
-| `content_type` | string ou null | nao | Content-Type HTTP observado durante o perfil. |
-| `format` | string | nao | Formato inferido do nome do arquivo ou dos metadados da fonte. |
-| `last_modified` | string ou null | nao | Header Last-Modified observado durante o perfil. |
-| `profiled_at` | ISO string | nao | Horario em que o perfil terminou. |
-| `profile_status` | string | nao | `ok`, `partial`, `failed` ou `skipped`. |
-| `profile_warnings` | array | nao | Objetos de aviso seguros para publico. |
-| `archive_profile` | object | nao | Resumo de membros para recursos ZIP ou semelhantes. |
+| `source_url` | URL string | sim | URL oficial canônica para baixar o recurso. |
+| `title` | string | não | Título legível do item. |
+| `release_time` | string | não | Horário de publicação quando a fonte distingue janelas de release. |
+| `size_bytes` | integer | não | Bytes lidos durante o perfil. |
+| `sha256` | string | não | Hash calculado durante o perfil quando o arquivo foi baixado. |
+| `row_count` | integer | não | Número de linhas de dados quando mensurável. |
+| `column_count` | integer | não | Número de colunas quando mensurável. |
+| `columns` | string array | não | Nomes de colunas quando disponíveis. |
+| `content_type` | string ou null | não | Content-Type HTTP observado durante o perfil. |
+| `format` | string | não | Formato inferido do nome do arquivo ou dos metadados da fonte. |
+| `last_modified` | string ou null | não | Header Last-Modified observado durante o perfil. |
+| `profiled_at` | ISO string | não | Horário em que o perfil terminou. |
+| `profile_status` | string | não | `ok`, `partial`, `failed` ou `skipped`. |
+| `profile_warnings` | array | não | Objetos de aviso seguros para público. |
+| `archive_profile` | object | não | Resumo de membros para recursos ZIP ou semelhantes. |
 
 ## Exemplo de manifesto
 
@@ -164,20 +164,20 @@ Codigos comuns:
 
 ## Escolha de itens para uso automatizado
 
-Para ingestao automatizada:
+Para ingestão automatizada:
 
 1. Prefira itens com `profile_status` igual a `ok`.
 2. Exija `source_url`.
-3. Use verificacao por `sha256` quando o campo existir.
-4. Trate `row_count`, `column_count` e `columns` como metadados de perfil, nao como garantias legais da agencia fonte.
+3. Use verificação por `sha256` quando o campo existir.
+4. Trate `row_count`, `column_count` e `columns` como metadados de perfil, não como garantias legais da agência fonte.
 5. Inspecione `profile_warnings` antes de usar itens `partial`, `failed` ou `skipped`.
-6. Nao assuma que `source_dataset_url` e baixavel. Em geral, esse campo e uma pagina de entrada.
+6. Não assuma que `source_dataset_url` é baixável. Em geral, esse campo é uma página de entrada.
 
 ## Endpoints
 
 ### `GET /health`
 
-Retorna status do servico e schema de manifesto compreendido por esta implantacao.
+Retorna status do serviço e schema de manifesto compreendido por esta implantação.
 
 ```bash
 curl https://institutoforest.org/api/v1/health
@@ -209,15 +209,15 @@ curl https://institutoforest.org/api/v1/datasets/inpe_bdqueimadas_focos/items
 
 ### `GET /catalog/reports`
 
-Retorna resumos compactos de relatorios.
+Retorna resumos compactos de relatórios.
 
 ### `GET /reports/{id}`
 
-Retorna um manifesto de relatorio. Relatorios ainda podem apontar para JSONs derivados armazenados pelo Forest.
+Retorna um manifesto de relatório. Relatórios ainda podem apontar para JSONs derivados armazenados pelo Forest.
 
 ### `GET /sources`
 
-Retorna agencias fonte e contagem de datasets.
+Retorna agências fonte e contagem de datasets.
 
 ### `GET /openapi.json`
 
@@ -241,7 +241,7 @@ for item in manifest.items:
 paths = client.download("inpe_bdqueimadas_focos", path="./data")
 ```
 
-O SDK segue `source_url`. Se `sha256` existir, o SDK verifica os bytes baixados por padrao.
+O SDK segue `source_url`. Se `sha256` existir, o SDK verifica os bytes baixados por padrão.
 
 ## Erros
 
