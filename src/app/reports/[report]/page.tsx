@@ -1,11 +1,8 @@
-// src/app/reports/[report]/page.tsx
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReportPageClient from "@/components/reports/ReportPageClient";
 import type { NoticiasAgricolasRelatedData } from "@/components/reports/NoticiasAgricolasRelatedBlock";
-import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
-import { dictionaries, type Locale } from "@/i18n/dictionaries";
+import { dictionaries } from "@/i18n/dictionaries";
 import { getReportBySlug } from "@/lib/reports/catalog";
 import { fetchStableReport } from "@/lib/reports/fetch";
 import {
@@ -44,16 +41,12 @@ export default async function ReportDetailPage({
   params: Promise<{ report: string }>;
 }) {
   const { report } = await params;
+  const backLabel = dictionaries.pt.reports.detail.back;
 
-  const cookieStore = await cookies();
-  const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
-  const locale: Locale = rawLocale === "en" ? "en" : "pt";
-  const backLabel = dictionaries[locale].reports.detail.back;
-
-  // noticias usa caminho constante e eh cached (revalidate 1h); kick off
-  // junto com o catalogo para nao esperar duas viagens sequenciais quando
-  // o relatorio for bdqueimadas. tryFetch... nao rejeita, entao a promise
-  // pode flutuar sem await em outros relatorios.
+  //noticias usa caminho constante e eh cached (revalidate 1h); kick off
+  //junto com o catalogo para nao esperar duas viagens sequenciais quando
+  //o relatorio for bdqueimadas. tryFetch... nao rejeita, entao a promise
+  //pode flutuar sem await em outros relatorios.
   const catalogPromise = getReportBySlug(report);
   const noticiasPromise = fetchNoticiasAgricolas();
 

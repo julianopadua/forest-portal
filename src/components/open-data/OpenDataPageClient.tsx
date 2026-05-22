@@ -1,4 +1,4 @@
-// src/components/open-data/OpenDataPageClient.tsx
+//src/components/open-data/OpenDataPageClient.tsx
 "use client";
 
 import { useMemo, useState } from "react";
@@ -45,7 +45,9 @@ export default function OpenDataPageClient({ datasets }: { datasets: OpenDataDat
       const hay = normalize(
         [
           ds.title,
+          ds.title_en ?? "",
           ds.description,
+          ds.description_en ?? "",
           ds.category_title,
           ds.segment_title ?? "",
           ds.subcategory_title,

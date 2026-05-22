@@ -32,12 +32,18 @@ export const DatasetSummary = registry.register(
       id: z.string().openapi({ example: "inpe_bdqueimadas_focos" }),
       slug: z.string().openapi({ example: "focos-bdqueimadas" }),
       title: z.string().openapi({ example: "INPE - BDQueimadas - Focos Brasil" }),
+      title_en: z.string().optional(),
       description: z.string(),
+      description_en: z.string().optional(),
       source_id: z.string().openapi({ example: "inpe" }),
       source_title: z.string().openapi({ example: "Instituto Nacional de Pesquisas Espaciais" }),
+      source_title_en: z.string().optional(),
       category_title: z.string(),
+      category_title_en: z.string().optional(),
       subcategory_title: z.string(),
+      subcategory_title_en: z.string().optional(),
       segment_title: z.string().optional(),
+      segment_title_en: z.string().optional(),
       source_url: z.string().url(),
       manifest_path: z
         .string()
@@ -51,6 +57,18 @@ export const DatasetSummary = registry.register(
     .openapi("DatasetSummary"),
 );
 
+export const ReportSummaryCoverage = registry.register(
+  "ReportSummaryCoverage",
+  z
+    .object({
+      first_year: z.number().int().nullable().optional(),
+      latest_year: z.number().int().nullable().optional(),
+      year_range: z.string().nullable().optional(),
+      latest_period: z.string().nullable().optional(),
+    })
+    .openapi("ReportSummaryCoverage"),
+);
+
 export const ReportSummary = registry.register(
   "ReportSummary",
   z
@@ -58,9 +76,17 @@ export const ReportSummary = registry.register(
       id: z.string(),
       slug: z.string(),
       title: z.string(),
+      title_en: z.string().optional(),
       description: z.string(),
+      description_en: z.string().optional(),
+      excerpt: z.string().optional(),
+      excerpt_en: z.string().optional(),
+      generated_at: z.string().optional(),
+      coverage: ReportSummaryCoverage.optional(),
       source_title: z.string(),
+      source_title_en: z.string().optional(),
       category_title: z.string(),
+      category_title_en: z.string().optional(),
       manifest_path: z.string(),
       stable_report_path: z.string(),
       tags: z.array(z.string()),

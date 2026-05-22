@@ -1,8 +1,8 @@
-// src/lib/reports/catalog.ts
+//src/lib/reports/catalog.ts
 //
-// Portal does NOT keep a hardcoded reports catalog. The SSOT is the JSON
-// published by `forest-pipelines publish-catalog` to Supabase Storage at
-// `catalog/reports_catalog.json`.
+//portal does not keep a hardcoded reports catalog. the ssot is the json
+//published by `forest-pipelines publish-catalog` to supabase storage at
+//`catalog/reports_catalog.json`.
 
 import { fetchJsonFromStorage } from "@/lib/storageFetch";
 
@@ -15,6 +15,10 @@ export type ReportCatalogItem = {
   titleEn?: string;
   description: string;
   descriptionEn?: string;
+  excerpt?: string;
+  excerptEn?: string;
+  generatedAt?: string;
+  coverage?: ReportCatalogCoverage;
   sourceTitle: string;
   sourceTitleEn?: string;
   categoryTitle: string;
@@ -35,6 +39,13 @@ export type ReportCatalogItem = {
 
 export const REPORTS_CATALOG_PATH = "catalog/reports_catalog.json";
 
+export type ReportCatalogCoverage = {
+  firstYear?: number | null;
+  latestYear?: number | null;
+  yearRange?: string | null;
+  latestPeriod?: string | null;
+};
+
 /** Raw entry as published by the pipeline (snake_case, matching configs/catalog/reports.yml). */
 type RawReportEntry = {
   id: string;
@@ -43,6 +54,15 @@ type RawReportEntry = {
   title_en?: string;
   description: string;
   description_en?: string;
+  excerpt?: string;
+  excerpt_en?: string;
+  generated_at?: string;
+  coverage?: {
+    first_year?: number | null;
+    latest_year?: number | null;
+    year_range?: string | null;
+    latest_period?: string | null;
+  };
   source_title: string;
   source_title_en?: string;
   category_title: string;
@@ -70,6 +90,16 @@ export type ReportsCatalogEnvelope = {
   reports: RawReportEntry[];
 };
 
+function toCoverage(raw: RawReportEntry["coverage"]): ReportCatalogCoverage | undefined {
+  if (!raw) return undefined;
+  return {
+    firstYear: raw.first_year,
+    latestYear: raw.latest_year,
+    yearRange: raw.year_range,
+    latestPeriod: raw.latest_period,
+  };
+}
+
 function toCamelCase(raw: RawReportEntry): ReportCatalogItem {
   return {
     id: raw.id,
@@ -78,6 +108,10 @@ function toCamelCase(raw: RawReportEntry): ReportCatalogItem {
     titleEn: raw.title_en,
     description: raw.description,
     descriptionEn: raw.description_en,
+    excerpt: raw.excerpt,
+    excerptEn: raw.excerpt_en,
+    generatedAt: raw.generated_at,
+    coverage: toCoverage(raw.coverage),
     sourceTitle: raw.source_title,
     sourceTitleEn: raw.source_title_en,
     categoryTitle: raw.category_title,

@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import BlogPostPageClient from "@/components/blog/BlogPostPageClient";
-import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
-import type { Locale } from "@/i18n/dictionaries";
 import { getBilingualPostsIfAny, getBlogSlugs, getPostBySlug } from "@/lib/blog/loadPost";
-
-function readLocaleFromCookies(jar: Awaited<ReturnType<typeof cookies>>): Locale {
-  const v = jar.get(LOCALE_COOKIE_NAME)?.value;
-  return v === "en" ? "en" : "pt";
-}
 
 export async function generateStaticParams() {
   const slugs = await getBlogSlugs();
@@ -22,11 +14,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const jar = await cookies();
-  const loc = readLocaleFromCookies(jar);
 
   const pair = await getBilingualPostsIfAny(slug);
-  const post = pair ? (loc === "en" ? pair.en : pair.pt) : await getPostBySlug(slug, loc);
+  const post = pair ? pair.pt : await getPostBySlug(slug, "pt");
   if (!post) return { title: "Blog" };
 
   const { title, excerpt, mainImage } = post.frontmatter;

@@ -1,4 +1,4 @@
-// src/lib/openData/openDataDataset.ts
+//src/lib/openData/openDataDataset.ts
 
 export type OpenDataDataset = {
   id: string;
@@ -12,7 +12,9 @@ export type OpenDataDataset = {
   slug: string;
 
   title: string;
+  title_en?: string;
   description: string;
+  description_en?: string;
 
   manifest_path: string;
   source_url: string;

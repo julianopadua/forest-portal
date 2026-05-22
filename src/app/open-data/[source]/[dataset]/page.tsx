@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { DownloadAllButton } from "@/components/open-data/DownloadAllButton";
-import { LOCALE_COOKIE_NAME } from "@/i18n/constants";
 import { dictionaries, type Locale } from "@/i18n/dictionaries";
 import { localeToBcp47 } from "@/i18n/localeTag";
 import { getOpenDataDatasets } from "@/lib/openData/catalog";
@@ -18,6 +16,8 @@ import {
 import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
 import { openDataTaxonomyLabel } from "@/lib/openData/openDataTaxonomyEn";
 import { fetchJsonFromStorage } from "@/lib/storageFetch";
+
+const DEFAULT_LOCALE: Locale = "pt";
 
 function formatBytes(n: number) {
   if (!Number.isFinite(n)) return "-";
@@ -75,10 +75,7 @@ export async function generateMetadata({
   params: Promise<{ source: string; dataset: string }>;
 }): Promise<Metadata> {
   const { source, dataset } = await params;
-  const cookieStore = await cookies();
-  const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
-  const locale: Locale = rawLocale === "en" ? "en" : "pt";
-  const meta = dictionaries[locale].openData.meta;
+  const meta = dictionaries[DEFAULT_LOCALE].openData.meta;
 
   const datasets = await getOpenDataDatasets();
   const ds = datasets.find((d) => d.source_id === source && d.slug === dataset);
@@ -98,9 +95,7 @@ export default async function OpenDataDatasetPage({
   params: Promise<{ source: string; dataset: string }>;
 }) {
   const { source, dataset } = await params;
-  const cookieStore = await cookies();
-  const rawLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
-  const locale: Locale = rawLocale === "en" ? "en" : "pt";
+  const locale = DEFAULT_LOCALE;
   const d = dictionaries[locale].openData.dataset;
   const catalogTree = dictionaries[locale].openData.catalogTree;
   const bcp47 = localeToBcp47(locale);

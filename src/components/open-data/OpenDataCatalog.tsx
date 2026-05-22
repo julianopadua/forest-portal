@@ -22,6 +22,14 @@ function formatDateOnly(iso: string | undefined, bcp47: "pt-BR" | "en-US") {
   return d.toLocaleDateString(bcp47);
 }
 
+function datasetTitle(ds: OpenDataDataset, locale: "pt" | "en") {
+  return locale === "en" ? ds.title_en ?? ds.title : ds.title;
+}
+
+function datasetDescription(ds: OpenDataDataset, locale: "pt" | "en") {
+  return locale === "en" ? ds.description_en ?? ds.description : ds.description;
+}
+
 type SourceNode = {
   key: string;
   title: string;
@@ -108,11 +116,12 @@ function sortFlatSubcategories(
 
 function buildSourceNodes(
   srcMap: Map<string, OpenDataDataset[]>,
-  bcp47: "pt-BR" | "en-US"
+  bcp47: "pt-BR" | "en-US",
+  locale: "pt" | "en",
 ): SourceNode[] {
   return Array.from(srcMap.entries())
     .map(([sourceId, datasets]) => {
-      datasets.sort((a, b) => a.title.localeCompare(b.title, bcp47));
+      datasets.sort((a, b) => datasetTitle(a, locale).localeCompare(datasetTitle(b, locale), bcp47));
       return { key: sourceId, title: datasets[0]?.source_title || sourceId, datasets };
     })
     .sort((a, b) => a.title.localeCompare(b.title, bcp47));
@@ -167,8 +176,8 @@ export default function OpenDataCatalog({
       ? datasets.filter((ds) => {
           const hay = normalize(
             [
-              ds.title,
-              ds.description,
+              datasetTitle(ds, locale),
+              datasetDescription(ds, locale),
               ds.category_title,
               ds.segment_title ?? "",
               ds.subcategory_title,
@@ -232,7 +241,7 @@ export default function OpenDataCatalog({
           const subcategories: SubCategoryNode[] = Array.from(subMap.entries()).map(([subTitle, srcMap]) => ({
             key: subTitle,
             title: subTitle,
-            sources: buildSourceNodes(srcMap, bcp47),
+            sources: buildSourceNodes(srcMap, bcp47, locale),
           }));
           return {
             key: segTitle,
@@ -244,7 +253,7 @@ export default function OpenDataCatalog({
       const flatSubcategories: SubCategoryNode[] = Array.from(data.flat.entries()).map(([subTitle, srcMap]) => ({
         key: subTitle,
         title: subTitle,
-        sources: buildSourceNodes(srcMap, bcp47),
+        sources: buildSourceNodes(srcMap, bcp47, locale),
       }));
 
       return {
@@ -325,14 +334,16 @@ export default function OpenDataCatalog({
   function renderDatasetRows(dsList: OpenDataDataset[]) {
     return dsList.map((ds) => {
       const updatedLabel = formatDateOnly(ds.generated_at, bcp47);
+      const title = datasetTitle(ds, locale);
+      const description = datasetDescription(ds, locale);
 
       return (
         <li key={ds.id} className="px-4 py-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
             <div className="min-w-0 max-w-xl flex-1">
-              <div className="text-sm font-semibold text-[color:var(--text)]">{ds.title}</div>
+              <div className="text-sm font-semibold text-[color:var(--text)]">{title}</div>
               <div className="mt-1 text-xs text-[color:var(--muted)] leading-relaxed line-clamp-4">
-                {ds.description}
+                {description}
               </div>
               <div className="mt-2 text-xs text-[color:var(--muted)]">
                 {ct.updatedOn} {updatedLabel}

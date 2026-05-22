@@ -31,7 +31,13 @@
             "type": "string",
             "example": "INPE - BDQueimadas - Focos Brasil"
           },
+          "title_en": {
+            "type": "string"
+          },
           "description": {
+            "type": "string"
+          },
+          "description_en": {
             "type": "string"
           },
           "source_id": {
@@ -42,13 +48,25 @@
             "type": "string",
             "example": "Instituto Nacional de Pesquisas Espaciais"
           },
+          "source_title_en": {
+            "type": "string"
+          },
           "category_title": {
+            "type": "string"
+          },
+          "category_title_en": {
             "type": "string"
           },
           "subcategory_title": {
             "type": "string"
           },
+          "subcategory_title_en": {
+            "type": "string"
+          },
           "segment_title": {
+            "type": "string"
+          },
+          "segment_title_en": {
             "type": "string"
           },
           "source_url": {
@@ -80,6 +98,35 @@
           "manifest_path"
         ]
       },
+      "ReportSummaryCoverage": {
+        "type": "object",
+        "properties": {
+          "first_year": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "latest_year": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "year_range": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latest_period": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
       "ReportSummary": {
         "type": "object",
         "properties": {
@@ -92,13 +139,37 @@
           "title": {
             "type": "string"
           },
+          "title_en": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
+          },
+          "description_en": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "excerpt_en": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string"
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/ReportSummaryCoverage"
           },
           "source_title": {
             "type": "string"
           },
+          "source_title_en": {
+            "type": "string"
+          },
           "category_title": {
+            "type": "string"
+          },
+          "category_title_en": {
             "type": "string"
           },
           "manifest_path": {
