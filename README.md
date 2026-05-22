@@ -320,8 +320,12 @@ The Supabase project supplies Auth, Postgres and Storage. Mirror `.env.local` in
 
 ## Roadmap
 
-Plausible directions include: forum and moderation; expansion of the report catalog and automatic documentation for new components; broader public API surface; admin dashboard; consolidation of `CONTRIBUTING.md` and `LICENSE` once the institutional policy is set.
+Plausible directions include: forum and moderation; expansion of the report catalog and automatic documentation for new components; broader public API surface; and admin dashboard improvements.
 
 ## Contributing and license
 
-Branch standards, review workflow and source license can still be formalized in `CONTRIBUTING.md` and `LICENSE`. Until then, align changes with the existing structure and the documentation in `doc/` and [AGENTS.md](AGENTS.md).
+Release status: `v0.1.0-alpha` is the first public alpha target. Contracts, documentation, and dataset coverage may evolve.
+
+Contributions are described in [CONTRIBUTING.md](CONTRIBUTING.md). Sensitive security reports should follow [SECURITY.md](SECURITY.md).
+
+Source code is licensed under the [MIT License](LICENSE). Data, content, metadata, reports, and third-party dataset terms are described in [DATA-LICENSING.md](DATA-LICENSING.md).
