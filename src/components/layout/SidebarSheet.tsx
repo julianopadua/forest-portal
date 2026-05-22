@@ -3,7 +3,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 import { useRouter } from "next/navigation";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
@@ -12,6 +12,13 @@ import AuthModal from "@/components/auth/AuthModal";
 import type { AuthMode } from "@/components/auth/AuthForm";
 
 type ThemeMode = "light" | "dark";
+
+function readThemeFromHtml(): ThemeMode {
+  const html = document.documentElement;
+  if (html.classList.contains("theme-dark")) return "dark";
+  if (html.classList.contains("theme-light")) return "light";
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 function IconX({ className }: { className?: string }) {
   return (
@@ -72,6 +79,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
 
   const [openSettings, setOpenSettings] = useState(false);
   const [theme, setTheme] = useState<ThemeMode>("light");
+  const [themeSyncOpen, setThemeSyncOpen] = useState(open);
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({
     open: false,
     mode: "signin",
@@ -82,15 +90,12 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
   const openDataId = dict.marketing.sections.mission.id;
   const reportsId = dict.marketing.sections.contents.id;
 
-  useEffect(() => {
-    const getThemeFromHtml = (): ThemeMode => {
-      const html = document.documentElement;
-      if (html.classList.contains("theme-dark")) return "dark";
-      if (html.classList.contains("theme-light")) return "light";
-      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    };
-    setTheme(getThemeFromHtml());
-  }, [open]);
+  if (open && open !== themeSyncOpen) {
+    setThemeSyncOpen(open);
+    setTheme(readThemeFromHtml());
+  } else if (!open && themeSyncOpen) {
+    setThemeSyncOpen(false);
+  }
 
   const toggleTheme = () => {
     const next: ThemeMode = theme === "dark" ? "light" : "dark";

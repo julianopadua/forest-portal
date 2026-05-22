@@ -66,6 +66,20 @@ function readLocaleFromStorage(): Locale | null {
   return null;
 }
 
+function readStoredFontLevel(): FontLevel {
+  if (typeof window === "undefined") return 0;
+  try {
+    const storedFont = localStorage.getItem(FONT_STORAGE_KEY);
+    if (storedFont !== null) {
+      const n = Number(storedFont);
+      if (Number.isFinite(n)) return clampFontLevel(n);
+    }
+  } catch {
+    // ignore
+  }
+  return 0;
+}
+
 function subscribeLocale(onStoreChange: () => void) {
   if (typeof window === "undefined") return () => {};
   window.addEventListener("storage", onStoreChange);
@@ -94,6 +108,12 @@ export function I18nProvider({ children, initialLocale = "pt" }: I18nProviderPro
   const locale = useSyncExternalStore(subscribeLocale, getSnapshot, getServerSnapshot);
 
   const [fontLevel, setFontLevelState] = useState<FontLevel>(0);
+  const [fontHydrated, setFontHydrated] = useState(false);
+
+  if (!fontHydrated && typeof window !== "undefined") {
+    setFontHydrated(true);
+    setFontLevelState(readStoredFontLevel());
+  }
 
   const setLocale = useCallback(
     (next: Locale) => {
@@ -108,19 +128,6 @@ export function I18nProvider({ children, initialLocale = "pt" }: I18nProviderPro
     },
     [router],
   );
-
-  // Carrega fontLevel (sem impacto nas strings i18n)
-  useEffect(() => {
-    try {
-      const storedFont = localStorage.getItem(FONT_STORAGE_KEY);
-      if (storedFont !== null) {
-        const n = Number(storedFont);
-        if (Number.isFinite(n)) setFontLevelState(clampFontLevel(n));
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
 
   // Mantém cookie alinhado ao locale efetivo (ex.: depois que localStorage diverge do SSR)
   useEffect(() => {
