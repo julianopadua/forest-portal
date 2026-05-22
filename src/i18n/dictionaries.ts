@@ -415,7 +415,7 @@ export const dictionaries: Record<Locale, Dict> = {
             title: "Compromissos",
             openSourceLinkText: "comunidade open source",
             bullets: [
-              "Ser uma instituição sem fins lucrativos que contribui de forma contínua à comunidade open source - código, documentação e melhoria pública do que publicamos.",
+              "Ser uma instituição sem fins lucrativos que contribui de forma contínua à comunidade open source, com código em github.com/julianopadua/forest-portal e github.com/julianopadua/forest-open-data-pipelines.",
               "Dados abertos de órgãos públicos nacionais: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP e outras fontes relevantes.",
               "Dados de sensoriamento remoto e imagens de satélite.",
               "Dados de investimentos de organizações supranacionais como BID e Banco Mundial.",
@@ -764,7 +764,7 @@ export const dictionaries: Record<Locale, Dict> = {
             title: "Commitments",
             openSourceLinkText: "open source community",
             bullets: [
-              "Operating as a nonprofit institution that contributes continuously to the open source community - code, documentation, and public improvement of what we publish.",
+              "Operating as a nonprofit institution that contributes continuously to the open source community, with code at github.com/julianopadua/forest-portal and github.com/julianopadua/forest-open-data-pipelines.",
               "Open data from national public agencies: INPE, INMET, CVM, Ibama, IBGE, Conab, ANP, and other relevant sources.",
               "Remote sensing and satellite imagery data.",
               "Investment data from supranational organizations such as the IDB and World Bank.",
