@@ -7,8 +7,6 @@ import {
   DatasetResponse,
   HealthBody,
   ProblemDetails,
-  ReportResponse,
-  ReportsCatalogResponse,
   SourcesResponse,
 } from "./schemas";
 
@@ -41,23 +39,6 @@ export function buildOpenApiDocument() {
       200: {
         description: "Catalog payload.",
         content: { "application/json": { schema: CatalogResponse } },
-      },
-      503: {
-        description: "Upstream catalog unavailable.",
-        content: { "application/problem+json": { schema: ProblemDetails } },
-      },
-    },
-  });
-
-  registry.registerPath({
-    method: "get",
-    path: `${PATH_PREFIX}/catalog/reports`,
-    summary: "List reports",
-    description: "Compact list of all published analytical reports.",
-    responses: {
-      200: {
-        description: "Reports catalog payload.",
-        content: { "application/json": { schema: ReportsCatalogResponse } },
       },
       503: {
         description: "Upstream catalog unavailable.",
@@ -113,32 +94,6 @@ export function buildOpenApiDocument() {
       },
       404: {
         description: "Unknown dataset id or slug.",
-        content: { "application/problem+json": { schema: ProblemDetails } },
-      },
-      503: {
-        description: "Upstream catalog unavailable.",
-        content: { "application/problem+json": { schema: ProblemDetails } },
-      },
-    },
-  });
-
-  registry.registerPath({
-    method: "get",
-    path: `${PATH_PREFIX}/reports/{id}`,
-    summary: "Get report manifest",
-    description: "Full report manifest envelope (schema 1.0).",
-    request: {
-      params: z.object({
-        id: z.string().openapi({ description: "Report id or slug." }),
-      }),
-    },
-    responses: {
-      200: {
-        description: "Report manifest payload.",
-        content: { "application/json": { schema: ReportResponse } },
-      },
-      404: {
-        description: "Unknown report id or slug.",
         content: { "application/problem+json": { schema: ProblemDetails } },
       },
       503: {

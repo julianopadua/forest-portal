@@ -6,7 +6,7 @@ A API serve apenas metadados. Os arquivos dos datasets não são armazenados pel
 
 URL base: `https://institutoforest.org/api/v1`
 
-Todas as respostas são JSON em UTF-8, com o mesmo envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, mais uma chave de carga útil como `datasets`, `manifest`, `items`, `reports` ou `sources`.
+Todas as respostas são JSON em UTF-8, com o mesmo envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, mais uma chave de carga útil como `datasets`, `manifest`, `items` ou `sources`.
 
 ## Autenticação
 
@@ -24,11 +24,13 @@ O Forest armazena:
 
 - Envelopes de catálogo.
 - Manifestos de dataset.
-- Manifestos de relatório e JSONs derivados de relatórios.
+- Manifestos de relatório e JSONs derivados de relatórios para páginas do portal.
 - Catálogos compactos de metadados, como ANP.
 - Metadados de perfil gerados pelas pipelines.
 
 O Forest não armazena arquivos brutos de datasets no Supabase. Consumidores da API e usuários do SDK baixam bytes pelos valores `source_url` dos itens.
+
+Relatórios podem ser publicados e renderizados no portal, mas não fazem parte da API pública v1 nem do contrato do SDK Python.
 
 ## URLs de dataset
 
@@ -206,14 +208,6 @@ Retorna apenas `items[]`. Use quando o cliente precisa de URLs oficiais e metada
 ```bash
 curl https://institutoforest.org/api/v1/datasets/inpe_bdqueimadas_focos/items
 ```
-
-### `GET /catalog/reports`
-
-Retorna resumos compactos de relatórios.
-
-### `GET /reports/{id}`
-
-Retorna um manifesto de relatório. Relatórios ainda podem apontar para JSONs derivados armazenados pelo Forest.
 
 ### `GET /sources`
 

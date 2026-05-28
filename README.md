@@ -73,16 +73,14 @@ Edge middleware documentation: [doc/src/src/middleware/middleware.md](doc/src/sr
 
 ## Public HTTP API (`/api/v1`)
 
-The portal exposes a public, read-only REST API rooted at `https://institutoforest.org/api/v1`. The same `getOpenDataCatalog`, `getReportsCatalog`, `fetchOpenDataManifest` and `fetchReportManifest` helpers used by the UI back the API — both surfaces read the exact same data through the exact same path. Dataset payload bytes are never served by the portal; each item's `source_url` points to the official source.
+The portal exposes a public, read-only REST API rooted at `https://institutoforest.org/api/v1`. The API serves open-data catalog metadata through the same dataset helpers used by the UI. Dataset payload bytes are never served by the portal; each item's `source_url` points to the official source. Reports remain portal content and are not part of the public API v1 contract.
 
 | Route | Returns |
 |------|---------|
 | `GET /api/v1/health` | Service and schema version probe |
 | `GET /api/v1/catalog` | Compact dataset list |
-| `GET /api/v1/catalog/reports` | Compact report list |
 | `GET /api/v1/datasets/{id}` | Full dataset manifest (id or slug) |
 | `GET /api/v1/datasets/{id}/items` | Items array only |
-| `GET /api/v1/reports/{id}` | Full report manifest |
 | `GET /api/v1/sources` | Source agencies and counts |
 | `GET /api/v1/openapi.json` | OpenAPI 3.1 spec (generated at build time) |
 
