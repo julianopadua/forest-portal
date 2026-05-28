@@ -22,10 +22,9 @@ Mudanças incompatíveis na API exigem um novo caminho de API. Mudanças incompa
 
 O Forest armazena:
 
-- Envelopes de catálogo.
-- Manifestos de dataset.
+- Envelopes de catálogo (`catalog/open_data_catalog.json`, `catalog/reports_catalog.json`).
+- Manifestos de dataset (um por fonte, por exemplo `anp/<slug>/manifest.json` para coleções ANP).
 - Manifestos de relatório e JSONs derivados de relatórios para páginas do portal.
-- Catálogos compactos de metadados, como ANP.
 - Metadados de perfil gerados pelas pipelines.
 
 O Forest não armazena arquivos brutos de datasets no Supabase. Consumidores da API e usuários do SDK baixam bytes pelos valores `source_url` dos itens.
