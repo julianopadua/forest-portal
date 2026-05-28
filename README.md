@@ -2,7 +2,7 @@
 
 Official repository of the Instituto Forest web portal. The system unifies the institutional presence, the open-data catalog, the public read-only HTTP API at `/api/v1`, interactive analytical reports, a Markdown-driven blog, public documentation, and authenticated user flows, on top of Next.js 16 (App Router), TypeScript 5 and Supabase.
 
-> **Reading the portal docs vs. consuming the data**: if you only want to **use** Forest open data, you do not need this repository — install the official Python SDK [`forest-data`](https://pypi.org/project/forest-data/) or call the public HTTP API at <https://institutoforest.org/api/v1>. This repository is for portal contributors.
+> **Reading the portal docs vs. consuming the data**: if you only want to **use** Forest open data, you do not need this repository. Install the official Python SDK [`forest-data`](https://pypi.org/project/forest-data/) or call the public HTTP API at <https://institutoforest.org/api/v1>. This repository is for portal contributors.
 
 ## Table of contents
 
@@ -42,7 +42,7 @@ The portal offers a unified experience for:
 
 The application is a frontend monolith decoupled from data extraction and transformation jobs. Next.js delivers pages and lightweight API routes; Supabase provides authentication, the relational database and object storage for public files. Middleware refreshes session cookies on every matched request, keeping the client and server in sync. UI components follow centralized CSS tokens and a responsive pattern with a fixed primary navigation and a side menu on narrow viewports.
 
-All dynamic data (datasets, reports, catalogs) is fetched from Supabase Storage via `manifest.json` files written by the sibling repository [`forest-open-data-pipelines`](https://github.com/julianopadua/forest-open-data-pipelines). The portal is a pure consumer of Storage — it never writes to it.
+All dynamic data (datasets, reports, catalogs) is fetched from Supabase Storage via `manifest.json` files written by the sibling repository [`forest-open-data-pipelines`](https://github.com/julianopadua/forest-open-data-pipelines). The portal is a pure consumer of Storage. It never writes to it.
 
 ## Tech stack
 
@@ -67,7 +67,7 @@ Build configuration: see [doc/src/next.config/next.config.md](doc/src/next.confi
 3. **Authentication**: API routes [login](doc/src/src/app/api/auth/login/route/route.md) and [signup](doc/src/src/app/api/auth/signup/route/route.md) use the appropriate client; the [OAuth callback](doc/src/src/app/auth/callback/route/route.md) exchanges the code for a session and redirects with validation of the internal `next` parameter.
 4. **User data**: [server actions for the profile](doc/src/src/app/actions/profile/profile.md) update tables such as `profiles` with cache revalidation.
 5. **Open data**: the catalog and public URLs derive from envelopes published by the pipeline; see the libraries in [catalog](doc/src/src/lib/openData/catalog/catalog.md) and [publicUrls](doc/src/src/lib/openData/publicUrls/publicUrls.md).
-6. **Public API**: routes under `src/app/api/v1/` expose the same data the UI reads, through the exact same helpers — see [Public HTTP API](#public-http-api-apiv1).
+6. **Public API**: routes under `src/app/api/v1/` expose the same data the UI reads, through the exact same helpers. See [Public HTTP API](#public-http-api-apiv1).
 
 Edge middleware documentation: [doc/src/src/middleware/middleware.md](doc/src/src/middleware/middleware.md).
 
@@ -158,7 +158,7 @@ The component combines three animations:
 2. **Hue cycle** via `filter` (`forest-marketing-logo-hue`, 24s `ease-in-out`): blue (default) → red → green → light gray/white → black → blue.
 3. **Cyclic typography** (typewriter): the word "INSTITUTO" stays static while the word below is typed, held, erased and replaced by the next entry in the list.
 
-**Cyclic word list** — defined in [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). To add, remove or reorder words, edit only that file:
+**Cyclic word list**: defined in [src/components/about/aboutSpinningLogoConfig.ts](src/components/about/aboutSpinningLogoConfig.ts). To add, remove or reorder words, edit only that file:
 
 ```ts
 export const SPINNING_LOGO_CYCLING_WORDS: string[] = [
@@ -180,7 +180,7 @@ export const SPINNING_LOGO_STATIC_WORD = "INSTITUTO";
 
 Recommendations:
 
-- Keep entries short (≈ 3 to 12 characters) — the widest word reserves the line width to avoid layout jumps.
+- Keep entries short (≈ 3 to 12 characters). The widest word reserves the line width to avoid layout jumps.
 - Order is preserved at runtime; the cycle is a simple `length`-modulo increment.
 - Ad-hoc overrides are possible via props (`<AboutSpinningLogo cyclingWords={[...]} staticWord="..." />`), useful for page-specific variants.
 
@@ -190,7 +190,7 @@ Recommendations:
 
 Tokens and light/dark palettes are defined in [globals.md](doc/src/src/app/globals/globals.md). The theme follows `prefers-color-scheme` or the `theme-light` / `theme-dark` classes on the `html` element, persisted in `localStorage` under the `fp_theme` key. Surfaces and shadows use variables such as `--surface`, `--border` and `--shadow-float`.
 
-Tailwind utility classes are the only styling channel — no CSS modules, no inline `style` objects for design values. Font scaling uses `--fp-font-scale` (5 levels, managed by `I18nProvider`); never set `font-size` directly on text elements.
+Tailwind utility classes are the only styling channel. Do not use CSS modules or inline `style` objects for design values. Font scaling uses `--fp-font-scale` (5 levels, managed by `I18nProvider`); never set `font-size` directly on text elements.
 
 Base components: [Button](doc/src/src/components/ui/Button/Button.md), [Modal](doc/src/src/components/ui/Modal/Modal.md). Layout: [Footer](doc/src/src/components/layout/Footer/Footer.md).
 

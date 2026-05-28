@@ -7,12 +7,6 @@ import { DownloadAllButton } from "@/components/open-data/DownloadAllButton";
 import { dictionaries, type Locale } from "@/i18n/dictionaries";
 import { localeToBcp47 } from "@/i18n/localeTag";
 import { getOpenDataDatasets } from "@/lib/openData/catalog";
-import {
-  ANP_CATALOG_COMPACT_PATH,
-  buildManifestFromAnpDataset,
-  isAnpDatasetSource,
-  type AnpCatalogCompact,
-} from "@/lib/openData/anpCatalog";
 import type { OpenDataItem, OpenDataManifest } from "@/lib/openData/types";
 import { openDataTaxonomyLabel } from "@/lib/openData/openDataTaxonomyEn";
 import { fetchJsonFromStorage } from "@/lib/storageFetch";
@@ -100,32 +94,14 @@ export default async function OpenDataDatasetPage({
   const catalogTree = dictionaries[locale].openData.catalogTree;
   const bcp47 = localeToBcp47(locale);
 
-  //anp eh detectavel pela URL, entao kick off do compact em paralelo com o catalogo
-  const isAnp = isAnpDatasetSource(source);
-  const datasetsPromise = getOpenDataDatasets();
-  const anpCompactPromise = isAnp
-    ? fetchJsonFromStorage<AnpCatalogCompact>(ANP_CATALOG_COMPACT_PATH, {
-        label: "anp_catalog_compact",
-      })
-    : null;
-
-  const datasets = await datasetsPromise;
+  const datasets = await getOpenDataDatasets();
   const ds = datasets.find((d) => d.source_id === source && d.slug === dataset);
 
   if (!ds) notFound();
 
-  let manifest: OpenDataManifest;
-
-  if (isAnp) {
-    const compact = await anpCompactPromise!;
-    const built = buildManifestFromAnpDataset(compact, ds.slug, ds.source_url);
-    if (!built) notFound();
-    manifest = built;
-  } else {
-    manifest = await fetchJsonFromStorage<OpenDataManifest>(ds.manifest_path, {
-      label: `manifest:${ds.id}`,
-    });
-  }
+  const manifest = await fetchJsonFromStorage<OpenDataManifest>(ds.manifest_path, {
+    label: `manifest:${ds.id}`,
+  });
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10">
