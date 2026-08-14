@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
-import { Montserrat } from "next/font/google";
+import "@fontsource-variable/montserrat/wght.css";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -14,13 +14,6 @@ import { getSiteUrl } from "@/lib/siteUrl";
 const SITE_NAME = "Instituto Forest";
 const SITE_DESCRIPTION =
   "Dados abertos por meio de código aberto. Portal do Instituto Forest: catálogo público, relatórios analíticos e API de metadados.";
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-sans",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -65,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={initialLocale === "pt" ? "pt-BR" : "en"}>
-      <body className={`min-h-dvh flex flex-col antialiased ${montserrat.variable}`}>
+      <body className="min-h-dvh flex flex-col antialiased">
         <I18nProvider initialLocale={initialLocale}>
           <Suspense
             fallback={

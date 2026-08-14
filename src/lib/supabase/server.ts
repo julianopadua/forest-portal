@@ -20,7 +20,7 @@ export async function createClient() {
             );
           } catch {
             // O método set() foi chamado num Server Component.
-            // Isso pode ser ignorado se você tiver um middleware atualizando a sessão.
+            //isto pode ser ignorado se o proxy atualizar a sessao.
           }
         },
       },
