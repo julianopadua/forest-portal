@@ -6,7 +6,7 @@ A API serve apenas metadados. Os arquivos dos datasets nao sao armazenados pelo 
 
 URL base: `https://institutoforest.org/api/v1`
 
-Todas as respostas sao JSON em UTF-8, com o mesmo envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, mais uma chave de carga util como `datasets`, `manifest`, `items`, `reports` ou `sources`.
+Todas as respostas sao JSON em UTF-8, com o mesmo envelope: `schema_version`, `api_version`, `generated_at`, `generation_status`, `warnings[]`, mais uma chave de carga util como `datasets`, `manifest`, `items` ou `sources`.
 
 ## Autenticacao
 
@@ -24,7 +24,6 @@ O Forest armazena:
 
 - Envelopes de catalogo.
 - Manifestos de dataset.
-- Manifestos de relatorio e JSONs derivados de relatorios.
 - Catalogos compactos de metadados, como ANP.
 - Metadados de perfil gerados pelas pipelines.
 
@@ -206,14 +205,6 @@ Retorna apenas `items[]`. Use quando o cliente precisa de URLs oficiais e metada
 ```bash
 curl https://institutoforest.org/api/v1/datasets/inpe_bdqueimadas_focos/items
 ```
-
-### `GET /catalog/reports`
-
-Retorna resumos compactos de relatorios.
-
-### `GET /reports/{id}`
-
-Retorna um manifesto de relatorio. Relatorios ainda podem apontar para JSONs derivados armazenados pelo Forest.
 
 ### `GET /sources`
 

@@ -51,24 +51,6 @@ export const DatasetSummary = registry.register(
     .openapi("DatasetSummary"),
 );
 
-export const ReportSummary = registry.register(
-  "ReportSummary",
-  z
-    .object({
-      id: z.string(),
-      slug: z.string(),
-      title: z.string(),
-      description: z.string(),
-      source_title: z.string(),
-      category_title: z.string(),
-      manifest_path: z.string(),
-      stable_report_path: z.string(),
-      tags: z.array(z.string()),
-      source_dataset_url: z.string().url().optional(),
-    })
-    .openapi("ReportSummary"),
-);
-
 export const ProfileStatus = z
   .enum(["ok", "partial", "failed", "skipped"])
   .openapi({
@@ -205,35 +187,6 @@ export const DatasetManifest = registry.register(
   }).openapi("DatasetManifest"),
 );
 
-export const ReportManifest = registry.register(
-  "ReportManifest",
-  EnvelopeBase.extend({
-    report_id: z.string(),
-    title: z.union([
-      z.string(),
-      z.object({ pt: z.string(), en: z.string() }),
-    ]),
-    bucket_prefix: z.string(),
-    paths: z.record(z.string(), z.string()),
-    public_urls: z.record(z.string(), z.string()),
-    meta: z.object({
-      source_label: z
-        .union([z.string(), z.object({ pt: z.string(), en: z.string() })])
-        .optional(),
-      dataset_id: z.string().optional(),
-      first_year: z.number().int().nullable().optional(),
-      latest_year: z.number().int().nullable().optional(),
-      year_range: z.string().nullable().optional(),
-      latest_period: z.string().nullable().optional(),
-      llm_enabled: z.boolean().optional(),
-      available_locales: z.array(z.enum(["pt", "en"])).optional(),
-      default_locale: z.enum(["pt", "en"]).optional(),
-      available_biomes: z.array(z.string()).optional(),
-      custom_tags: z.record(z.string(), z.unknown()).optional(),
-    }),
-  }).openapi("ReportManifest"),
-);
-
 export const SourceFacet = registry.register(
   "SourceFacet",
   z
@@ -256,10 +209,8 @@ const responseEnvelope = <T extends z.ZodTypeAny>(payload: T, payloadKey: string
   EnvelopeBase.extend({ [payloadKey]: payload }).openapi(`Response_${payloadKey}`);
 
 export const CatalogResponse = responseEnvelope(z.array(DatasetSummary), "datasets");
-export const ReportsCatalogResponse = responseEnvelope(z.array(ReportSummary), "reports");
 export const DatasetResponse = responseEnvelope(DatasetManifest, "manifest");
 export const DatasetItemsResponse = responseEnvelope(z.array(OpenDataItem), "items");
-export const ReportResponse = responseEnvelope(ReportManifest, "manifest");
 export const SourcesResponse = responseEnvelope(z.array(SourceFacet), "sources");
 
 export const ProblemDetails = registry.register(
@@ -276,7 +227,5 @@ export const ProblemDetails = registry.register(
 );
 
 export type DatasetSummaryT = z.infer<typeof DatasetSummary>;
-export type ReportSummaryT = z.infer<typeof ReportSummary>;
 export type DatasetManifestT = z.infer<typeof DatasetManifest>;
-export type ReportManifestT = z.infer<typeof ReportManifest>;
 export type SourceFacetT = z.infer<typeof SourceFacet>;

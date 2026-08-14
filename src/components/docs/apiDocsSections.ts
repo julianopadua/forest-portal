@@ -18,10 +18,8 @@ export const API_DOCS_SECTIONS_BY_LOCALE: Record<"pt" | "en", readonly DocsNavSe
       items: [
         { href: "#get-health", label: "GET /health" },
         { href: "#get-catalog", label: "GET /catalog" },
-        { href: "#get-catalogreports", label: "GET /catalog/reports" },
         { href: "#get-datasetsid", label: "GET /datasets/{id}" },
         { href: "#get-datasetsiditems", label: "GET /datasets/{id}/items" },
-        { href: "#get-reportsid", label: "GET /reports/{id}" },
         { href: "#get-sources", label: "GET /sources" },
       ],
     },
@@ -47,10 +45,8 @@ export const API_DOCS_SECTIONS_BY_LOCALE: Record<"pt" | "en", readonly DocsNavSe
       items: [
         { href: "#get-health", label: "GET /health" },
         { href: "#get-catalog", label: "GET /catalog" },
-        { href: "#get-catalogreports", label: "GET /catalog/reports" },
         { href: "#get-datasetsid", label: "GET /datasets/{id}" },
         { href: "#get-datasetsiditems", label: "GET /datasets/{id}/items" },
-        { href: "#get-reportsid", label: "GET /reports/{id}" },
         { href: "#get-sources", label: "GET /sources" },
       ],
     },

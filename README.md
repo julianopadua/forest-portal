@@ -73,16 +73,14 @@ Edge middleware documentation: [doc/src/src/middleware/middleware.md](doc/src/sr
 
 ## Public HTTP API (`/api/v1`)
 
-The portal exposes a public, read-only REST API rooted at `https://institutoforest.org/api/v1`. The same `getOpenDataCatalog`, `getReportsCatalog`, `fetchOpenDataManifest` and `fetchReportManifest` helpers used by the UI back the API — both surfaces read the exact same data through the exact same path. Dataset payload bytes are never served by the portal; each item's `source_url` points to the official source.
+The portal exposes a public, read-only REST API rooted at `https://institutoforest.org/api/v1`. The API reads the same open-data catalog and dataset manifests used by the UI. Dataset payload bytes are never served by the portal; each item's `source_url` points to the official source. Analytical reports remain portal content and are not part of the public API.
 
 | Route | Returns |
 |------|---------|
 | `GET /api/v1/health` | Service and schema version probe |
 | `GET /api/v1/catalog` | Compact dataset list |
-| `GET /api/v1/catalog/reports` | Compact report list |
 | `GET /api/v1/datasets/{id}` | Full dataset manifest (id or slug) |
 | `GET /api/v1/datasets/{id}/items` | Items array only |
-| `GET /api/v1/reports/{id}` | Full report manifest |
 | `GET /api/v1/sources` | Source agencies and counts |
 | `GET /api/v1/openapi.json` | OpenAPI 3.1 spec (generated at build time) |
 
@@ -208,7 +206,7 @@ Catalog and page components: [OpenDataCatalog](doc/src/src/components/open-data/
 
 ## Analytical reports
 
-Reports are described in the catalog envelope at `catalog/reports_catalog.json` (published by the pipeline). The listing is documented in [reports/page.md](doc/src/src/app/reports/page/page.md). Visualizations and section types live in `src/components/reports/` and the dynamic route `src/app/reports/[report]/page.tsx`.
+Reports are described in the catalog envelope at `catalog/reports_catalog.json` and rendered by the portal. Visualizations and section types live in `src/components/reports/` and the dynamic route `src/app/reports/[report]/page.tsx`.
 
 To register a new report: edit `forest-open-data-pipelines/configs/catalog/reports.yml` and run `forest-pipelines publish-catalog` + `forest-pipelines build-report <id>`. Add a new section-type component in `src/components/reports/` only when the report introduces a section kind that is not yet supported.
 
