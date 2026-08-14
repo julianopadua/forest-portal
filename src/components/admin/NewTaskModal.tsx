@@ -1,7 +1,7 @@
 // src/components/admin/NewTaskModal.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Button from "@/components/ui/Button";
 import {
   DOMAINS,
@@ -54,14 +54,6 @@ export default function NewTaskModal({
   const [form, setForm] = useState<FormState>(INITIAL);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      setForm(INITIAL);
-      setError(null);
-      setSubmitting(false);
-    }
-  }, [open]);
 
   const sortedTasks = useMemo(
     () => [...allTasks].sort((a, b) => a.title.localeCompare(b.title)),

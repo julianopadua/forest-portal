@@ -111,15 +111,18 @@ export function I18nProvider({ children, initialLocale = "pt" }: I18nProviderPro
 
   // Carrega fontLevel (sem impacto nas strings i18n)
   useEffect(() => {
-    try {
-      const storedFont = localStorage.getItem(FONT_STORAGE_KEY);
-      if (storedFont !== null) {
-        const n = Number(storedFont);
-        if (Number.isFinite(n)) setFontLevelState(clampFontLevel(n));
+    const frame = requestAnimationFrame(() => {
+      try {
+        const storedFont = localStorage.getItem(FONT_STORAGE_KEY);
+        if (storedFont !== null) {
+          const n = Number(storedFont);
+          if (Number.isFinite(n)) setFontLevelState(clampFontLevel(n));
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   // Mantém cookie alinhado ao locale efetivo (ex.: depois que localStorage diverge do SSR)

@@ -1,7 +1,7 @@
 // src/components/auth/AuthModal.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Modal from "@/components/ui/Modal";
 import AuthForm, { AuthMode } from "@/components/auth/AuthForm";
 import { useI18n } from "@/i18n/I18nProvider";
@@ -16,10 +16,6 @@ export default function AuthModal(props: {
 
   const { dict } = useI18n();
   const [mode, setMode] = useState<AuthMode>(initialMode);
-
-  useEffect(() => {
-    setMode(initialMode);
-  }, [initialMode, open]);
 
   const title = useMemo(() => {
     return mode === "signup" ? dict.common.createAccount : dict.common.signIn;

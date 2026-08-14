@@ -200,12 +200,14 @@ export default function AdminTaskManager() {
         />
       )}
 
-      <NewTaskModal
-        open={newOpen}
-        onClose={() => setNewOpen(false)}
-        allTasks={tasks}
-        onCreate={handleCreate}
-      />
+      {newOpen && (
+        <NewTaskModal
+          open
+          onClose={() => setNewOpen(false)}
+          allTasks={tasks}
+          onCreate={handleCreate}
+        />
+      )}
 
       <TaskDrawer
         task={openTask}

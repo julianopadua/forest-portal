@@ -13,6 +13,16 @@ import type { AuthMode } from "@/components/auth/AuthForm";
 
 type ThemeMode = "light" | "dark";
 
+function readThemeFromDocument(): ThemeMode {
+  if (typeof document === "undefined") return "light";
+  const html = document.documentElement;
+  if (html.classList.contains("theme-dark")) return "dark";
+  if (html.classList.contains("theme-light")) return "light";
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
 function IconX({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -71,7 +81,7 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
   const { user, profile } = useSupabaseUser();
 
   const [openSettings, setOpenSettings] = useState(false);
-  const [theme, setTheme] = useState<ThemeMode>("light");
+  const [theme, setTheme] = useState<ThemeMode>(readThemeFromDocument);
   const [authModal, setAuthModal] = useState<{ open: boolean; mode: AuthMode }>({
     open: false,
     mode: "signin",
@@ -83,14 +93,10 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
   const reportsId = dict.marketing.sections.contents.id;
 
   useEffect(() => {
-    const getThemeFromHtml = (): ThemeMode => {
-      const html = document.documentElement;
-      if (html.classList.contains("theme-dark")) return "dark";
-      if (html.classList.contains("theme-light")) return "light";
-      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    };
-    setTheme(getThemeFromHtml());
-  }, [open]);
+    const observer = new MutationObserver(() => setTheme(readThemeFromDocument()));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   const toggleTheme = () => {
     const next: ThemeMode = theme === "dark" ? "light" : "dark";
@@ -248,16 +254,18 @@ export default function SidebarSheet({ open, onClose }: { open: boolean; onClose
         </aside>
       </div>
 
-      <AuthModal
-        open={authModal.open}
-        onClose={() => setAuthModal((s) => ({ ...s, open: false }))}
-        initialMode={authModal.mode}
-        onSuccess={() => {
-          setAuthModal((s) => ({ ...s, open: false }));
-          onClose();
-          router.refresh();
-        }}
-      />
+      {authModal.open && (
+        <AuthModal
+          open
+          onClose={() => setAuthModal((s) => ({ ...s, open: false }))}
+          initialMode={authModal.mode}
+          onSuccess={() => {
+            setAuthModal((s) => ({ ...s, open: false }));
+            onClose();
+            router.refresh();
+          }}
+        />
+      )}
     </>
   );
 }
